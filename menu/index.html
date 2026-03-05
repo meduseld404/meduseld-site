@@ -93,26 +93,6 @@
     </a>
   </div>
 
-  <!-- Discord Chat Widget -->
-  <div class="row justify-content-center mt-5">
-    <div class="col-12 col-lg-10">
-      <div class="card bg-dark border-warning">
-        <div class="card-header text-center" style="background-color: #5865F2; color: white;">
-          <h4 class="mb-0">💬 Discord Chat</h4>
-        </div>
-        <div class="card-body p-0">
-          <iframe 
-            src="https://e.widgetbot.io/channels/924788704529252353/1474674474036232204"
-            style="width: 100%; height: 600px; border: none;"
-            allowtransparency="true"
-            frameborder="0"
-            sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts">
-          </iframe>
-        </div>
-      </div>
-    </div>
-  </div>
-
 </div>
 
 <style>
@@ -189,6 +169,14 @@
   
   // Recheck every 30 seconds
   setInterval(checkPanelStatus, 30000);
+</script>
+
+<!-- Discord Widget Crate -->
+<script src="https://cdn.jsdelivr.net/npm/@widgetbot/crate@3" async defer>
+  new Crate({
+    server: '924788704529252353',
+    channel: '1474674474036232204'
+  })
 </script>
 
 </body>
