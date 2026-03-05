@@ -176,22 +176,27 @@
       const timeoutId = setTimeout(() => controller.abort(), 5000);
       
       const response = await fetch(panelUrl, {
-        method: 'HEAD',
-        mode: 'no-cors',
-        signal: controller.signal
+        method: 'GET',
+        signal: controller.signal,
+        cache: 'no-cache'
       });
       
       clearTimeout(timeoutId);
       
-      // With no-cors, we can't read the response, but if fetch succeeds, server is reachable
-      button.innerHTML = '🟢 Open Control Panel';
-      button.classList.remove('btn-secondary', 'btn-danger');
-      button.classList.add('btn-warning');
-      button.removeAttribute('disabled');
-      
-      indicator.innerHTML = '<span class="status-online">🟢</span> Online';
-      indicator.classList.remove('bg-secondary', 'bg-danger');
-      indicator.classList.add('bg-success');
+      // Check if response is OK (status 200-299)
+      if (response.ok) {
+        button.innerHTML = '🟢 Open Control Panel';
+        button.classList.remove('btn-secondary', 'btn-danger');
+        button.classList.add('btn-warning');
+        button.removeAttribute('disabled');
+        
+        indicator.innerHTML = '<span class="status-online">🟢</span> Online';
+        indicator.classList.remove('bg-secondary', 'bg-danger');
+        indicator.classList.add('bg-success');
+      } else {
+        // Server returned an error status
+        throw new Error('Server error');
+      }
       
     } catch (error) {
       // Server is offline or unreachable
