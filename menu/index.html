@@ -219,6 +219,17 @@
 
 </div>
 
+<!-- Footer -->
+<footer class="text-center py-4 mt-5" style="border-top: 1px solid rgba(230, 198, 92, 0.2);">
+  <p class="text-muted mb-0">
+    &copy; <span id="copyright-year"></span> <a href="https://github.com/quietarcade" target="_blank" class="text-warning text-decoration-none">quietarcade</a>. All rights reserved.
+  </p>
+</footer>
+
+<script>
+  document.getElementById('copyright-year').textContent = new Date().getFullYear();
+</script>
+
 <style>
   .service-card {
     cursor: pointer;
