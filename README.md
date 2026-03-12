@@ -82,7 +82,7 @@ SSH into the server and pull the changes:
 
 ```bash
 ssh vertebra@meduseld.io
-cd ~/services/meduseld-site
+cd /srv/meduseld-site
 git pull
 ```
 

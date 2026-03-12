@@ -283,7 +283,7 @@
               <button
                 id="refresh-prices-btn"
                 class="btn btn-sm btn-outline-warning"
-                onclick="fetchGamePrices()"
+                onclick="fetchGamePrices(true)"
                 title="Refresh prices"
               >
                 <i class="bi bi-arrow-clockwise"></i>
@@ -1127,18 +1127,54 @@
           this.style.opacity = '1';
         });
       });
-      async function fetchGamePrices() {
+      async function fetchGamePrices(forceRefresh = false) {
+        const CACHE_KEY = 'gamePricesCache';
+        const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
         const refreshBtn = document.getElementById('refresh-prices-btn');
         if (refreshBtn) {
           refreshBtn.disabled = true;
           refreshBtn.innerHTML =
             '<i class="bi bi-arrow-clockwise" style="animation: spin 1s linear infinite;"></i>';
         }
+
         const priceElements = document.querySelectorAll('.game-price-badge');
+
+        // Check cache first
+        if (!forceRefresh) {
+          try {
+            const cached = localStorage.getItem(CACHE_KEY);
+            if (cached) {
+              const { timestamp, prices, country, currency } = JSON.parse(cached);
+              const age = Date.now() - timestamp;
+
+              if (age < CACHE_DURATION) {
+                // Use cached data
+                console.log('Using cached game prices');
+                for (const el of priceElements) {
+                  const appId = el.getAttribute('data-appid');
+                  if (prices[appId]) {
+                    el.innerHTML = prices[appId];
+                  }
+                }
+                if (refreshBtn) {
+                  refreshBtn.disabled = false;
+                  refreshBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i>';
+                }
+                return;
+              }
+            }
+          } catch (error) {
+            console.error('Error reading cache:', error);
+          }
+        }
+
+        // Show loading spinners
         for (const el of priceElements) {
           el.innerHTML =
             '<span class="spinner-border spinner-border-sm text-warning" role="status"></span>';
         }
+
         let userCountry = 'us';
         let currencySymbol = '$';
         try {
@@ -1182,6 +1218,9 @@
         } catch (error) {
           console.error('Error detecting country:', error);
         }
+
+        const priceCache = {};
+
         for (const el of priceElements) {
           const appId = el.getAttribute('data-appid');
           try {
@@ -1191,6 +1230,8 @@
             );
             const proxyData = await response.json();
             const data = JSON.parse(proxyData.contents);
+
+            let priceHtml = '';
             if (
               data[appId] &&
               data[appId].success &&
@@ -1201,10 +1242,10 @@
               if (priceData.discount_percent > 0) {
                 const finalPrice = (priceData.final / 100).toFixed(2);
                 const originalPrice = (priceData.initial / 100).toFixed(2);
-                el.innerHTML = `<span class="badge bg-danger me-1" style="font-size: 0.85rem;">SALE -${priceData.discount_percent}%</span><span class="badge bg-success" style="font-size: 0.85rem;">${currencySymbol}${finalPrice}</span><span class="badge bg-secondary text-decoration-line-through ms-1" style="font-size: 0.75rem;">${currencySymbol}${originalPrice}</span>`;
+                priceHtml = `<span class="badge bg-danger me-1" style="font-size: 0.85rem;">SALE -${priceData.discount_percent}%</span><span class="badge bg-success" style="font-size: 0.85rem;">${currencySymbol}${finalPrice}</span><span class="badge bg-secondary text-decoration-line-through ms-1" style="font-size: 0.75rem;">${currencySymbol}${originalPrice}</span>`;
               } else {
                 const price = (priceData.final / 100).toFixed(2);
-                el.innerHTML = `<span class="badge bg-secondary" style="font-size: 0.85rem;">${currencySymbol}${price}</span>`;
+                priceHtml = `<span class="badge bg-secondary" style="font-size: 0.85rem;">${currencySymbol}${price}</span>`;
               }
             } else if (
               data[appId] &&
@@ -1212,16 +1253,38 @@
               data[appId].data &&
               data[appId].data.is_free
             ) {
-              el.innerHTML = `<span class="badge bg-success" style="font-size: 0.85rem;">FREE</span>`;
+              priceHtml = `<span class="badge bg-success" style="font-size: 0.85rem;">FREE</span>`;
             } else {
-              el.innerHTML = `<span class="badge bg-secondary" style="font-size: 0.75rem;">N/A</span>`;
+              priceHtml = `<span class="badge bg-secondary" style="font-size: 0.75rem;">N/A</span>`;
             }
+
+            el.innerHTML = priceHtml;
+            priceCache[appId] = priceHtml;
           } catch (error) {
             console.error(`Error fetching price for app ${appId}:`, error);
-            el.innerHTML = `<span class="badge bg-secondary" style="font-size: 0.75rem;">N/A</span>`;
+            const errorHtml = `<span class="badge bg-secondary" style="font-size: 0.75rem;">N/A</span>`;
+            el.innerHTML = errorHtml;
+            priceCache[appId] = errorHtml;
           }
           await new Promise((resolve) => setTimeout(resolve, 300));
         }
+
+        // Save to cache
+        try {
+          localStorage.setItem(
+            CACHE_KEY,
+            JSON.stringify({
+              timestamp: Date.now(),
+              prices: priceCache,
+              country: userCountry,
+              currency: currencySymbol,
+            })
+          );
+          console.log('Game prices cached successfully');
+        } catch (error) {
+          console.error('Error saving cache:', error);
+        }
+
         if (refreshBtn) {
           refreshBtn.disabled = false;
           refreshBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i>';
