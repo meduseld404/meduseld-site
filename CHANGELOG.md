@@ -2,6 +2,27 @@
 
 All notable changes to the Meduseld services hub.
 
+## [0.4.0-alpha] - 2026-03-13
+
+### Bug Fixes
+
+- **Fixed Panel Redirect Issue**: Resolved catch-all route that was causing panel.meduseld.io to redirect incorrectly on some browsers
+- **Fixed System Logs**: Updated system logs endpoint to use absolute paths and proper error handling for Ubuntu syslog access
+- **Fixed Mobile Web App Meta Tag**: Replaced deprecated `apple-mobile-web-app-capable` with standard `mobile-web-app-capable`
+
+### UI/UX Improvements
+
+- **CoreUI Icon Library**: Migrated from custom icons to CoreUI icon library for better consistency
+- **Button Improvements**: Enhanced restart button functionality and visual feedback
+- **System Logs Panel**: Improved error messages and permission handling for system log viewing
+- **Footer Updates**: Updated version display and styling for better mobile compatibility
+
+### Technical
+
+- **Log File Paths**: Changed to absolute paths for production (`/srv/meduseld/logs/webserver.log`, `/var/log/syslog`)
+- **CORS Headers**: Enhanced cross-origin support for system monitoring endpoints
+- **Error Handling**: Better error messages when log files are not readable or don't exist
+
 ## [0.1.0-alpha] - 2026-03-10
 
 Initial release of the Meduseld service site.
