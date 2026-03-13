@@ -7,7 +7,7 @@ body {
   background-position: center;
   background-attachment: fixed;
   background-repeat: no-repeat;
-  
+
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
 
@@ -17,8 +17,12 @@ body {
   min-height: 100vh;
 }
 
+header {
+  padding-top: calc(15px + env(safe-area-inset-top));
+}
+
 html {
-    background: #0b1f14;
+  background: #0b1f14;
 }
 
 @media (max-width: 768px) {
@@ -176,12 +180,18 @@ h5 {
   color: #e6c65c;
 }
 
+html,
+body {
+  overscroll-behavior-y: none;
+}
+
 .meduseld-footer {
   position: relative;
   color: #e6c65c;
   font-size: 0.85rem;
   letter-spacing: 1px;
   opacity: 0.85;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
 }
 
 .footer-divider {
