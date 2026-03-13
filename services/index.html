@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <link rel="apple-touch-icon" sizes="180x180" href="https://meduseld.io//apple-touch-icon.png" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#0b1f14" />
@@ -927,8 +927,7 @@
           button.style.cursor = '';
           button.style.backgroundColor = '';
           button.style.color = '';
-          indicator.innerHTML =
-            '<i class="cil-circle text-success status-online me-1"></i>Online';
+          indicator.innerHTML = '<i class="cil-circle text-success status-online me-1"></i>Online';
           indicator.classList.remove('bg-secondary', 'bg-danger', 'bg-warning');
           indicator.classList.add('bg-success');
           indicator.style.backgroundColor = '';
@@ -992,8 +991,7 @@
           button.style.cursor = '';
           button.style.backgroundColor = '';
           button.style.color = '';
-          indicator.innerHTML =
-            '<i class="cil-circle text-success status-online me-1"></i>Online';
+          indicator.innerHTML = '<i class="cil-circle text-success status-online me-1"></i>Online';
           indicator.classList.remove('bg-secondary', 'bg-danger', 'bg-warning');
           indicator.classList.add('bg-success');
           indicator.style.backgroundColor = '';
@@ -1051,8 +1049,7 @@
           button.style.cursor = '';
           button.style.backgroundColor = '';
           button.style.color = '';
-          indicator.innerHTML =
-            '<i class="cil-circle text-success status-online me-1"></i>Online';
+          indicator.innerHTML = '<i class="cil-circle text-success status-online me-1"></i>Online';
           indicator.classList.remove('bg-secondary', 'bg-danger', 'bg-warning');
           indicator.classList.add('bg-success');
           indicator.style.backgroundColor = '';
@@ -1151,8 +1148,7 @@
         } catch (error) {
           console.error('Error fetching news:', error);
           newsContainer.innerHTML = `<div class="text-center text-muted"><i class="cil-warning" style="font-size: 2rem;"></i><p class="mt-2">Unable to load news at this time</p><small>Check console for details</small></div>`;
-          newsStatus.innerHTML =
-            'Error <i class="cil-info ms-1" style="cursor: pointer;"></i>';
+          newsStatus.innerHTML = 'Error <i class="cil-info ms-1" style="cursor: pointer;"></i>';
           newsStatus.classList.remove('bg-secondary');
           newsStatus.classList.add('bg-danger');
           newsStatus.title = `Failed to fetch news: ${error.message || 'Unknown error'}`;
