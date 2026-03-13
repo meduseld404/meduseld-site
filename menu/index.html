@@ -10,6 +10,12 @@
   <link rel="stylesheet" href="https://meduseld.io/static/style.css">
 </head>
 <body class="bg-dark text-light">
+<!-- Dev Mode Badge -->
+<div class="d-flex justify-content-center pt-3" id="dev-mode-badge-container" style="display: none;">
+  <span class="badge text-dark px-3 py-2" style="font-size: 0.85rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: 2px solid #5a67d8;">
+    <i class="bi bi-terminal"></i> DEVELOPMENT MODE
+  </span>
+</div>
 <div class="container py-5">
   <div class="text-center mb-5">
     <img src="https://meduseld.io/static/logo.png" style="max-height:100px; margin-bottom:20px;">
@@ -242,6 +248,19 @@ document.addEventListener('DOMContentLoaded',function(){document.getElementById(
 document.getElementById('newsCollapse').addEventListener('show.bs.collapse',function(){document.getElementById('news-chevron').style.transform='rotate(180deg)'});
 document.getElementById('newsCollapse').addEventListener('hide.bs.collapse',function(){document.getElementById('news-chevron').style.transform='rotate(0deg)'});
 setTimeout(function(){const tooltip=document.getElementById('discord-tooltip');if(tooltip){tooltip.style.display='block';setTimeout(function(){tooltip.style.opacity='0';tooltip.style.transition='opacity 0.5s ease-out';setTimeout(function(){tooltip.style.display='none'},500)},8000)}},3000);
+
+// Check if backend is in dev mode
+async function checkDevMode(){try{const response=await fetch('/api/stats');const data=await response.json();if(data.dev_mode){const devBadgeContainer=document.getElementById('dev-mode-badge-container');if(devBadgeContainer){devBadgeContainer.style.display='';devBadgeContainer.classList.add('d-flex')}document.title='🔧 DEV | '+document.title;
+// Update URLs to point to localhost in dev mode with view query params
+const panelButton=document.getElementById('panel-button');const sshButton=document.getElementById('ssh-button');const jellyfinButton=document.getElementById('jellyfin-button');
+if(panelButton&&panelButton.href){panelButton.href='http://localhost:5001?view=panel'}
+if(sshButton&&sshButton.href){sshButton.href='http://localhost:5001?view=ssh'}
+if(jellyfinButton&&jellyfinButton.href){jellyfinButton.href='http://localhost:5001?view=jellyfin'}
+// Update back to landing button
+const backButtons=document.querySelectorAll('a[href="https://meduseld.io"]');backButtons.forEach(btn=>btn.href='http://localhost:5001');
+// Update CONFIG for health checks
+CONFIG.panelUrl='http://localhost:5001?view=panel';CONFIG.sshUrl='http://localhost:5001?view=ssh';CONFIG.jellyfinUrl='http://localhost:5001?view=jellyfin'}}catch(error){console.log('Could not check dev mode status:',error)}}
+checkDevMode();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@widgetbot/crate@3" async defer>
 const crate=new Crate({server:'924788704529252353',channel:'1474674474036232204',color:'#e6c65c'})
