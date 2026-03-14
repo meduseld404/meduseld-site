@@ -76,7 +76,7 @@ header {
 }
 
 @media (max-width: 768px) {
-  body {
+  html {
     background-attachment: scroll;
   }
 }
