@@ -102,7 +102,7 @@
                   Checking...
                 </span>
               </div>
-              <p class="card-text mb-0 flex-grow-1" id="game-description">
+              <p class="card-text flex-grow-1 d-flex align-items-center justify-content-center" id="game-description">
                 Control the Icarus dedicated game server. Start, stop, restart, and monitor server
                 status.
               </p>
@@ -139,37 +139,6 @@
             </div>
           </div>
         </div>
-        <!-- SSH Access -->
-        <div class="col-md-6 col-lg-4">
-          <div class="card h-100 text-white bg-dark border-warning service-card">
-            <div class="card-body d-flex flex-column text-center p-4">
-              <div class="mb-3">
-                <i class="bi bi-terminal" style="font-size: 3rem; color: #e6c65c"></i>
-              </div>
-              <h3 class="card-title mb-3" style="color: #e6c65c">SSH Access</h3>
-              <div class="mb-2">
-                <span id="ssh-status-indicator" class="badge bg-secondary">
-                  <span class="spinner-border spinner-border-sm me-1" role="status"></span>
-                  Checking...
-                </span>
-              </div>
-              <p class="card-text mb-0 flex-grow-1">
-                Secure shell access to the server. Connect via web terminal.
-              </p>
-              <div class="mt-auto">
-                <a
-                  id="ssh-button"
-                  href="https://ssh.meduseld.io"
-                  class="btn btn-secondary btn-lg w-100"
-                  disabled
-                >
-                  <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                  Checking Status...
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
         <!-- Entertainment -->
         <div class="col-md-6 col-lg-4">
           <div class="card h-100 text-white bg-dark border-warning service-card">
@@ -184,7 +153,7 @@
                   Checking...
                 </span>
               </div>
-              <p class="card-text mb-0 flex-grow-1" id="jellyfin-description">
+              <p class="card-text flex-grow-1 d-flex align-items-center justify-content-center" id="jellyfin-description">
                 Stream movies, TV shows, and media from our Palantír server.
               </p>
               <div class="mt-auto">
@@ -201,27 +170,40 @@
             </div>
           </div>
         </div>
-        <!-- Game Wiki -->
-        <div class="col-md-6 col-lg-4">
-          <div class="card h-100 text-white bg-dark border-secondary disabled-card">
-            <div class="card-body d-flex flex-column text-center p-4">
-              <div class="mb-3"><i class="bi bi-book" style="font-size: 3rem"></i></div>
-              <h3 class="card-title mb-3 text-secondary" id="wiki-title">Game Wiki</h3>
-              <p class="card-text mb-4 flex-grow-1" id="wiki-description">
-                Community wiki with guides, tips, and information for the current game.
-              </p>
-              <button class="btn btn-secondary btn-lg" disabled>Coming Soon</button>
-            </div>
-          </div>
-        </div>
         <!-- VPN Access -->
         <div class="col-md-6 col-lg-4">
           <div class="card h-100 text-white bg-dark border-secondary disabled-card">
             <div class="card-body d-flex flex-column text-center p-4">
               <div class="mb-3"><i class="bi bi-shield-lock" style="font-size: 3rem"></i></div>
               <h3 class="card-title mb-3 text-secondary">VPN Access</h3>
-              <p class="card-text mb-4 flex-grow-1">
+              <p class="card-text flex-grow-1 d-flex align-items-center justify-content-center">
                 Secure VPN connection using OpenVPN for remote access.
+              </p>
+              <button class="btn btn-secondary btn-lg" disabled>Coming Soon</button>
+            </div>
+          </div>
+        </div>
+        <!-- Game Wiki -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 text-white bg-dark border-secondary disabled-card">
+            <div class="card-body d-flex flex-column text-center p-4">
+              <div class="mb-3"><i class="bi bi-book" style="font-size: 3rem"></i></div>
+              <h3 class="card-title mb-3 text-secondary" id="wiki-title">Game Wiki</h3>
+              <p class="card-text flex-grow-1 d-flex align-items-center justify-content-center" id="wiki-description">
+                Community wiki with guides, tips, and information for the current game.
+              </p>
+              <button class="btn btn-secondary btn-lg" disabled>Coming Soon</button>
+            </div>
+          </div>
+        </div>
+        <!-- E-book / Audiobook Library -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 text-white bg-dark border-secondary disabled-card">
+            <div class="card-body d-flex flex-column text-center p-4">
+              <div class="mb-3"><i class="bi bi-book-half" style="font-size: 3rem"></i></div>
+              <h3 class="card-title mb-3 text-secondary">Library</h3>
+              <p class="card-text flex-grow-1 d-flex align-items-center justify-content-center">
+                Browse and listen to e-books and audiobooks from our collection.
               </p>
               <button class="btn btn-secondary btn-lg" disabled>Coming Soon</button>
             </div>
@@ -233,7 +215,7 @@
             <div class="card-body d-flex flex-column text-center p-4">
               <div class="mb-3"><i class="bi bi-question-circle" style="font-size: 3rem"></i></div>
               <h3 class="card-title mb-3 text-secondary">Trivia Game</h3>
-              <p class="card-text mb-4 flex-grow-1">Test your knowledge with trivia questions.</p>
+              <p class="card-text flex-grow-1 d-flex align-items-center justify-content-center">Test your knowledge with trivia questions.</p>
               <button class="btn btn-secondary btn-lg" disabled>Coming Soon</button>
             </div>
           </div>
@@ -244,10 +226,41 @@
             <div class="card-body d-flex flex-column text-center p-4">
               <div class="mb-3"><i class="bi bi-star" style="font-size: 3rem"></i></div>
               <h3 class="card-title mb-3 text-secondary">Hall of Fame</h3>
-              <p class="card-text mb-4 flex-grow-1">
+              <p class="card-text flex-grow-1 d-flex align-items-center justify-content-center">
                 Funny moments, clips, and memorable screenshots from our adventures.
               </p>
               <button class="btn btn-secondary btn-lg" disabled>Coming Soon</button>
+            </div>
+          </div>
+        </div>
+        <!-- SSH Access -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 text-white bg-dark border-warning service-card">
+            <div class="card-body d-flex flex-column text-center p-4">
+              <div class="mb-3">
+                <i class="bi bi-terminal" style="font-size: 3rem; color: #e6c65c"></i>
+              </div>
+              <h3 class="card-title mb-3" style="color: #e6c65c">SSH Access</h3>
+              <div class="mb-2">
+                <span id="ssh-status-indicator" class="badge bg-secondary">
+                  <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                  Checking...
+                </span>
+              </div>
+              <p class="card-text flex-grow-1 d-flex align-items-center justify-content-center">
+                Secure shell access to the server. Connect via web terminal.
+              </p>
+              <div class="mt-auto">
+                <a
+                  id="ssh-button"
+                  href="https://ssh.meduseld.io"
+                  class="btn btn-secondary btn-lg w-100"
+                  disabled
+                >
+                  <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  Checking Status...
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -265,7 +278,7 @@
                   Active
                 </span>
               </div>
-              <p class="card-text mb-4 flex-grow-1">
+              <p class="card-text flex-grow-1 d-flex align-items-center justify-content-center">
                 View server logs, system diagnostics, and monitor server health.
               </p>
               <a href="https://system.meduseld.io" class="btn btn-warning btn-lg">
@@ -279,7 +292,7 @@
             <div class="card-body d-flex flex-column text-center p-4">
               <div class="mb-3"><i class="bi bi-clock" style="font-size: 3rem"></i></div>
               <h3 class="card-title mb-3 text-secondary">More Services</h3>
-              <p class="card-text mb-4 flex-grow-1"></p>
+              <p class="card-text flex-grow-1 d-flex align-items-center justify-content-center"></p>
               <button class="btn btn-secondary btn-lg" disabled>Coming Soon</button>
             </div>
           </div>
