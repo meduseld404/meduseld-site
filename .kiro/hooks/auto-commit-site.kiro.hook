@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Auto Commit (meduseld-site)",
+  "description": "Automatically stages and commits changes in meduseld-site with a proper conventional commit message after any file is edited.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "meduseld-site/**/*"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A file was just edited in the meduseld-site repo. Stage all changes with `git add -A` in the meduseld-site directory, then check `git diff --cached --stat` to see what changed, and commit with a proper conventional commit message following the commitlint rules (type(scope): Subject in sentence case). Valid scopes: services, system, landing, ui, icons, footer, header, news, prices, release. Use --no-verify flag. If there are no staged changes, do nothing."
+  }
+}
