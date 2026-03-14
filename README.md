@@ -4,7 +4,7 @@ Service hub for managing game servers, media streaming, and other services hoste
 
 ## Version
 
-v0.1.0-alpha - Initial release
+v0.5.0-alpha
 
 ## Features
 

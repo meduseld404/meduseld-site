@@ -2,6 +2,44 @@
 
 All notable changes to the Meduseld services hub.
 
+## [0.5.0-alpha] - 2026-03-14
+
+### New Features
+
+- **System Backup Button**: Trigger game save backups to Google Drive from the system page with confirmation modal and progress polling
+- **System Reboot Button**: Remote server reboot from the system page with danger confirmation modal
+- **Cloud Backup Modal**: Shows real-time backup progress, handles "already in progress" state, polls for completion
+- **Remote Desktop Card**: Added coming soon card for screen sharing/collaboration
+- **The Red Book Card**: Renamed Library card to "The Red Book" for e-books and audiobooks
+
+### Bug Fixes
+
+- **Fixed Reboot Token**: Set reboot auth token (was placeholder `CHANGE_ME`)
+- **Fixed System Logs Endpoint**: Switched from `panel.meduseld.io` to `health.meduseld.io` for public access without auth
+- **Fixed Discord Widget Mobile**: Resolved Crate widget cutoff on mobile viewports
+- **Fixed iOS Background**: Background now covers status bar area on iOS Safari with `viewport-fit=cover`
+- **Fixed Card Spacing**: Improved service card spacing and consistent button alignment
+- **Fixed Speech Bubble**: Replaced broken Crate notify API with custom speech bubble implementation
+- **Fixed Duplicate Viewport Meta**: Removed duplicate viewport meta tag missing `viewport-fit=cover`
+- **Fixed Orphaned JS**: Removed server logs JavaScript that had no matching HTML element
+
+### UI/UX Improvements
+
+- **Bootstrap Icons Migration**: Replaced CoreUI icons with Bootstrap Icons across all pages
+- **Palantir Rename**: Renamed Jellyfin to "Palantir" with film icon
+- **Card Reordering**: Reorganized service cards, centered descriptions
+- **Shared CSS**: Deduplicated CSS and moved shared styles to `style.css`
+- **SSH Button Moved**: Relocated SSH button to bottom action row on system page
+- **Trello Widget Replaced**: Swapped embedded Trello widget for a link button on system page
+- **Apple Touch Icon**: Updated icon styling for iOS glass theme
+
+### Configuration & Infrastructure
+
+- **Commitlint Enforcement**: Added commit message validation with git hooks
+- **Steering Documentation**: Added page functionality reference for all UI pages
+- **Backup Auth**: Configured backup service authentication token
+- **Cleaned Up Code**: Removed unused code and added missing static assets
+
 ## [0.4.0-alpha] - 2026-03-13
 
 ### Bug Fixes
@@ -59,34 +97,3 @@ Initial release of the Meduseld service site.
 - Geolocation-based currency detection via ipapi.co
 - Real-time status updates every 5 seconds
 - Bootstrap tooltips with click/hover support
-
-## Recent Updates (Pre-Release)
-
-### Services
-
-- Added Jellyfin media server integration with status monitoring
-- Enabled real-time status checks for game server panel
-- Enabled SSH terminal access with availability monitoring
-- Integrated Steam news feed for current game
-
-### UI/UX Improvements
-
-- Fixed game server panel title to display "{Game Name} Server" format
-- Made tooltips clickable on mobile devices for better accessibility
-- Added Bootstrap tooltip support with click and hover triggers
-- Improved mobile experience for info icons and status badges
-
-### Features
-
-- Automatic service status checks every 30 seconds
-- Collapsible game news panel with Steam API integration
-- Server specifications display
-- Games queue showing upcoming titles
-- Discord integration widget
-
-### Technical
-
-- Status monitoring using fetch with timeout controls
-- No-CORS mode for cross-origin status checks
-- Responsive design with Bootstrap 5.3.2
-- Dynamic content updates based on configuration
