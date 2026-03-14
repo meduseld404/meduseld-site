@@ -1362,6 +1362,7 @@
             server: '924788704529252353',
             channel: '1474674474036232204',
             color: '#e6c65c',
+            css: '@media (max-width: 480px) { .popout { max-width: calc(100vw - 24px) !important; width: calc(100vw - 24px) !important; max-height: 55vh !important; right: 0 !important; bottom: 56px !important; border-radius: 12px !important; } .button { bottom: 8px !important; right: 8px !important; width: 48px !important; height: 48px !important; } }',
           });
         } catch (e) {
           console.error('Widgetbot Crate failed to init:', e);
@@ -1377,7 +1378,7 @@
       setTimeout(function () {
         var bubble = document.createElement('div');
         bubble.innerHTML = '<i class="bi bi-chat-left-text-fill" style="margin-right:8px"></i>Server suggestion or problem? Send a Discord message!';
-        bubble.style.cssText = 'position:fixed;bottom:80px;right:20px;background:#e6c65c;color:#000;padding:12px 16px;border-radius:8px;font-size:0.9rem;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,0.3);z-index:9998;max-width:250px;opacity:0;transition:opacity 0.5s ease;pointer-events:none;';
+        bubble.style.cssText = 'position:fixed;bottom:80px;right:20px;background:#e6c65c;color:#000;padding:12px 16px;border-radius:8px;font-size:0.9rem;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,0.3);z-index:9998;max-width:min(250px, calc(100vw - 40px));opacity:0;transition:opacity 0.5s ease;pointer-events:none;';
         document.body.appendChild(bubble);
         requestAnimationFrame(function () {
           bubble.style.opacity = '1';
