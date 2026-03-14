@@ -162,47 +162,6 @@ header {
   border-color: #8b1e1e !important;
 }
 
-.control-card {
-  cursor: pointer;
-  transition: all 0.25s ease;
-  border: 1px solid rgba(201, 162, 39, 0.3);
-  color: #e6c65c;
-}
-
-.control-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 0 20px rgba(201, 162, 39, 0.35);
-}
-
-/* ACTIVE STATES */
-.control-start {
-  background: #1f4d2b !important;
-  /* green */
-}
-
-.control-stop {
-  background: #6b1e1e !important;
-  /* red */
-}
-
-.control-restart {
-  background: #7a6516 !important;
-  /* gold */
-}
-
-.control-kill {
-  background: #3c1e6b !important;
-  /* royal purple */
-}
-
-.control-card.disabled {
-  opacity: 0.35;
-  pointer-events: none;
-  cursor: not-allowed !important;
-  box-shadow: none;
-  filter: grayscale(50%);
-}
-
 .btn-warning {
   background-color: #e6c65c !important;
   border-color: #e6c65c !important;
