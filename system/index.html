@@ -214,6 +214,8 @@
         panelUrl: 'https://panel.meduseld.io',
         rebootUrl: 'https://reboot.meduseld.io',
         rebootToken: 'CHANGE_ME',
+        backupUrl: 'https://backup.meduseld.io',
+        backupToken: 'CHANGE_ME',
       };
 
       async function fetchServerLogs() {
@@ -303,60 +305,80 @@
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Backing up...';
         statusDiv.style.display = 'block';
-        statusText.textContent = 'Uploading save data to Google Drive...';
+        statusText.textContent = 'Starting backup to Google Drive...';
 
         try {
-          const response = await fetch(CONFIG.panelUrl + '/backup-to-cloud', {
-            method: 'GET',
-            credentials: 'include',
+          const response = await fetch(CONFIG.backupUrl + '/backup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: CONFIG.backupToken }),
           });
-
-          if (response.redirected || response.status === 302) {
-            statusText.textContent = 'Authentication required — open the panel first to log in.';
-            statusText.style.color = '#ffc107';
-            btn.innerHTML = '<i class="bi bi-exclamation-triangle me-2"></i>Auth Required';
-            btn.classList.remove('btn-success');
-            btn.classList.add('btn-warning');
-            btn.disabled = false;
-            setTimeout(() => {
-              btn.innerHTML = '<i class="bi bi-cloud-upload me-2"></i>Start Backup';
-              btn.classList.remove('btn-warning');
-              btn.classList.add('btn-success');
-              statusDiv.style.display = 'none';
-              statusText.style.color = '';
-            }, 4000);
-            return;
-          }
 
           const data = await response.json();
 
           if (data.success) {
-            statusText.textContent = 'Backup uploaded successfully.';
+            statusText.textContent = 'Backup in progress — uploading to Google Drive...';
             statusText.style.color = '#198754';
-            btn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Backup Complete';
-            btn.classList.remove('btn-success');
-            btn.classList.add('btn-outline-success');
+            pollBackupStatus();
+          } else if (data.error === 'Backup already in progress') {
+            statusText.textContent = 'A backup is already running.';
+            statusText.style.color = '#ffc107';
+            btn.innerHTML = '<i class="bi bi-clock me-2"></i>In Progress';
+            pollBackupStatus();
           } else {
             statusText.textContent = 'Backup failed: ' + (data.error || 'Unknown error');
             statusText.style.color = '#dc3545';
             btn.innerHTML = '<i class="bi bi-x-circle me-2"></i>Failed';
             btn.disabled = false;
+            resetBackupBtn(5000);
           }
         } catch (error) {
-          statusText.textContent = 'Connection failed — panel may be offline.';
+          statusText.textContent = 'Connection failed — backup service may be offline.';
           statusText.style.color = '#dc3545';
           btn.innerHTML = '<i class="bi bi-x-circle me-2"></i>Connection Failed';
           btn.disabled = false;
+          resetBackupBtn(5000);
         }
+      }
 
+      function pollBackupStatus() {
+        const statusText = document.getElementById('backup-status-text');
+        const btn = document.getElementById('confirm-backup-btn');
+        const interval = setInterval(async () => {
+          try {
+            const res = await fetch(CONFIG.backupUrl + '/status');
+            const data = await res.json();
+            if (!data.running) {
+              clearInterval(interval);
+              if (data.last_result === 'success') {
+                statusText.textContent = 'Backup uploaded successfully.';
+                statusText.style.color = '#198754';
+                btn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Backup Complete';
+              } else {
+                statusText.textContent = 'Backup failed: ' + (data.last_result || 'Unknown');
+                statusText.style.color = '#dc3545';
+                btn.innerHTML = '<i class="bi bi-x-circle me-2"></i>Failed';
+              }
+              resetBackupBtn(5000);
+            }
+          } catch (e) {
+            // Service might be temporarily unreachable, keep polling
+          }
+        }, 5000);
+      }
+
+      function resetBackupBtn(delay) {
         setTimeout(() => {
+          const btn = document.getElementById('confirm-backup-btn');
+          const statusDiv = document.getElementById('backup-status');
+          const statusText = document.getElementById('backup-status-text');
           btn.innerHTML = '<i class="bi bi-cloud-upload me-2"></i>Start Backup';
-          btn.classList.remove('btn-outline-success');
+          btn.classList.remove('btn-outline-success', 'btn-warning');
           btn.classList.add('btn-success');
           btn.disabled = false;
           statusDiv.style.display = 'none';
           statusText.style.color = '';
-        }, 5000);
+        }, delay);
       }
 
       async function executeReboot() {
