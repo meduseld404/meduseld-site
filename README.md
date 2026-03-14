@@ -1,4 +1,4 @@
-# Meduseld service Site
+# Meduseld Service Site
 
 Service hub for managing game servers, media streaming, and other services hosted on meduseld.io.
 
