@@ -15,7 +15,7 @@
       rel="stylesheet"
     />
     <link
-      href="https://cdn.jsdelivr.net/npm/@coreui/icons@3.0.0/css/all.min.css"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="https://meduseld.io/static/style.css" />
@@ -47,7 +47,7 @@
               aria-controls="newsCollapse"
             >
               <h4 class="mb-0" style="color: #e6c65c">
-                <i class="cil-newspaper me-2"></i>
+                <i class="bi bi-newspaper me-2"></i>
                 <span id="news-game-title">Game News</span>
               </h4>
               <div class="d-flex align-items-center gap-2">
@@ -61,10 +61,10 @@
                   title="Refresh news"
                   style="padding: 0.25rem 0.5rem"
                 >
-                  <i class="cil-reload"></i>
+                  <i class="bi bi-arrow-clockwise"></i>
                 </button>
                 <i
-                  class="cil-chevron-bottom"
+                  class="bi bi-chevron-down"
                   id="news-chevron"
                   style="color: #e6c65c; font-size: 1.2rem; transition: transform 0.3s"
                 ></i>
@@ -93,7 +93,7 @@
           <div class="card h-100 text-white bg-dark border-warning service-card">
             <div class="card-body d-flex flex-column text-center p-4 position-relative">
               <div class="mb-3">
-                <i class="cil-gamepad" style="font-size: 3rem; color: #e6c65c"></i>
+                <i class="bi bi-controller" style="font-size: 3rem; color: #e6c65c"></i>
               </div>
               <h3 class="card-title mb-3" style="color: #e6c65c" id="game-name"></h3>
               <div class="mb-2">
@@ -131,7 +131,7 @@
                     "
                     title="Click to toggle mode"
                   >
-                    <i class="cil-storage"></i>
+                    <i class="bi bi-hdd-rack"></i>
                     <span id="panel-mode-label">Production</span>
                   </button>
                 </div>
@@ -144,7 +144,7 @@
           <div class="card h-100 text-white bg-dark border-warning service-card">
             <div class="card-body d-flex flex-column text-center p-4">
               <div class="mb-3">
-                <i class="cil-terminal" style="font-size: 3rem; color: #e6c65c"></i>
+                <i class="bi bi-terminal" style="font-size: 3rem; color: #e6c65c"></i>
               </div>
               <h3 class="card-title mb-3" style="color: #e6c65c">SSH Access</h3>
               <div class="mb-2">
@@ -173,9 +173,9 @@
           <div class="card h-100 text-white bg-dark border-warning service-card">
             <div class="card-body d-flex flex-column text-center p-4">
               <div class="mb-3">
-                <i class="cil-movie" style="font-size: 3rem; color: #e6c65c"></i>
+                <i class="bi bi-globe2" style="font-size: 3rem; color: #e6c65c"></i>
               </div>
-              <h3 class="card-title mb-3" style="color: #e6c65c">Jellyfin</h3>
+              <h3 class="card-title mb-3" style="color: #e6c65c">Palantír</h3>
               <div class="mb-2">
                 <span id="jellyfin-status-indicator" class="badge bg-secondary">
                   <span class="spinner-border spinner-border-sm me-1" role="status"></span>
@@ -183,7 +183,7 @@
                 </span>
               </div>
               <p class="card-text mb-4 flex-grow-1" id="jellyfin-description">
-                Stream movies, TV shows, and media from our Jellyfin server.
+                Stream movies, TV shows, and media from our Palantír server.
               </p>
               <a
                 id="jellyfin-button"
@@ -201,7 +201,7 @@
         <div class="col-md-6 col-lg-4">
           <div class="card h-100 text-white bg-dark border-secondary disabled-card">
             <div class="card-body d-flex flex-column text-center p-4">
-              <div class="mb-3"><i class="cil-book" style="font-size: 3rem"></i></div>
+              <div class="mb-3"><i class="bi bi-book" style="font-size: 3rem"></i></div>
               <h3 class="card-title mb-3 text-secondary" id="wiki-title">Game Wiki</h3>
               <p class="card-text mb-4 flex-grow-1" id="wiki-description">
                 Community wiki with guides, tips, and information for the current game.
@@ -214,7 +214,7 @@
         <div class="col-md-6 col-lg-4">
           <div class="card h-100 text-white bg-dark border-secondary disabled-card">
             <div class="card-body d-flex flex-column text-center p-4">
-              <div class="mb-3"><i class="cil-lock-locked" style="font-size: 3rem"></i></div>
+              <div class="mb-3"><i class="bi bi-lock" style="font-size: 3rem"></i></div>
               <h3 class="card-title mb-3 text-secondary">VPN Access</h3>
               <p class="card-text mb-4 flex-grow-1">
                 Secure VPN connection using OpenVPN for remote access.
@@ -227,7 +227,7 @@
         <div class="col-md-6 col-lg-4">
           <div class="card h-100 text-white bg-dark border-secondary disabled-card">
             <div class="card-body d-flex flex-column text-center p-4">
-              <div class="mb-3"><i class="cil-help-circle" style="font-size: 3rem"></i></div>
+              <div class="mb-3"><i class="bi bi-question-circle" style="font-size: 3rem"></i></div>
               <h3 class="card-title mb-3 text-secondary">Trivia Game</h3>
               <p class="card-text mb-4 flex-grow-1">Test your knowledge with trivia questions.</p>
               <button class="btn btn-secondary btn-lg" disabled>Coming Soon</button>
@@ -238,7 +238,7 @@
         <div class="col-md-6 col-lg-4">
           <div class="card h-100 text-white bg-dark border-secondary disabled-card">
             <div class="card-body d-flex flex-column text-center p-4">
-              <div class="mb-3"><i class="cil-star" style="font-size: 3rem"></i></div>
+              <div class="mb-3"><i class="bi bi-star" style="font-size: 3rem"></i></div>
               <h3 class="card-title mb-3 text-secondary">Hall of Fame</h3>
               <p class="card-text mb-4 flex-grow-1">
                 Funny moments, clips, and memorable screenshots from our adventures.
@@ -252,12 +252,12 @@
           <div class="card h-100 text-white bg-dark border-warning service-card">
             <div class="card-body d-flex flex-column text-center p-4">
               <div class="mb-3">
-                <i class="cil-storage" style="font-size: 3rem; color: #e6c65c"></i>
+                <i class="bi bi-hdd-rack" style="font-size: 3rem; color: #e6c65c"></i>
               </div>
               <h3 class="card-title mb-3" style="color: #e6c65c">System Monitor</h3>
               <div class="mb-2">
                 <span class="badge bg-success">
-                  <i class="cil-circle status-online me-1"></i>
+                  <i class="bi bi-circle-fill status-online me-1"></i>
                   Active
                 </span>
               </div>
@@ -273,7 +273,7 @@
         <div class="col-md-6 col-lg-4">
           <div class="card h-100 text-white bg-dark border-secondary disabled-card">
             <div class="card-body d-flex flex-column text-center p-4">
-              <div class="mb-3"><i class="cil-clock" style="font-size: 3rem"></i></div>
+              <div class="mb-3"><i class="bi bi-clock" style="font-size: 3rem"></i></div>
               <h3 class="card-title mb-3 text-secondary">More Services</h3>
               <p class="card-text mb-4 flex-grow-1"></p>
               <button class="btn btn-secondary btn-lg" disabled>Coming Soon</button>
@@ -289,7 +289,7 @@
           data-bs-toggle="modal"
           data-bs-target="#changelogModal"
         >
-          <i class="cil-history me-2"></i>
+          <i class="bi bi-clock-history me-2"></i>
           Changelog
         </button>
       </div>
@@ -303,7 +303,7 @@
             >
               <div style="width: 40px"></div>
               <h4 class="mb-0 flex-grow-1 text-center" style="color: #e6c65c">
-                <i class="cil-gamepad me-2"></i>
+                <i class="bi bi-controller me-2"></i>
                 Games Up Next
               </h4>
               <button
@@ -312,7 +312,7 @@
                 onclick="fetchGamePrices(true)"
                 title="Refresh prices"
               >
-                <i class="cil-reload"></i>
+                <i class="bi bi-arrow-clockwise"></i>
               </button>
             </div>
             <div class="card-body">
@@ -352,7 +352,7 @@
                       Dawn of Defiance
                     </a>
                     <i
-                      class="cil-info ms-2 text-warning"
+                      class="bi bi-info-circle ms-2 text-warning"
                       style="cursor: pointer"
                       title="Playing this game depends on dedicated server support"
                       data-bs-toggle="tooltip"
@@ -485,7 +485,7 @@
               style="background-color: rgba(108, 117, 125, 0.1); border-bottom: 2px solid #e6c65c"
             >
               <h4 class="mb-0" style="color: #e6c65c">
-                <i class="cil-monitor me-2"></i>
+                <i class="bi bi-display me-2"></i>
                 Server Specifications
               </h4>
             </div>
@@ -494,7 +494,7 @@
                 <div class="col-md-6">
                   <div class="p-3 border border-secondary rounded">
                     <h6 class="text-warning mb-2">
-                      <i class="cil-speedometer me-2"></i>
+                      <i class="bi bi-cpu me-2"></i>
                       Processor
                     </h6>
                     <p class="text-light mb-0">AMD Ryzen 7 2700</p>
@@ -503,7 +503,7 @@
                 <div class="col-md-6">
                   <div class="p-3 border border-secondary rounded">
                     <h6 class="text-warning mb-2">
-                      <i class="cil-memory me-2"></i>
+                      <i class="bi bi-memory me-2"></i>
                       Memory
                     </h6>
                     <p class="text-light mb-0">G.SKILL Ripjaws V 32GB DDR4 3600</p>
@@ -512,7 +512,7 @@
                 <div class="col-md-6">
                   <div class="p-3 border border-secondary rounded">
                     <h6 class="text-warning mb-2">
-                      <i class="cil-devices me-2"></i>
+                      <i class="bi bi-gpu-card me-2"></i>
                       Graphics
                     </h6>
                     <p class="text-light mb-0">NVIDIA GeForce RTX 3060</p>
@@ -521,7 +521,7 @@
                 <div class="col-md-6">
                   <div class="p-3 border border-secondary rounded">
                     <h6 class="text-warning mb-2">
-                      <i class="cil-hard-drive me-2"></i>
+                      <i class="bi bi-device-hdd me-2"></i>
                       Storage
                     </h6>
                     <p class="text-light mb-0">SIX NVME M.2 SSD 1TB</p>
@@ -530,7 +530,7 @@
                 <div class="col-md-6">
                   <div class="p-3 border border-secondary rounded">
                     <h6 class="text-warning mb-2">
-                      <i class="cil-monitor-horizontal me-2"></i>
+                      <i class="bi bi-motherboard me-2"></i>
                       Motherboard
                     </h6>
                     <p class="text-light mb-0">GIGABYTE B550M K AMD AM4</p>
@@ -539,7 +539,7 @@
                 <div class="col-md-6">
                   <div class="p-3 border border-secondary rounded">
                     <h6 class="text-warning mb-2">
-                      <i class="cil-drop me-2"></i>
+                      <i class="bi bi-droplet me-2"></i>
                       Cooling
                     </h6>
                     <p class="text-light mb-0">ARCTIC Liquid Freezer III Pro 240</p>
@@ -548,7 +548,7 @@
                 <div class="col-md-6">
                   <div class="p-3 border border-secondary rounded">
                     <h6 class="text-warning mb-2">
-                      <i class="cil-inbox me-2"></i>
+                      <i class="bi bi-box me-2"></i>
                       Case
                     </h6>
                     <p class="text-light mb-0">JONSBO Z20 Mini Tower</p>
@@ -557,7 +557,7 @@
                 <div class="col-md-6">
                   <div class="p-3 border border-secondary rounded">
                     <h6 class="text-warning mb-2">
-                      <i class="cil-terminal me-2"></i>
+                      <i class="bi bi-terminal me-2"></i>
                       Operating System
                     </h6>
                     <p class="text-light mb-0">Ubuntu Server LTS (24.04)</p>
@@ -578,7 +578,7 @@
               class="btn btn-sm btn-outline-warning"
               title="Cloudflare Dashboard"
             >
-              <i class="cil-cloud me-1"></i>
+              <i class="bi bi-cloud me-1"></i>
               Cloudflare
             </a>
             <a
@@ -587,9 +587,9 @@
               class="btn btn-sm btn-outline-warning"
               title="Meduseld GitHub Repository"
             >
-              <i class="cil-code me-1"></i>
+              <i class="bi bi-code-slash me-1"></i>
               Backend Repo
-              <i class="cil-file"></i>
+              <i class="bi bi-file-earmark"></i>
             </a>
             <a
               href="https://github.com/meduseld404/meduseld-site"
@@ -597,9 +597,9 @@
               class="btn btn-sm btn-outline-warning"
               title="Meduseld Site GitHub Repository"
             >
-              <i class="cil-code me-1"></i>
+              <i class="bi bi-code-slash me-1"></i>
               Site Repo
-              <i class="cil-file"></i>
+              <i class="bi bi-file-earmark"></i>
             </a>
             <a
               href="https://github.com/meduseld404/meduseld-site"
@@ -607,9 +607,9 @@
               class="btn btn-sm btn-outline-warning"
               title="Meduseld Site GitHub Repository"
             >
-              <i class="cil-code me-1"></i>
+              <i class="bi bi-code-slash me-1"></i>
               Herugrim Repo
-              <i class="cil-robot"></i>
+              <i class="bi bi-robot"></i>
             </a>
             <a
               href="https://mail.google.com"
@@ -617,7 +617,7 @@
               class="btn btn-sm btn-outline-warning"
               title="Gmail"
             >
-              <i class="cil-envelope-closed me-1"></i>
+              <i class="bi bi-envelope me-1"></i>
               Gmail
             </a>
             <a
@@ -626,7 +626,7 @@
               class="btn btn-sm btn-outline-warning"
               title="Google Drive"
             >
-              <i class="cil-globe-alt me-1"></i>
+              <i class="bi bi-globe me-1"></i>
               Drive
             </a>
           </div>
@@ -645,7 +645,7 @@
         <div class="modal-content bg-dark text-light border-warning">
           <div class="modal-header" style="border-bottom: 2px solid #e6c65c">
             <h5 class="modal-title" id="changelogModalLabel" style="color: #e6c65c">
-              <i class="cil-history me-2"></i>
+              <i class="bi bi-clock-history me-2"></i>
               Site Changelog
             </h5>
             <button
@@ -657,7 +657,7 @@
           </div>
           <div class="modal-body" id="changelog-content">
             <div class="text-center py-4">
-              <i class="cil-clock-split text-warning" style="font-size: 3rem"></i>
+              <i class="bi bi-hourglass-split text-warning" style="font-size: 3rem"></i>
               <p class="mt-3 text-muted">Changelog coming soon!</p>
               <small class="text-muted">
                 Updates to meduseld.io and related services will be tracked here.
@@ -911,7 +911,7 @@
           modeBadge.style.background = 'linear-gradient(135deg, #1d4e2a 0%, #2d7a3e 100%)';
           modeBadge.style.border = '2px solid #3a9d4f';
           modeBadge.style.color = '#ffffff';
-          modeBadge.innerHTML = '<i class="cil-storage"></i> Production';
+          modeBadge.innerHTML = '<i class="bi bi-hdd-rack"></i> Production';
           modeBadge.title = 'Click to switch to Development mode';
         }
       }
@@ -953,7 +953,7 @@
           button.style.cursor = '';
           button.style.backgroundColor = '';
           button.style.color = '';
-          indicator.innerHTML = '<i class="cil-circle text-success status-online me-1"></i>Online';
+          indicator.innerHTML = '<i class="bi bi-circle-fill text-success status-online me-1"></i>Online';
           indicator.classList.remove('bg-secondary', 'bg-danger', 'bg-warning');
           indicator.classList.add('bg-success');
           indicator.style.backgroundColor = '';
@@ -978,7 +978,7 @@
             return false;
           };
           indicator.innerHTML =
-            '<i class="cil-cloud-slash-fill me-1" style="color:#9ca3af;"></i>Cloudflare Offline';
+            '<i class="bi bi-cloud-slash me-1" style="color:#9ca3af;"></i>Cloudflare Offline';
           indicator.classList.remove('bg-secondary', 'bg-danger', 'bg-success', 'bg-warning');
           indicator.style.backgroundColor = '#f48120';
           document.getElementById('game-description').textContent =
@@ -996,7 +996,7 @@
             e.preventDefault();
             return false;
           };
-          indicator.innerHTML = '<i class="cil-circle text-danger me-1"></i>Offline';
+          indicator.innerHTML = '<i class="bi bi-circle-fill text-danger me-1"></i>Offline';
           indicator.classList.remove('bg-secondary', 'bg-success', 'bg-warning');
           indicator.classList.add('bg-danger');
           indicator.style.backgroundColor = '';
@@ -1017,7 +1017,7 @@
           button.style.cursor = '';
           button.style.backgroundColor = '';
           button.style.color = '';
-          indicator.innerHTML = '<i class="cil-circle text-success status-online me-1"></i>Online';
+          indicator.innerHTML = '<i class="bi bi-circle-fill text-success status-online me-1"></i>Online';
           indicator.classList.remove('bg-secondary', 'bg-danger', 'bg-warning');
           indicator.classList.add('bg-success');
           indicator.style.backgroundColor = '';
@@ -1040,7 +1040,7 @@
             return false;
           };
           indicator.innerHTML =
-            '<i class="cil-cloud-slash-fill me-1" style="color:#9ca3af;"></i>Cloudflare Offline';
+            '<i class="bi bi-cloud-slash me-1" style="color:#9ca3af;"></i>Cloudflare Offline';
           indicator.classList.remove('bg-secondary', 'bg-danger', 'bg-success', 'bg-warning');
           indicator.style.backgroundColor = '#f48120';
         } else {
@@ -1056,7 +1056,7 @@
             e.preventDefault();
             return false;
           };
-          indicator.innerHTML = '<i class="cil-circle text-danger me-1"></i>Offline';
+          indicator.innerHTML = '<i class="bi bi-circle-fill text-danger me-1"></i>Offline';
           indicator.classList.remove('bg-secondary', 'bg-success', 'bg-warning');
           indicator.classList.add('bg-danger');
           indicator.style.backgroundColor = '';
@@ -1066,7 +1066,7 @@
         const button = document.getElementById('jellyfin-button');
         const indicator = document.getElementById('jellyfin-status-indicator');
         if (data.color === 'green') {
-          button.innerHTML = 'Open Jellyfin';
+          button.innerHTML = 'Open Palantír';
           button.classList.remove('btn-secondary', 'btn-danger', 'btn-disabled-link', 'bg-warning');
           button.classList.add('btn-warning');
           button.removeAttribute('disabled');
@@ -1075,7 +1075,7 @@
           button.style.cursor = '';
           button.style.backgroundColor = '';
           button.style.color = '';
-          indicator.innerHTML = '<i class="cil-circle text-success status-online me-1"></i>Online';
+          indicator.innerHTML = '<i class="bi bi-circle-fill text-success status-online me-1"></i>Online';
           indicator.classList.remove('bg-secondary', 'bg-danger', 'bg-warning');
           indicator.classList.add('bg-success');
           indicator.style.backgroundColor = '';
@@ -1098,7 +1098,7 @@
             return false;
           };
           indicator.innerHTML =
-            '<i class="cil-cloud-slash-fill me-1" style="color:#9ca3af;"></i>Cloudflare Offline';
+            '<i class="bi bi-cloud-slash me-1" style="color:#9ca3af;"></i>Cloudflare Offline';
           indicator.classList.remove('bg-secondary', 'bg-danger', 'bg-success', 'bg-warning');
           indicator.style.backgroundColor = '#f48120';
         } else {
@@ -1114,7 +1114,7 @@
             e.preventDefault();
             return false;
           };
-          indicator.innerHTML = '<i class="cil-circle text-danger me-1"></i>Offline';
+          indicator.innerHTML = '<i class="bi bi-circle-fill text-danger me-1"></i>Offline';
           indicator.classList.remove('bg-secondary', 'bg-success', 'bg-warning');
           indicator.classList.add('bg-danger');
           indicator.style.backgroundColor = '';
@@ -1127,7 +1127,7 @@
         if (refreshBtn) {
           refreshBtn.disabled = true;
           refreshBtn.innerHTML =
-            '<i class="cil-reload" style="animation: spin 1s linear infinite;"></i>';
+            '<i class="bi bi-arrow-clockwise" style="animation: spin 1s linear infinite;"></i>';
           refreshBtn.addEventListener('click', function (e) {
             e.stopPropagation();
           });
@@ -1163,7 +1163,7 @@
                 const textarea = document.createElement('textarea');
                 textarea.innerHTML = content;
                 content = textarea.value;
-                return `<div class="news-item mb-3 pb-3 border-bottom border-secondary"><div class="d-flex justify-content-between align-items-start mb-2"><h5 class="mb-0 flex-grow-1" style="color:#e6c65c;">${item.title}</h5><span class="badge bg-secondary ms-2 flex-shrink-0">${date}</span></div><p class="mb-2 text-light" style="font-size: 0.9rem;">${content}</p><a href="${item.url}" target="_blank" class="btn btn-sm btn-outline-warning">Read More <i class="cil-inbox-arrow-up-right ms-1"></i></a></div>`;
+                return `<div class="news-item mb-3 pb-3 border-bottom border-secondary"><div class="d-flex justify-content-between align-items-start mb-2"><h5 class="mb-0 flex-grow-1" style="color:#e6c65c;">${item.title}</h5><span class="badge bg-secondary ms-2 flex-shrink-0">${date}</span></div><p class="mb-2 text-light" style="font-size: 0.9rem;">${content}</p><a href="${item.url}" target="_blank" class="btn btn-sm btn-outline-warning">Read More <i class="bi bi-box-arrow-up-right ms-1"></i></a></div>`;
               })
               .join('');
           } else {
@@ -1173,8 +1173,8 @@
           }
         } catch (error) {
           console.error('Error fetching news:', error);
-          newsContainer.innerHTML = `<div class="text-center text-muted"><i class="cil-warning" style="font-size: 2rem;"></i><p class="mt-2">Unable to load news at this time</p><small>Check console for details</small></div>`;
-          newsStatus.innerHTML = 'Error <i class="cil-info ms-1" style="cursor: pointer;"></i>';
+          newsContainer.innerHTML = `<div class="text-center text-muted"><i class="bi bi-exclamation-triangle-fill" style="font-size: 2rem;"></i><p class="mt-2">Unable to load news at this time</p><small>Check console for details</small></div>`;
+          newsStatus.innerHTML = 'Error <i class="bi bi-info-circle ms-1" style="cursor: pointer;"></i>';
           newsStatus.classList.remove('bg-secondary');
           newsStatus.classList.add('bg-danger');
           newsStatus.title = `Failed to fetch news: ${error.message || 'Unknown error'}`;
@@ -1187,7 +1187,7 @@
         });
         if (refreshBtn) {
           refreshBtn.disabled = false;
-          refreshBtn.innerHTML = '<i class="cil-reload"></i>';
+          refreshBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i>';
         }
       }
       document.addEventListener('DOMContentLoaded', function () {
@@ -1244,7 +1244,7 @@
         if (refreshBtn) {
           refreshBtn.disabled = true;
           refreshBtn.innerHTML =
-            '<i class="cil-reload" style="animation: spin 1s linear infinite;"></i>';
+            '<i class="bi bi-arrow-clockwise" style="animation: spin 1s linear infinite;"></i>';
         }
 
         const priceElements = document.querySelectorAll('.game-price-badge');
@@ -1270,7 +1270,7 @@
                 }
                 if (refreshBtn) {
                   refreshBtn.disabled = false;
-                  refreshBtn.innerHTML = '<i class="cil-reload"></i>';
+                  refreshBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i>';
                 }
                 return;
               } else {
@@ -1444,7 +1444,7 @@
 
         if (refreshBtn) {
           refreshBtn.disabled = false;
-          refreshBtn.innerHTML = '<i class="cil-reload"></i>';
+          refreshBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i>';
         }
       }
       document.getElementById('newsCollapse').addEventListener('show.bs.collapse', function () {
@@ -1473,7 +1473,7 @@
         if (refreshBtn) {
           refreshBtn.disabled = true;
           refreshBtn.innerHTML =
-            '<i class="cil-reload" style="animation: spin 1s linear infinite;"></i>';
+            '<i class="bi bi-arrow-clockwise" style="animation: spin 1s linear infinite;"></i>';
         }
 
         logsContainer.innerHTML =
@@ -1511,7 +1511,7 @@
           }
         } catch (error) {
           console.error('Error fetching logs:', error);
-          logsContainer.innerHTML = `<div class="text-center text-danger"><i class="cil-warning" style="font-size: 2rem;"></i><p class="mt-2">Unable to load server logs</p><small>${error.message}</small></div>`;
+          logsContainer.innerHTML = `<div class="text-center text-danger"><i class="bi bi-exclamation-triangle-fill" style="font-size: 2rem;"></i><p class="mt-2">Unable to load server logs</p><small>${error.message}</small></div>`;
           logsStatus.textContent = 'Error';
           logsStatus.classList.remove('bg-success');
           logsStatus.classList.add('bg-danger');
@@ -1519,7 +1519,7 @@
 
         if (refreshBtn) {
           refreshBtn.disabled = false;
-          refreshBtn.innerHTML = '<i class="cil-reload"></i>';
+          refreshBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i>';
         }
       }
 
