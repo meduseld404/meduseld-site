@@ -23,9 +23,14 @@ window.MeduseldAuth = (function () {
     try {
       var parts = token.split('.');
       if (parts.length !== 3) return null;
-      // Base64url decode the payload
+      // Base64url decode the payload (UTF-8 safe for emoji/unicode in Discord names)
       var payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-      var decoded = atob(payload);
+      var binary = atob(payload);
+      var bytes = new Uint8Array(binary.length);
+      for (var i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      var decoded = new TextDecoder().decode(bytes);
       return JSON.parse(decoded);
     } catch (e) {
       console.warn('MeduseldAuth: Failed to decode JWT', e);
