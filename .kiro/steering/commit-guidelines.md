@@ -91,3 +91,33 @@ Commits are automatically validated via git hooks. Invalid commits will be rejec
 ## When Making Changes
 
 Always commit your changes using this format after completing each logical unit of work. Do not wait for the user to ask — commit automatically when changes are done. The repository has commitlint configured to enforce these rules.
+
+## Pull Request Descriptions
+
+When opening a PR (or when the user asks for a PR description), provide a fully filled-out PR body using the repository's template format. Do NOT paste the empty template — fill in every section with real content:
+
+```markdown
+## Description
+
+<Concise summary of what this PR does and why>
+
+## Changes
+
+- <Specific change with commit reference if available>
+- <Another change>
+
+## Testing
+
+- <Concrete steps to verify the changes work>
+
+## Revisions
+
+- N/A
+```
+
+Guidelines:
+
+- **Description**: 1-3 sentences explaining the goal, not just "various changes"
+- **Changes**: List each meaningful change as a bullet. Reference commit hashes where helpful
+- **Testing**: Provide actual verification steps (API calls, UI checks, commands to run). Never include secrets, tokens, or internal URLs in public repos
+- **Revisions**: Start with "N/A", update as review comments are addressed
