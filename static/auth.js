@@ -208,6 +208,10 @@ window.MeduseldAuth = (function () {
       (_user.role || 'user') +
       '</div>' +
       '</div>' +
+      '<div class="px-3 py-2 border-top" style="border-color:rgba(230,198,92,0.2)!important;">' +
+      '<a href="/cdn-cgi/access/logout" class="text-danger text-decoration-none" style="font-size:0.8rem;">' +
+      '<i class="bi bi-box-arrow-right me-1"></i>Logout</a>' +
+      '</div>' +
       '</div>';
 
     container.style.display = 'block';
