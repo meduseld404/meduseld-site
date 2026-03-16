@@ -76,8 +76,8 @@ window.MeduseldAuth = (function () {
       xhr.send();
       if (xhr.status === 200) {
         var identity = JSON.parse(xhr.responseText);
-        var oidc = identity.oidc_fields || {};
-        var discordUser = oidc.discord_user || {};
+        var custom = identity.custom || {};
+        var discordUser = custom.discord_user || {};
 
         if (discordUser.id) {
           _user.discord_id = discordUser.id;
@@ -92,10 +92,10 @@ window.MeduseldAuth = (function () {
               discordUser.avatar +
               '.png';
           }
-        } else if (oidc.sub) {
-          _user.discord_id = oidc.sub;
-          _user.username = oidc.preferred_username || _user.username;
-          _user.display_name = oidc.name || _user.display_name;
+        } else if (custom.sub) {
+          _user.discord_id = custom.sub;
+          _user.username = custom.preferred_username || _user.username;
+          _user.display_name = custom.name || _user.display_name;
         }
       }
     } catch (e) {
