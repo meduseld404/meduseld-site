@@ -497,5 +497,14 @@
         }
       }
     </script>
+    <script src="https://meduseld.io/static/auth.js"></script>
+    <script>
+      if (typeof MeduseldAuth !== 'undefined') {
+        MeduseldAuth.syncUser().then(function () {
+          MeduseldAuth.renderProfile('profile-container');
+        });
+        MeduseldAuth.renderProfile('profile-container');
+      }
+    </script>
   </body>
 </html>
