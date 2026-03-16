@@ -108,17 +108,44 @@ window.MeduseldAuth = (function () {
     if (_synced || !_user) return Promise.resolve();
     _synced = true;
 
-    return fetch('https://panel.meduseld.io/api/me', {
-      credentials: 'include',
-    })
+    // First, sync the Discord identity data to the backend
+    // (the backend only has the Cloudflare UUID from the JWT, not the real Discord ID)
+    var syncPromise = Promise.resolve();
+    if (_user.discord_id && _user.discord_id.length < 30) {
+      // Looks like a real Discord ID (numeric), not a Cloudflare UUID
+      syncPromise = fetch('https://panel.meduseld.io/api/sync-identity', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          discord_id: _user.discord_id,
+          username: _user.username,
+          display_name: _user.display_name,
+          avatar_hash: _user.avatar_hash,
+        }),
+      }).catch(function () {});
+    }
+
+    return syncPromise
+      .then(function () {
+        return fetch('https://panel.meduseld.io/api/me', {
+          credentials: 'include',
+        });
+      })
       .then(function (res) {
         return res.json();
       })
       .then(function (data) {
         if (data.authenticated && data.user) {
-          // Update role from backend (the DB is the source of truth for roles)
           _user.role = data.user.role;
           _user.is_active = data.user.is_active;
+          // Update discord_id from backend in case sync worked
+          if (data.user.discord_id) {
+            _user.discord_id = data.user.discord_id;
+          }
+          if (data.user.avatar_url) {
+            _user.avatar_url = data.user.avatar_url;
+          }
         }
       })
       .catch(function () {
