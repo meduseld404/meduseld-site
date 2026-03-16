@@ -162,6 +162,70 @@ window.MeduseldAuth = (function () {
       });
   }
 
+  // Render a profile widget into a target container element
+  function renderProfile(containerId) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+
+    if (!_user) {
+      container.style.display = 'none';
+      return;
+    }
+
+    var avatarHtml = _user.avatar_url
+      ? '<img src="' +
+        _user.avatar_url +
+        '" alt="Avatar" style="width:36px;height:36px;border-radius:50%;border:2px solid #e6c65c;">'
+      : '<i class="bi bi-person-circle" style="font-size:1.8rem;color:#e6c65c;"></i>';
+
+    var roleBadge = '';
+    if (_user.role === 'admin') {
+      roleBadge =
+        ' <span class="badge" style="font-size:0.6rem;background:#e6c65c;color:#0b1f14;vertical-align:middle;">Admin</span>';
+    }
+
+    container.innerHTML =
+      '<div class="d-flex align-items-center gap-2" style="cursor:pointer;" id="profile-toggle">' +
+      avatarHtml +
+      '<span class="d-none d-md-inline text-light" style="font-size:0.85rem;">' +
+      (_user.display_name || _user.username) +
+      roleBadge +
+      '</span>' +
+      '<i class="bi bi-chevron-down text-light d-none d-md-inline" style="font-size:0.7rem;"></i>' +
+      '</div>' +
+      '<div id="profile-dropdown" class="position-absolute end-0 mt-2 py-2 rounded shadow-lg" ' +
+      'style="display:none;min-width:200px;background:#1a1a2e;border:1px solid rgba(230,198,92,0.3);z-index:1050;">' +
+      '<div class="px-3 py-2 border-bottom" style="border-color:rgba(230,198,92,0.2)!important;">' +
+      '<div class="text-light" style="font-size:0.85rem;font-weight:600;">' +
+      (_user.display_name || _user.username) +
+      '</div>' +
+      '<div class="text-muted" style="font-size:0.75rem;">@' +
+      _user.username +
+      '</div>' +
+      '</div>' +
+      '<div class="px-3 py-2">' +
+      '<div class="text-muted" style="font-size:0.75rem;">Role: ' +
+      (_user.role || 'user') +
+      '</div>' +
+      '</div>' +
+      '</div>';
+
+    container.style.display = 'block';
+    container.classList.add('position-relative');
+
+    var toggle = document.getElementById('profile-toggle');
+    var dropdown = document.getElementById('profile-dropdown');
+    if (toggle && dropdown) {
+      toggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+      });
+      document.addEventListener('click', function () {
+        dropdown.style.display = 'none';
+      });
+    }
+  }
+
   // Run on load
   init();
 
@@ -181,5 +245,6 @@ window.MeduseldAuth = (function () {
       return _user.role === role;
     },
     syncUser: syncUser,
+    renderProfile: renderProfile,
   };
 })();
