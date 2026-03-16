@@ -199,12 +199,12 @@ window.MeduseldAuth = (function () {
       '<div class="text-light" style="font-size:0.85rem;font-weight:600;">' +
       (_user.display_name || _user.username) +
       '</div>' +
-      '<div class="text-muted" style="font-size:0.75rem;">@' +
+      '<div style="font-size:0.75rem;color:#a0a0b8;">@' +
       _user.username +
       '</div>' +
       '</div>' +
       '<div class="px-3 py-2">' +
-      '<div class="text-muted" style="font-size:0.75rem;">Role: ' +
+      '<div style="font-size:0.75rem;color:#a0a0b8;">Role: ' +
       (_user.role || 'user') +
       '</div>' +
       '</div>' +
