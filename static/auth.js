@@ -67,6 +67,40 @@ window.MeduseldAuth = (function () {
     if (!token) return;
     var payload = decodeJwtPayload(token);
     _user = extractUser(payload);
+
+    // Try to get richer identity from Cloudflare Access identity endpoint
+    // This includes the original OIDC claims with discord_user data
+    try {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', '/cdn-cgi/access/get-identity', false); // synchronous, fast local call
+      xhr.send();
+      if (xhr.status === 200) {
+        var identity = JSON.parse(xhr.responseText);
+        var oidc = identity.oidc_fields || {};
+        var discordUser = oidc.discord_user || {};
+
+        if (discordUser.id) {
+          _user.discord_id = discordUser.id;
+          _user.username = discordUser.username || _user.username;
+          _user.display_name = discordUser.global_name || _user.display_name;
+          _user.avatar_hash = discordUser.avatar || null;
+          if (discordUser.avatar) {
+            _user.avatar_url =
+              'https://cdn.discordapp.com/avatars/' +
+              discordUser.id +
+              '/' +
+              discordUser.avatar +
+              '.png';
+          }
+        } else if (oidc.sub) {
+          _user.discord_id = oidc.sub;
+          _user.username = oidc.preferred_username || _user.username;
+          _user.display_name = oidc.name || _user.display_name;
+        }
+      }
+    } catch (e) {
+      // Identity endpoint not available — use JWT data
+    }
   }
 
   // Best-effort sync to backend — updates DB and gets role back
