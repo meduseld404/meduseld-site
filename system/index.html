@@ -266,6 +266,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://meduseld.io/static/auth.js"></script>
     <script>
       const CONFIG = {
         healthUrl: 'https://health.meduseld.io',
@@ -274,6 +275,9 @@
         backupUrl: 'https://health.meduseld.io/check',
         backupToken: '320c8aa762861cfdf87a696410f0434e9d3122ffd677fab889493280fb1a697f',
       };
+
+      // Sync user to backend DB (best-effort, non-blocking)
+      MeduseldAuth.syncUser();
 
       async function fetchServerLogs() {
         const refreshBtn = document.getElementById('refresh-logs-btn');
