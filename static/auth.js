@@ -128,7 +128,9 @@ window.MeduseldAuth = (function () {
           display_name: _user.display_name,
           avatar_hash: _user.avatar_hash,
         }),
-      }).catch(function () {});
+      }).catch(function (err) {
+        console.warn('MeduseldAuth: sync-identity failed', err);
+      });
     }
 
     return syncPromise
@@ -153,8 +155,9 @@ window.MeduseldAuth = (function () {
           }
         }
       })
-      .catch(function () {
+      .catch(function (err) {
         // Backend is down — that's fine, we still have JWT data
+        console.warn('MeduseldAuth: backend sync failed', err);
         _synced = false;
       });
   }
