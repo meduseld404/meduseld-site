@@ -162,6 +162,9 @@ window.MeduseldAuth = (function () {
       });
   }
 
+  // Track if document click listener is already bound
+  var _documentListenerBound = false;
+
   // Render a profile widget into a target container element
   function renderProfile(containerId) {
     var container = document.getElementById(containerId);
@@ -224,9 +227,13 @@ window.MeduseldAuth = (function () {
         e.stopPropagation();
         dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
       });
-      document.addEventListener('click', function () {
-        dropdown.style.display = 'none';
-      });
+      if (!_documentListenerBound) {
+        _documentListenerBound = true;
+        document.addEventListener('click', function () {
+          var dd = document.getElementById('profile-dropdown');
+          if (dd) dd.style.display = 'none';
+        });
+      }
     }
   }
 
