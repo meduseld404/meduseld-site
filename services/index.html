@@ -878,20 +878,8 @@
         const modeBadge = document.getElementById('panel-mode-badge');
         if (panelDevMode) {
           button.href = CONFIG.panelUrl + '?env=development';
-          modeBadge.style.display = 'inline-block';
-          modeBadge.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-          modeBadge.style.border = '2px solid #5a67d8';
-          modeBadge.style.color = '#ffffff';
-          modeBadge.innerHTML = '<i class="bi bi-code-slash"></i> Development Mode';
-          modeBadge.title = 'Click to switch to Production mode';
         } else {
           button.href = CONFIG.panelUrl;
-          modeBadge.style.display = 'inline-block';
-          modeBadge.style.background = 'linear-gradient(135deg, #1d4e2a 0%, #2d7a3e 100%)';
-          modeBadge.style.border = '2px solid #3a9d4f';
-          modeBadge.style.color = '#ffffff';
-          modeBadge.innerHTML = '<i class="bi bi-hdd-rack"></i> Production';
-          modeBadge.title = 'Click to switch to Development mode';
         }
       }
       async function checkAllServicesStatus() {
