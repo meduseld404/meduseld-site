@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="apple-touch-icon" sizes="180x180" href="https://meduseld.io/apple-touch-icon.png" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b1f14" />
+    <link rel="icon" type="image/x-icon" href="https://meduseld.io/static/favicon.ico" />
+    <meta charset="UTF-8" />
+    <title>Meduseld - User Management</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://meduseld.io/static/style.css" />
+  </head>
+  <body class="text-light" style="background: transparent">
+    <!-- User Profile Container -->
+    <div
+      id="profile-container"
+      style="position: fixed; top: 20px; right: 20px; z-index: 1040; display: none"
+    ></div>
+
+    <!-- Header Navigation -->
+    <div class="container-fluid pt-3">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div class="d-flex align-items-center gap-2">
+          <a href="https://services.meduseld.io" class="btn btn-warning btn-sm">
+            <i class="bi bi-arrow-left"></i>
+            Back to Services
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container py-4">
+      <div class="text-center mb-4">
+        <img
+          src="https://meduseld.io/static/logo.png"
+          style="max-height: 100px; margin-bottom: 20px"
+        />
+        <h1 style="color: #e6c65c; font-weight: 600">
+          <i class="bi bi-people-fill me-2"></i>
+          User Management
+        </h1>
+      </div>
+    </div>
+  </body>
+</html>
+        <p style="opacity: 0.8">Manage user roles and account status</p>
+      </div>
+
+      <!-- Backend Status -->
+      <div class="text-center mb-3">
+        <span class="badge bg-secondary" id="user-count">Loading...</span>
+      </div>
+
+      <!-- Users Table -->
+      <div class="row justify-content-center">
+        <div class="col-12 col-xl-10">
+          <div class="card bg-dark border-warning">
+            <div
+              class="card-header d-flex justify-content-between align-items-center"
+              style="background-color: rgba(230, 198, 92, 0.1); border-bottom: 2px solid #e6c65c"
+            >
+              <h4 class="mb-0" style="color: #e6c65c">
+                <i class="bi bi-person-lines-fill me-2"></i>Users
+              </h4>
+              <button
+                id="refresh-btn"
+                class="btn btn-sm btn-outline-warning"
+                onclick="fetchUsers()"
+                title="Refresh"
+              >
+                <i class="bi bi-arrow-clockwise"></i>
+              </button>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-dark table-hover mb-0" style="background: transparent">
+                  <thead>
+                    <tr style="border-bottom: 2px solid rgba(230, 198, 92, 0.3)">
+                      <th style="color: #e6c65c">User</th>
+                      <th style="color: #e6c65c">Discord ID</th>
+                      <th style="color: #e6c65c">Role</th>
+                      <th style="color: #e6c65c">Status</th>
+                      <th style="color: #e6c65c">Last Login</th>
+                      <th style="color: #e6c65c">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="users-table-body">
+                    <tr>
+                      <td colspan="6" class="text-center py-4">
+                        <div class="spinner-border text-warning" role="status"></div>
+                        <p class="mt-2 mb-0 text-muted">Loading users...</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast container -->
+    <div
+      id="toast-container"
+      class="position-fixed top-0 start-50 translate-middle-x"
+      style="z-index: 9999; margin-top: 1rem"
+    ></div>
+
+    <!-- Footer -->
+    <footer
+      class="text-center py-3 mt-auto"
+      style="border-top: 1px solid rgba(230, 198, 92, 0.2)"
+    >
+      <p class="text-light mb-0" style="font-size: 0.85rem">
+        &copy;
+        <span id="copyright-year"></span>
+        <a href="https://quietarca.de" target="_blank" class="text-warning text-decoration-none">
+          quietarcade
+        </a>
+        ~ All rights reserved.
+      </p>
+      <p class="text-light mb-0" style="font-size: 0.75rem">
+        <a
+          href="https://github.com/meduseld404/meduseld-site"
+          target="_blank"
+          class="text-light text-decoration-none"
+        >
+          v0.5.0-alpha
+        </a>
+      </p>
+    </footer>
+
+    <style>
+      .table-dark {
+        --bs-table-bg: transparent;
+        --bs-table-hover-bg: rgba(230, 198, 92, 0.08);
+      }
+      .table-dark td,
+      .table-dark th {
+        border-color: rgba(230, 198, 92, 0.15);
+        vertical-align: middle;
+      }
+      .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 2px solid #e6c65c;
+      }
+      .role-badge {
+        font-size: 0.75rem;
+        padding: 0.35em 0.65em;
+      }
+      .btn-action {
+        font-size: 0.8rem;
+        padding: 0.25rem 0.5rem;
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://meduseld.io/static/auth.js"></script>
+    <script>
+      var API_BASE = 'https://panel.meduseld.io';
+      var currentUserId = null;
+
+      document.getElementById('copyright-year').textContent = new Date().getFullYear();
+
+      // Auth gate: admin only
+      if (typeof MeduseldAuth !== 'undefined') {
+        MeduseldAuth.syncUser().then(function () {
+          MeduseldAuth.renderProfile('profile-container');
+          if (!MeduseldAuth.hasRole('admin')) {
+            window.location.href = 'https://services.meduseld.io?restricted=user-management';
+            return;
+          }
+          // Store current user ID for self-protection checks
+          var user = MeduseldAuth.getUser();
+          if (user) currentUserId = user.discord_id;
+          fetchUsers();
+        });
+        MeduseldAuth.renderProfile('profile-container');
+      }
+
+      function showToast(message, type) {
+        var container = document.getElementById('toast-container');
+        var toast = document.createElement('div');
+        toast.className = 'alert alert-' + type + ' alert-dismissible fade show';
+        toast.innerHTML =
+          message +
+          '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+        container.appendChild(toast);
+        setTimeout(function () {
+          toast.remove();
+        }, 5000);
+      }
+
+      function formatDate(iso) {
+        if (!iso) return '<span class="text-muted">Never</span>';
+        var d = new Date(iso);
+        return (
+          d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) +
+          ' ' +
+          d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+        );
+      }
+
+      function renderUsers(users) {
+        var tbody = document.getElementById('users-table-body');
+        var countBadge = document.getElementById('user-count');
+        countBadge.textContent = users.length + ' user' + (users.length !== 1 ? 's' : '');
+        countBadge.classList.remove('bg-secondary', 'bg-danger');
+        countBadge.classList.add('bg-success');
+
+        if (users.length === 0) {
+          tbody.innerHTML =
+            '<tr><td colspan="6" class="text-center py-4 text-muted">No users found</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = users
+          .map(function (u) {
+            var isSelf = u.discord_id === currentUserId;
+            var avatarHtml = u.avatar_url
+              ? '<img src="' + u.avatar_url + '" class="user-avatar me-2" alt="">'
+              : '<i class="bi bi-person-circle me-2" style="font-size:1.5rem;color:#e6c65c;"></i>';
+
+            var roleBadge =
+              u.role === 'admin'
+                ? '<span class="badge role-badge" style="background:#e6c65c;color:#0b1f14;">Admin</span>'
+                : '<span class="badge role-badge bg-secondary">User</span>';
+
+            var statusBadge = u.is_active
+              ? '<span class="badge role-badge bg-success"><i class="bi bi-check-circle me-1"></i>Active</span>'
+              : '<span class="badge role-badge bg-danger"><i class="bi bi-x-circle me-1"></i>Inactive</span>';
+
+            var roleBtn = '';
+            if (!isSelf) {
+              if (u.role === 'admin') {
+                roleBtn =
+                  '<button class="btn btn-outline-warning btn-action" onclick="updateUser(' +
+                  u.id +
+                  ', {role:\'user\'})" title="Demote to User"><i class="bi bi-arrow-down-circle me-1"></i>Demote</button>';
+              } else {
+                roleBtn =
+                  '<button class="btn btn-outline-warning btn-action" onclick="updateUser(' +
+                  u.id +
+                  ', {role:\'admin\'})" title="Promote to Admin"><i class="bi bi-arrow-up-circle me-1"></i>Promote</button>';
+              }
+            }
+
+            var activeBtn = '';
+            if (!isSelf) {
+              if (u.is_active) {
+                activeBtn =
+                  '<button class="btn btn-outline-danger btn-action" onclick="updateUser(' +
+                  u.id +
+                  ', {is_active:false})" title="Deactivate"><i class="bi bi-person-slash"></i></button>';
+              } else {
+                activeBtn =
+                  '<button class="btn btn-outline-success btn-action" onclick="updateUser(' +
+                  u.id +
+                  ', {is_active:true})" title="Activate"><i class="bi bi-person-check"></i></button>';
+              }
+            }
+
+            var selfBadge = isSelf
+              ? ' <span class="badge bg-info role-badge">You</span>'
+              : '';
+
+            return (
+              '<tr' +
+              (!u.is_active ? ' style="opacity:0.5;"' : '') +
+              '>' +
+              '<td>' +
+              avatarHtml +
+              '<span class="text-light">' +
+              (u.display_name || u.username) +
+              '</span>' +
+              selfBadge +
+              '</td>' +
+              '<td><code style="font-size:0.8rem;color:#a0a0b8;">' +
+              u.discord_id +
+              '</code></td>' +
+              '<td>' +
+              roleBadge +
+              '</td>' +
+              '<td>' +
+              statusBadge +
+              '</td>' +
+              '<td style="font-size:0.85rem;">' +
+              formatDate(u.last_login) +
+              '</td>' +
+              '<td><div class="d-flex gap-1">' +
+              roleBtn +
+              activeBtn +
+              '</div></td>' +
+              '</tr>'
+            );
+          })
+          .join('');
+      }
+
+      function fetchUsers() {
+        var refreshBtn = document.getElementById('refresh-btn');
+        if (refreshBtn) {
+          refreshBtn.disabled = true;
+          refreshBtn.innerHTML =
+            '<i class="bi bi-arrow-clockwise" style="animation: spin 1s linear infinite;"></i>';
+        }
+
+        fetch(API_BASE + '/api/admin/users', { credentials: 'include' })
+          .then(function (res) {
+            return res.json();
+          })
+          .then(function (data) {
+            if (data.users) {
+              renderUsers(data.users);
+            } else if (data.error) {
+              showToast(
+                '<i class="bi bi-exclamation-triangle me-2"></i>' + data.error,
+                'danger'
+              );
+            }
+          })
+          .catch(function (err) {
+            document.getElementById('users-table-body').innerHTML =
+              '<tr><td colspan="6" class="text-center py-4">' +
+              '<i class="bi bi-exclamation-triangle-fill text-danger" style="font-size:2rem;"></i>' +
+              '<p class="mt-2 mb-0 text-muted">Backend is offline. Unable to load users.</p>' +
+              '</td></tr>';
+            var countBadge = document.getElementById('user-count');
+            countBadge.textContent = 'Backend Offline';
+            countBadge.classList.remove('bg-secondary', 'bg-success');
+            countBadge.classList.add('bg-danger');
+          })
+          .finally(function () {
+            if (refreshBtn) {
+              refreshBtn.disabled = false;
+              refreshBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i>';
+            }
+          });
+      }
+
+      function updateUser(userId, changes) {
+        fetch(API_BASE + '/api/admin/users/' + userId, {
+          method: 'PUT',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(changes),
+        })
+          .then(function (res) {
+            return res.json().then(function (d) {
+              return { ok: res.ok, data: d };
+            });
+          })
+          .then(function (result) {
+            if (result.ok) {
+              var action = changes.role
+                ? 'Role updated'
+                : changes.is_active
+                  ? 'User activated'
+                  : 'User deactivated';
+              showToast(
+                '<i class="bi bi-check-circle me-2"></i>' + action + ' successfully',
+                'success'
+              );
+              fetchUsers();
+            } else {
+              showToast(
+                '<i class="bi bi-exclamation-triangle me-2"></i>' +
+                  (result.data.error || 'Update failed'),
+                'danger'
+              );
+            }
+          })
+          .catch(function (err) {
+            showToast('Error: ' + err.message, 'danger');
+          });
+      }
+    </script>
+  </body>
+</html>
