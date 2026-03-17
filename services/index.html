@@ -1164,12 +1164,22 @@
           toast.className =
             'position-fixed top-0 start-50 translate-middle-x mt-3 alert alert-warning alert-dismissible fade show';
           toast.style.zIndex = '9999';
-          toast.innerHTML =
-            '<i class="bi bi-shield-lock me-2"></i>' +
-            '<strong>' +
-            pageName +
-            '</strong> is not available for your account type.' +
-            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+
+          var icon = document.createElement('i');
+          icon.className = 'bi bi-shield-lock me-2';
+          toast.appendChild(icon);
+
+          var strong = document.createElement('strong');
+          strong.textContent = pageName;
+          toast.appendChild(strong);
+
+          toast.appendChild(document.createTextNode(' is not available for your account type.'));
+
+          var closeBtn = document.createElement('button');
+          closeBtn.type = 'button';
+          closeBtn.className = 'btn-close';
+          closeBtn.setAttribute('data-bs-dismiss', 'alert');
+          toast.appendChild(closeBtn);
           document.body.appendChild(toast);
           setTimeout(function () {
             toast.remove();
