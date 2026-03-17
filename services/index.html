@@ -1092,26 +1092,23 @@
           });
           var data = await res.json();
           if (data.token && data.user_id) {
-            // Redirect to the Jellyfin SSO login page (served on jellyfin.meduseld.io
-            // via Flask proxy) which sets localStorage credentials and redirects to Jellyfin
-            window.open(
+            window.location.href =
               'https://jellyfin.meduseld.io/sso-login?token=' +
-                encodeURIComponent(data.token) +
-                '&userId=' +
-                encodeURIComponent(data.user_id) +
-                '&serverId=' +
-                encodeURIComponent(data.server_id || ''),
-              '_blank'
-            );
+              encodeURIComponent(data.token) +
+              '&userId=' +
+              encodeURIComponent(data.user_id) +
+              '&serverId=' +
+              encodeURIComponent(data.server_id || '');
+            return;
           } else {
-            window.open(CONFIG.jellyfinUrl, '_blank');
+            window.location.href = CONFIG.jellyfinUrl;
+            return;
           }
         } catch (e) {
           console.error('Edoras SSO auth failed:', e);
-          window.open(CONFIG.jellyfinUrl, '_blank');
+          window.location.href = CONFIG.jellyfinUrl;
+          return;
         }
-        btn.disabled = false;
-        btn.innerHTML = origText;
       }
 
       checkAllServicesStatus();
