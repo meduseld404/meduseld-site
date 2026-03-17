@@ -732,7 +732,7 @@
           <div class="modal-header" style="border-bottom: 2px solid #e6c65c">
             <h5 class="modal-title" id="changelogModalLabel" style="color: #e6c65c">
               <i class="bi bi-clock-history me-2"></i>
-              Site Changelog
+              Changelog
             </h5>
             <button
               type="button"
@@ -741,13 +741,54 @@
               aria-label="Close"
             ></button>
           </div>
-          <div class="modal-body" id="changelog-content">
-            <div class="text-center py-4">
-              <i class="bi bi-hourglass-split text-warning" style="font-size: 3rem"></i>
-              <p class="mt-3 text-muted">Changelog coming soon!</p>
-              <small class="text-muted">
-                Updates to meduseld.io and related services will be tracked here.
-              </small>
+          <div class="modal-body" id="changelog-content" style="max-height: 70vh">
+            <ul
+              class="nav nav-tabs mb-3"
+              role="tablist"
+              style="border-bottom-color: rgba(230, 198, 92, 0.3)"
+            >
+              <li class="nav-item" role="presentation">
+                <button
+                  class="nav-link active text-warning"
+                  id="tab-site"
+                  data-bs-toggle="tab"
+                  data-bs-target="#changelog-site"
+                  type="button"
+                  role="tab"
+                  style="border-color: transparent; background: none"
+                >
+                  Site
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button
+                  class="nav-link text-warning"
+                  id="tab-backend"
+                  data-bs-toggle="tab"
+                  data-bs-target="#changelog-backend"
+                  type="button"
+                  role="tab"
+                  style="border-color: transparent; background: none"
+                >
+                  Backend
+                </button>
+              </li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane fade show active" id="changelog-site" role="tabpanel">
+                <div class="text-center py-4">
+                  <div class="spinner-border text-warning" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="changelog-backend" role="tabpanel">
+                <div class="text-center py-4">
+                  <div class="spinner-border text-warning" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="modal-footer" style="border-top: 1px solid rgba(230, 198, 92, 0.2)">
@@ -780,6 +821,14 @@
     <style>
       .news-item:last-child {
         border-bottom: none !important;
+      }
+      .nav-tabs .nav-link.active {
+        background: rgba(230, 198, 92, 0.15) !important;
+        border-color: rgba(230, 198, 92, 0.3) rgba(230, 198, 92, 0.3) transparent !important;
+        color: #e6c65c !important;
+      }
+      .nav-tabs .nav-link:hover:not(.active) {
+        border-color: rgba(230, 198, 92, 0.15) rgba(230, 198, 92, 0.15) transparent !important;
       }
       #news-container::-webkit-scrollbar {
         width: 8px;
@@ -858,6 +907,69 @@
         jellyfinUrl: 'https://jellyfin.meduseld.io',
         healthApiUrl: 'https://meduseld-health.404-41f.workers.dev',
       };
+
+      // ===== Changelog =====
+      const CHANGELOG_URLS = {
+        site: 'https://raw.githubusercontent.com/meduseld404/meduseld-site/main/CHANGELOG.md',
+        backend: 'https://raw.githubusercontent.com/meduseld404/meduseld-backend/main/CHANGELOG.md',
+      };
+      let changelogLoaded = false;
+
+      function renderMarkdown(md) {
+        // Skip the "# Changelog" title and description line
+        const lines = md.split('\n');
+        let html = '';
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+          if (line.startsWith('# ')) continue;
+          if (i <= 2 && !line.startsWith('#') && line.trim() && !line.startsWith('-')) continue;
+          if (line.startsWith('## ')) {
+            html +=
+              '<h5 class="mt-4 mb-2" style="color:#e6c65c">' + escapeHtml(line.slice(3)) + '</h5>';
+          } else if (line.startsWith('### ')) {
+            html += '<h6 class="mt-3 mb-1 text-light">' + escapeHtml(line.slice(4)) + '</h6>';
+          } else if (line.startsWith('- ')) {
+            const text = escapeHtml(line.slice(2));
+            const content = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            html +=
+              '<div class="ms-2 mb-1 text-muted" style="font-size:0.9rem">• ' + content + '</div>';
+          } else if (line.trim() === '') {
+            // skip blank lines
+          } else {
+            html +=
+              '<p class="text-muted mb-1" style="font-size:0.9rem">' + escapeHtml(line) + '</p>';
+          }
+        }
+        return html || '<p class="text-muted">No changelog entries found.</p>';
+      }
+
+      function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+      }
+
+      async function loadChangelogs() {
+        if (changelogLoaded) return;
+        changelogLoaded = true;
+        const targets = [
+          { url: CHANGELOG_URLS.site, el: document.getElementById('changelog-site') },
+          { url: CHANGELOG_URLS.backend, el: document.getElementById('changelog-backend') },
+        ];
+        for (const t of targets) {
+          try {
+            const res = await fetch(t.url);
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const md = await res.text();
+            t.el.innerHTML = renderMarkdown(md);
+          } catch (err) {
+            console.error('Failed to load changelog from ' + t.url + ':', err);
+            t.el.innerHTML = '<p class="text-muted">Failed to load changelog.</p>';
+          }
+        }
+      }
+
+      document.getElementById('changelogModal').addEventListener('show.bs.modal', loadChangelogs);
 
       // Sync user to backend DB (best-effort, non-blocking)
       if (typeof MeduseldAuth !== 'undefined') {
