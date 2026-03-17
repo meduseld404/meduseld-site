@@ -872,6 +872,9 @@
           if (sshCard) sshCard.style.display = '';
           if (sysCard) sysCard.style.display = '';
           if (quickLinks) quickLinks.style.display = '';
+          document.querySelectorAll('.edoras-admin-btn').forEach(function (btn) {
+            btn.style.display = '';
+          });
         }
       }
 
@@ -1583,6 +1586,20 @@
               >
                 <i class="bi bi-plus-circle me-2"></i>
                 Request
+              </a>
+              <a
+                href="https://edoras.meduseld.io"
+                class="btn btn-outline-light btn-lg edoras-admin-btn"
+                style="display: none; border-color: rgba(230, 198, 92, 0.4)"
+              >
+                <i class="bi bi-gear me-2"></i>
+                Manage
+                <span
+                  class="badge ms-1"
+                  style="background: #e6c65c; color: #0b1f14; font-size: 0.6rem"
+                >
+                  Admin
+                </span>
               </a>
             </div>
           </div>
