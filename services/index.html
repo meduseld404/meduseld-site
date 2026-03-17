@@ -169,15 +169,16 @@
                 Stream movies, TV shows, and media from our Edoras server.
               </p>
               <div class="mt-auto">
-                <button
+                <a
                   id="jellyfin-button"
-                  class="btn btn-secondary btn-lg w-100"
-                  disabled
-                  onclick="openEdoras()"
+                  href="#"
+                  class="btn btn-secondary btn-lg w-100 btn-disabled-link"
+                  role="button"
+                  style="cursor: not-allowed"
                 >
                   <span class="spinner-border spinner-border-sm me-2" role="status"></span>
                   Checking Status...
-                </button>
+                </a>
               </div>
             </div>
           </div>
@@ -1045,6 +1046,11 @@
           button.style.cursor = '';
           button.style.backgroundColor = '';
           button.style.color = '';
+          button.href = '#';
+          button.onclick = function (e) {
+            e.preventDefault();
+            openEdoras();
+          };
           indicator.innerHTML =
             '<i class="bi bi-circle-fill text-success status-online me-1"></i>Online';
           indicator.classList.remove('bg-secondary', 'bg-danger', 'bg-warning');
@@ -1063,6 +1069,9 @@
           button.style.backgroundColor = '#f48120';
           button.style.color = '#fff';
           button.style.cursor = 'not-allowed';
+          button.onclick = function (e) {
+            e.preventDefault();
+          };
           indicator.innerHTML =
             '<i class="bi bi-cloud-slash me-1" style="color:#9ca3af;"></i>Cloudflare Offline';
           indicator.classList.remove('bg-secondary', 'bg-danger', 'bg-success', 'bg-warning');
@@ -1075,6 +1084,9 @@
           button.style.backgroundColor = '';
           button.style.color = '';
           button.style.cursor = 'not-allowed';
+          button.onclick = function (e) {
+            e.preventDefault();
+          };
           indicator.innerHTML = '<i class="bi bi-circle-fill text-danger me-1"></i>Offline';
           indicator.classList.remove('bg-secondary', 'bg-success', 'bg-warning');
           indicator.classList.add('bg-danger');
