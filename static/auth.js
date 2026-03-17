@@ -129,6 +129,7 @@ window.MeduseldAuth = (function () {
           username: _user.username,
           display_name: _user.display_name,
           avatar_hash: _user.avatar_hash,
+          is_admin: _user.role === 'admin',
         }),
       }).catch(function (err) {
         console.warn('MeduseldAuth: sync-identity failed (non-critical)', err);
