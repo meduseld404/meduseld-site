@@ -1611,8 +1611,11 @@
         bootstrap.Modal.getInstance(document.getElementById('edorasModal')).hide();
         openEdoras();
       });
-      // Re-run after modal is in DOM so .edoras-admin-btn gets shown
-      showAdminCards();
+      // Show manage button for admins (modal is now in DOM)
+      if (typeof MeduseldAuth !== 'undefined' && MeduseldAuth.hasRole('admin')) {
+        var manageBtn = document.querySelector('.edoras-admin-btn');
+        if (manageBtn) manageBtn.style.display = '';
+      }
     </script>
   </body>
 </html>
