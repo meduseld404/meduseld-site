@@ -1611,6 +1611,8 @@
         bootstrap.Modal.getInstance(document.getElementById('edorasModal')).hide();
         openEdoras();
       });
+      // Re-run after modal is in DOM so .edoras-admin-btn gets shown
+      showAdminCards();
     </script>
   </body>
 </html>
