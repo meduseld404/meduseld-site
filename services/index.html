@@ -1106,6 +1106,7 @@
             window.open(CONFIG.jellyfinUrl, '_blank');
           }
         } catch (e) {
+          console.error('Edoras SSO auth failed:', e);
           window.open(CONFIG.jellyfinUrl, '_blank');
         }
         btn.disabled = false;
