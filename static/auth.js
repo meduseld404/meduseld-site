@@ -211,6 +211,10 @@ window.MeduseldAuth = (function () {
       (_user.role || 'user') +
       '</div>' +
       '</div>' +
+      (_user.role === 'admin'
+        ? '<a href="https://admin.meduseld.io" class="d-block px-3 py-2 text-decoration-none border-top" style="border-color:rgba(230,198,92,0.2)!important;font-size:0.8rem;color:#e6c65c;">' +
+          '<i class="bi bi-people-fill me-1"></i>Admin Panel</a>'
+        : '') +
       '<div class="px-3 py-2 border-top" style="border-color:rgba(230,198,92,0.2)!important;">' +
       '<a href="/cdn-cgi/access/logout" class="text-danger text-decoration-none" style="font-size:0.8rem;">' +
       '<i class="bi bi-box-arrow-right me-1"></i>Logout</a>' +
