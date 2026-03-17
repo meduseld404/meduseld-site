@@ -715,6 +715,8 @@
 
     <!-- System Monitoring JS -->
     <script>
+      const STATS_URL = 'https://health.meduseld.io/check/stats';
+      const HISTORY_URL = 'https://health.meduseld.io/check/history';
       const PANEL_URL = 'https://panel.meduseld.io';
 
       // ===== Charts =====
@@ -737,13 +739,6 @@
               backgroundColor: 'rgba(230,198,92,0.15)',
               tension: 0.3,
             },
-            {
-              label: 'Server %',
-              data: [],
-              borderColor: '#4f8f63',
-              backgroundColor: 'rgba(79,143,99,0.15)',
-              tension: 0.3,
-            },
           ],
         },
         options: chartOpts,
@@ -759,13 +754,6 @@
               data: [],
               borderColor: '#e6c65c',
               backgroundColor: 'rgba(230,198,92,0.15)',
-              tension: 0.3,
-            },
-            {
-              label: 'Server GB',
-              data: [],
-              borderColor: '#4f8f63',
-              backgroundColor: 'rgba(79,143,99,0.15)',
               tension: 0.3,
             },
           ],
@@ -823,10 +811,10 @@
         return val !== null && val !== undefined ? val + 'W' : '--';
       }
 
-      // ===== Fetch stats =====
+      // ===== Fetch system stats from standalone monitoring service =====
       async function fetchStats() {
         try {
-          const res = await fetch(PANEL_URL + '/api/stats', { credentials: 'include' });
+          const res = await fetch(STATS_URL);
           if (!res.ok) throw new Error('HTTP ' + res.status);
           const data = await res.json();
 
@@ -837,18 +825,18 @@
           statusEl.style.color = '#198754';
           statusCard.style.borderLeft = '3px solid #198754';
 
-          // System stats
-          document.getElementById('sys-cpu').textContent = data.stats.cpu + '%';
+          // System stats (standalone service returns flat object, not nested under .stats)
+          document.getElementById('sys-cpu').textContent = data.cpu + '%';
           document.getElementById('sys-ram').textContent =
-            data.stats.ram_used + '/' + data.stats.ram_total + ' GB';
+            data.ram_used + '/' + data.ram_total + ' GB';
           document.getElementById('sys-disk').textContent =
-            data.stats.disk_used + '/' + data.stats.disk_total + ' GB';
+            data.disk_used + '/' + data.disk_total + ' GB';
 
           // CPU temp
           const tempEl = document.getElementById('sys-temp');
           const tempCard = document.getElementById('temp-card');
-          if (data.stats.cpu_temp != null) {
-            const t = data.stats.cpu_temp;
+          if (data.cpu_temp != null) {
+            const t = data.cpu_temp;
             tempEl.textContent = t + '°C';
             tempCard.style.borderLeft =
               t < 60 ? '3px solid #198754' : t < 75 ? '3px solid #ffc107' : '3px solid #dc3545';
@@ -857,7 +845,7 @@
           }
 
           // Power
-          const pw = data.stats.power;
+          const pw = data.power;
           if (pw && pw.total_watts != null) {
             document.getElementById('sys-power').textContent = pw.total_watts + 'W';
             const powerCard = document.getElementById('power-card');
@@ -868,7 +856,6 @@
                   ? '3px solid #e6c65c'
                   : '3px solid #ffc107';
 
-            // Monthly cost in header card
             const costPerKwh = pw.cost_per_kwh || 0.245;
             const monthly = (((pw.total_watts * 24 * 30) / 1000) * costPerKwh).toFixed(2);
             document.getElementById('sys-power-cost').textContent = '~£' + monthly + '/mo';
@@ -890,8 +877,21 @@
             document.getElementById('cost-yearly').textContent = '£' + yearly;
             document.getElementById('cost-rate').textContent = '£' + costPerKwh + '/kWh';
           }
+        } catch (err) {
+          console.error('Stats fetch failed:', err);
+          document.getElementById('sys-status').textContent = 'Offline';
+          document.getElementById('sys-status').style.color = '#dc3545';
+          document.getElementById('status-card').style.borderLeft = '3px solid #dc3545';
+        }
+      }
 
-          // Game server
+      // ===== Fetch game server info from Flask (best-effort, fails gracefully) =====
+      async function fetchGameServer() {
+        try {
+          const res = await fetch(PANEL_URL + '/api/stats', { credentials: 'include' });
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          const data = await res.json();
+
           document.getElementById('gs-state').textContent = data.state || '--';
           const stateEl = document.getElementById('gs-state');
           stateEl.style.color =
@@ -930,17 +930,16 @@
             document.getElementById('gs-ram').textContent = '--';
           }
         } catch (err) {
-          console.error('Stats fetch failed:', err);
-          document.getElementById('sys-status').textContent = 'Offline';
-          document.getElementById('sys-status').style.color = '#dc3545';
-          document.getElementById('status-card').style.borderLeft = '3px solid #dc3545';
+          // Flask is down — that's fine, system stats still work independently
+          document.getElementById('gs-state').textContent = 'Unavailable';
+          document.getElementById('gs-state').style.color = '#888';
         }
       }
 
-      // ===== Fetch history for charts =====
+      // ===== Fetch history from standalone monitoring service =====
       async function fetchHistory() {
         try {
-          const res = await fetch(PANEL_URL + '/api/history', { credentials: 'include' });
+          const res = await fetch(HISTORY_URL);
           if (!res.ok) return;
           const data = await res.json();
 
@@ -948,12 +947,12 @@
 
           cpuChart.data.labels = labels;
           cpuChart.data.datasets[0].data = data.map((d) => d.system_cpu);
-          cpuChart.data.datasets[1].data = data.map((d) => d.icarus_cpu);
+          cpuChart.data.datasets[1].data = [];
           cpuChart.update();
 
           ramChart.data.labels = labels;
           ramChart.data.datasets[0].data = data.map((d) => d.system_ram);
-          ramChart.data.datasets[1].data = data.map((d) => d.icarus_ram);
+          ramChart.data.datasets[1].data = [];
           ramChart.update();
 
           powerChart.data.labels = labels;
@@ -969,8 +968,10 @@
       // ===== Init monitoring =====
       fetchStats();
       fetchHistory();
+      fetchGameServer();
       setInterval(fetchStats, 5000);
       setInterval(fetchHistory, 30000);
+      setInterval(fetchGameServer, 10000);
     </script>
   </body>
 </html>
