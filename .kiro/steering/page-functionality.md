@@ -192,7 +192,7 @@ Authenticated Flask page for controlling the Icarus dedicated game server. Requi
 ### Navigation Bar
 
 - "Back to Services" button → navigates to `https://services.meduseld.io`
-- "SSH Terminal" button → opens `https://ssh.meduseld.io` in new tab
+- "SSH Terminal" button (admin only — hidden for non-admin users) → opens `https://ssh.meduseld.io` in new tab
 - "Backup" dropdown:
   - "Download Backup" → `GET /download-backup` (downloads file)
   - "Backup to Cloud" → `GET /backup-to-cloud` (triggers Google Drive upload)
