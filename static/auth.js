@@ -218,7 +218,6 @@ window.MeduseldAuth = (function () {
       '</div>';
 
     container.style.display = 'block';
-    container.classList.add('position-relative');
 
     var toggle = document.getElementById('profile-toggle');
     var dropdown = document.getElementById('profile-dropdown');
