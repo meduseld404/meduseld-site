@@ -1486,7 +1486,12 @@
         bubble.innerHTML =
           '<i class="bi bi-chat-left-text-fill" style="margin-right:8px"></i>Server suggestion or problem? Send a Discord message!';
         bubble.style.cssText =
-          'position:fixed;bottom:80px;right:20px;background:#e6c65c;color:#000;padding:12px 16px;border-radius:8px;font-size:0.9rem;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,0.3);z-index:9998;max-width:min(250px, calc(100vw - 40px));opacity:0;transition:opacity 0.5s ease;pointer-events:none;';
+          'position:fixed;bottom:80px;right:20px;background:#e6c65c;color:#000;padding:12px 16px;border-radius:12px;font-size:0.9rem;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,0.3);z-index:9998;max-width:min(250px, calc(100vw - 40px));opacity:0;transition:opacity 0.5s ease;pointer-events:none;';
+        // Add speech bubble tail pointing toward the widget button
+        var tail = document.createElement('div');
+        tail.style.cssText =
+          'position:absolute;bottom:-10px;right:20px;width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-top:10px solid #e6c65c;';
+        bubble.appendChild(tail);
         document.body.appendChild(bubble);
         requestAnimationFrame(function () {
           bubble.style.opacity = '1';
