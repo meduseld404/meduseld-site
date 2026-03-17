@@ -286,6 +286,10 @@
       if (typeof MeduseldAuth !== 'undefined') {
         MeduseldAuth.syncUser().then(function () {
           MeduseldAuth.renderProfile('profile-container');
+          if (!MeduseldAuth.hasRole('admin')) {
+            window.location.href = 'https://services.meduseld.io?restricted=system-monitor';
+            return;
+          }
         });
         MeduseldAuth.renderProfile('profile-container');
       }
@@ -502,6 +506,10 @@
       if (typeof MeduseldAuth !== 'undefined') {
         MeduseldAuth.syncUser().then(function () {
           MeduseldAuth.renderProfile('profile-container');
+          if (!MeduseldAuth.hasRole('admin')) {
+            window.location.href = 'https://services.meduseld.io?restricted=system-monitor';
+            return;
+          }
         });
         MeduseldAuth.renderProfile('profile-container');
       }

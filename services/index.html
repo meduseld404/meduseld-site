@@ -263,7 +263,7 @@
           </div>
         </div>
         <!-- SSH Access -->
-        <div class="col-md-6 col-lg-4">
+        <div class="col-md-6 col-lg-4" id="ssh-card" style="display: none">
           <div class="card h-100 text-white bg-dark border-warning service-card">
             <div class="card-body d-flex flex-column text-center p-4">
               <div class="mb-3">
@@ -294,7 +294,7 @@
           </div>
         </div>
         <!-- System Monitor -->
-        <div class="col-md-6 col-lg-4">
+        <div class="col-md-6 col-lg-4" id="system-monitor-card" style="display: none">
           <div class="card h-100 text-white bg-dark border-warning service-card">
             <div class="card-body d-flex flex-column text-center p-4">
               <div class="mb-3">
@@ -675,6 +675,16 @@
               <i class="bi bi-globe me-1"></i>
               Drive
             </a>
+            <a
+              href="https://admin.meduseld.io"
+              id="admin-link"
+              class="btn btn-sm btn-outline-warning"
+              title="User Management"
+              style="display: none"
+            >
+              <i class="bi bi-people-fill me-1"></i>
+              Admin
+            </a>
           </div>
         </div>
       </div>
@@ -823,9 +833,21 @@
       if (typeof MeduseldAuth !== 'undefined') {
         MeduseldAuth.syncUser().then(function () {
           MeduseldAuth.renderProfile('profile-container');
+          showAdminCards();
         });
         // Render immediately with JWT data, re-render after sync for updated role/avatar
         MeduseldAuth.renderProfile('profile-container');
+      }
+
+      function showAdminCards() {
+        if (typeof MeduseldAuth !== 'undefined' && MeduseldAuth.hasRole('admin')) {
+          var sshCard = document.getElementById('ssh-card');
+          var sysCard = document.getElementById('system-monitor-card');
+          var adminLink = document.getElementById('admin-link');
+          if (sshCard) sshCard.style.display = '';
+          if (sysCard) sysCard.style.display = '';
+          if (adminLink) adminLink.style.display = '';
+        }
       }
 
       let panelDevMode = localStorage.getItem('panelDevMode') === 'true';
@@ -1131,6 +1153,30 @@
         }
       }
       document.addEventListener('DOMContentLoaded', function () {
+        // Show restricted access toast if redirected from an admin-only page
+        var params = new URLSearchParams(window.location.search);
+        var restricted = params.get('restricted');
+        if (restricted) {
+          var pageName = restricted.replace(/-/g, ' ').replace(/\b\w/g, function (c) {
+            return c.toUpperCase();
+          });
+          var toast = document.createElement('div');
+          toast.className =
+            'position-fixed top-0 start-50 translate-middle-x mt-3 alert alert-warning alert-dismissible fade show';
+          toast.style.zIndex = '9999';
+          toast.innerHTML =
+            '<i class="bi bi-shield-lock me-2"></i>' +
+            '<strong>' +
+            pageName +
+            '</strong> is not available for your account type.' +
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+          document.body.appendChild(toast);
+          setTimeout(function () {
+            toast.remove();
+          }, 8000);
+          window.history.replaceState({}, '', window.location.pathname);
+        }
+
         document.getElementById('game-name').textContent = `${CONFIG.gameName} Server`;
         document.getElementById('game-description').textContent =
           `Control the ${CONFIG.gameName} dedicated game server. Start, stop, restart, and monitor server status.`;
@@ -1439,6 +1485,7 @@
       if (typeof MeduseldAuth !== 'undefined') {
         MeduseldAuth.syncUser().then(function () {
           MeduseldAuth.renderProfile('profile-container');
+          showAdminCards();
         });
         MeduseldAuth.renderProfile('profile-container');
       }
