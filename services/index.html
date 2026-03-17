@@ -20,6 +20,12 @@
     <link rel="stylesheet" href="https://meduseld.io/static/style.css" />
   </head>
   <body class="text-light" style="background: transparent">
+    <!-- User Profile Container -->
+    <div
+      id="profile-container"
+      style="position: fixed; top: 20px; right: 20px; z-index: 1040; display: none"
+    ></div>
+
     <div class="container py-5">
       <div class="text-center mb-5">
         <img
@@ -815,7 +821,11 @@
 
       // Sync user to backend DB (best-effort, non-blocking)
       if (typeof MeduseldAuth !== 'undefined') {
-        MeduseldAuth.syncUser();
+        MeduseldAuth.syncUser().then(function () {
+          MeduseldAuth.renderProfile('profile-container');
+        });
+        // Render immediately with JWT data, re-render after sync for updated role/avatar
+        MeduseldAuth.renderProfile('profile-container');
       }
 
       let panelDevMode = localStorage.getItem('panelDevMode') === 'true';
@@ -1423,6 +1433,15 @@
           }, 500);
         }, 8000);
       }, 3000);
+    </script>
+    <script src="https://meduseld.io/static/auth.js"></script>
+    <script>
+      if (typeof MeduseldAuth !== 'undefined') {
+        MeduseldAuth.syncUser().then(function () {
+          MeduseldAuth.renderProfile('profile-container');
+        });
+        MeduseldAuth.renderProfile('profile-container');
+      }
     </script>
   </body>
 </html>
