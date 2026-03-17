@@ -137,7 +137,8 @@ Server logs viewer and system management page. Non-admin users are redirected to
 - Shows progress spinner during backup
 - Polls `https://health.meduseld.io/check/backup-status` every 5 seconds until complete
 - Handles "already in progress" state
-- Button resets after 5 seconds on success/failure
+- On success: shows green checkmark with "Backup uploaded successfully", hides Start Backup button, Cancel becomes a green "Close" button. Resets when modal is reopened.
+- On failure: button resets after 5 seconds
 - "Cancel" button → closes modal
 
 ### Reboot Server Modal
