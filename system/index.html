@@ -18,6 +18,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="https://meduseld.io/static/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   </head>
   <body class="text-light" style="background: transparent">
     <!-- User Profile Container -->
@@ -125,6 +126,211 @@
               <i class="bi bi-power me-2"></i>
               Reboot Server
             </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== SYSTEM MONITORING ===== -->
+      <div class="row justify-content-center mt-5">
+        <div class="col-12 col-lg-10">
+          <h3 class="text-center mb-4" style="color: #e6c65c">
+            <i class="bi bi-speedometer2 me-2"></i>
+            System Monitoring
+          </h3>
+
+          <!-- Status Cards Row -->
+          <div class="row g-3 mb-4">
+            <div class="col-6 col-md-4 col-lg-2">
+              <div class="card bg-dark text-white text-center" id="status-card">
+                <div class="card-body py-2">
+                  <small class="text-muted">Status</small>
+                  <h5 id="sys-status" class="mb-0">--</h5>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+              <div class="card bg-dark text-white text-center">
+                <div class="card-body py-2">
+                  <small class="text-muted">CPU</small>
+                  <h5 id="sys-cpu" class="mb-0">--</h5>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+              <div class="card bg-dark text-white text-center" id="temp-card">
+                <div class="card-body py-2">
+                  <small class="text-muted">CPU Temp</small>
+                  <h5 id="sys-temp" class="mb-0">--</h5>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+              <div class="card bg-dark text-white text-center">
+                <div class="card-body py-2">
+                  <small class="text-muted">RAM</small>
+                  <h5 id="sys-ram" class="mb-0">--</h5>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+              <div class="card bg-dark text-white text-center">
+                <div class="card-body py-2">
+                  <small class="text-muted">Disk</small>
+                  <h5 id="sys-disk" class="mb-0">--</h5>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+              <div class="card bg-dark text-white text-center" id="power-card">
+                <div class="card-body py-2">
+                  <small class="text-muted">
+                    <i class="bi bi-lightning-charge"></i>
+                    Power
+                  </small>
+                  <h5 id="sys-power" class="mb-0">--</h5>
+                  <small id="sys-power-cost" class="text-muted" style="font-size: 0.7rem"></small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Power Breakdown + Cost Estimate -->
+          <div class="row g-3 mb-4">
+            <div class="col-12 col-md-6">
+              <div class="card bg-dark text-white">
+                <div class="card-header" style="border-bottom: 1px solid rgba(230, 198, 92, 0.2)">
+                  <i class="bi bi-lightning-charge me-1"></i>
+                  Power Breakdown
+                </div>
+                <div class="card-body">
+                  <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">CPU</span>
+                    <span id="pw-cpu">--</span>
+                  </div>
+                  <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">GPU</span>
+                    <span id="pw-gpu">--</span>
+                  </div>
+                  <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">RAM</span>
+                    <span id="pw-ram">--</span>
+                  </div>
+                  <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Storage (NVMe)</span>
+                    <span id="pw-storage">--</span>
+                  </div>
+                  <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Other (MB/Fans/AIO)</span>
+                    <span id="pw-other">--</span>
+                  </div>
+                  <hr style="border-color: rgba(230, 198, 92, 0.3)" />
+                  <div class="d-flex justify-content-between">
+                    <span style="color: #e6c65c">Total</span>
+                    <span id="pw-total" style="color: #e6c65c">--</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-6">
+              <div class="card bg-dark text-white">
+                <div class="card-header" style="border-bottom: 1px solid rgba(230, 198, 92, 0.2)">
+                  <i class="bi bi-currency-pound me-1"></i>
+                  Cost Estimate (24/7)
+                </div>
+                <div class="card-body">
+                  <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Current draw</span>
+                    <span id="cost-watts">--</span>
+                  </div>
+                  <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Daily</span>
+                    <span id="cost-daily">--</span>
+                  </div>
+                  <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Monthly (30d)</span>
+                    <span id="cost-monthly" style="color: #e6c65c">--</span>
+                  </div>
+                  <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Yearly</span>
+                    <span id="cost-yearly">--</span>
+                  </div>
+                  <hr style="border-color: rgba(230, 198, 92, 0.3)" />
+                  <div class="d-flex justify-content-between">
+                    <span class="text-muted">Rate</span>
+                    <span id="cost-rate" class="text-muted">--</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts -->
+          <div class="row g-3 mb-4">
+            <div class="col-12 col-md-4">
+              <div class="card bg-dark text-white h-100">
+                <div class="card-header" style="border-bottom: 1px solid rgba(230, 198, 92, 0.2)">
+                  CPU Usage
+                </div>
+                <div class="card-body"><canvas id="cpuChart"></canvas></div>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="card bg-dark text-white h-100">
+                <div class="card-header" style="border-bottom: 1px solid rgba(230, 198, 92, 0.2)">
+                  RAM Usage
+                </div>
+                <div class="card-body"><canvas id="ramChart"></canvas></div>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="card bg-dark text-white h-100">
+                <div class="card-header" style="border-bottom: 1px solid rgba(230, 198, 92, 0.2)">
+                  <i class="bi bi-lightning-charge"></i>
+                  Power Draw (W)
+                </div>
+                <div class="card-body"><canvas id="powerChart"></canvas></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Game Server Status -->
+          <div class="row g-3">
+            <div class="col-12">
+              <div class="card bg-dark text-white">
+                <div class="card-header" style="border-bottom: 1px solid rgba(230, 198, 92, 0.2)">
+                  <i class="bi bi-controller me-1"></i>
+                  Game Server
+                </div>
+                <div class="card-body">
+                  <div class="row text-center">
+                    <div class="col-4 col-md-2">
+                      <small class="text-muted">State</small>
+                      <h6 id="gs-state" class="mb-0">--</h6>
+                    </div>
+                    <div class="col-4 col-md-2">
+                      <small class="text-muted">Players</small>
+                      <h6 id="gs-players" class="mb-0">--</h6>
+                    </div>
+                    <div class="col-4 col-md-2">
+                      <small class="text-muted">Uptime</small>
+                      <h6 id="gs-uptime" class="mb-0">--</h6>
+                    </div>
+                    <div class="col-4 col-md-2">
+                      <small class="text-muted">Server CPU</small>
+                      <h6 id="gs-cpu" class="mb-0">--</h6>
+                    </div>
+                    <div class="col-4 col-md-2">
+                      <small class="text-muted">Server RAM</small>
+                      <h6 id="gs-ram" class="mb-0">--</h6>
+                    </div>
+                    <div class="col-4 col-md-2">
+                      <small class="text-muted">Health</small>
+                      <h6 id="gs-health" class="mb-0">--</h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -505,6 +711,266 @@
         });
         MeduseldAuth.renderProfile('profile-container');
       }
+    </script>
+
+    <!-- System Monitoring JS -->
+    <script>
+      const PANEL_URL = 'https://panel.meduseld.io';
+
+      // ===== Charts =====
+      const chartOpts = {
+        responsive: true,
+        animation: false,
+        scales: { y: { beginAtZero: true } },
+        plugins: { legend: { labels: { color: '#ccc', boxWidth: 12 } } },
+      };
+
+      const cpuChart = new Chart(document.getElementById('cpuChart'), {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: 'System %',
+              data: [],
+              borderColor: '#e6c65c',
+              backgroundColor: 'rgba(230,198,92,0.15)',
+              tension: 0.3,
+            },
+            {
+              label: 'Server %',
+              data: [],
+              borderColor: '#4f8f63',
+              backgroundColor: 'rgba(79,143,99,0.15)',
+              tension: 0.3,
+            },
+          ],
+        },
+        options: chartOpts,
+      });
+
+      const ramChart = new Chart(document.getElementById('ramChart'), {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: 'System GB',
+              data: [],
+              borderColor: '#e6c65c',
+              backgroundColor: 'rgba(230,198,92,0.15)',
+              tension: 0.3,
+            },
+            {
+              label: 'Server GB',
+              data: [],
+              borderColor: '#4f8f63',
+              backgroundColor: 'rgba(79,143,99,0.15)',
+              tension: 0.3,
+            },
+          ],
+        },
+        options: chartOpts,
+      });
+
+      const powerChart = new Chart(document.getElementById('powerChart'), {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: 'Total W',
+              data: [],
+              borderColor: '#e6c65c',
+              backgroundColor: 'rgba(230,198,92,0.15)',
+              tension: 0.3,
+            },
+            {
+              label: 'CPU W',
+              data: [],
+              borderColor: '#4f8f63',
+              backgroundColor: 'rgba(79,143,99,0.15)',
+              tension: 0.3,
+            },
+            {
+              label: 'GPU W',
+              data: [],
+              borderColor: '#7b68ee',
+              backgroundColor: 'rgba(123,104,238,0.1)',
+              tension: 0.3,
+            },
+          ],
+        },
+        options: chartOpts,
+      });
+
+      // ===== Format helpers =====
+      function formatUptime(seconds) {
+        if (!seconds || seconds <= 0) return '--';
+        const d = Math.floor(seconds / 86400);
+        const h = Math.floor((seconds % 86400) / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+        let str = '';
+        if (d > 0) str += d + 'd ';
+        if (h > 0) str += h + 'h ';
+        if (m > 0) str += m + 'm ';
+        str += s + 's';
+        return str;
+      }
+
+      function w(val) {
+        return val !== null && val !== undefined ? val + 'W' : '--';
+      }
+
+      // ===== Fetch stats =====
+      async function fetchStats() {
+        try {
+          const res = await fetch(PANEL_URL + '/api/stats', { credentials: 'include' });
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          const data = await res.json();
+
+          // Status card
+          const statusEl = document.getElementById('sys-status');
+          const statusCard = document.getElementById('status-card');
+          statusEl.textContent = 'Online';
+          statusEl.style.color = '#198754';
+          statusCard.style.borderLeft = '3px solid #198754';
+
+          // System stats
+          document.getElementById('sys-cpu').textContent = data.stats.cpu + '%';
+          document.getElementById('sys-ram').textContent =
+            data.stats.ram_used + '/' + data.stats.ram_total + ' GB';
+          document.getElementById('sys-disk').textContent =
+            data.stats.disk_used + '/' + data.stats.disk_total + ' GB';
+
+          // CPU temp
+          const tempEl = document.getElementById('sys-temp');
+          const tempCard = document.getElementById('temp-card');
+          if (data.stats.cpu_temp != null) {
+            const t = data.stats.cpu_temp;
+            tempEl.textContent = t + '°C';
+            tempCard.style.borderLeft =
+              t < 60 ? '3px solid #198754' : t < 75 ? '3px solid #ffc107' : '3px solid #dc3545';
+          } else {
+            tempEl.textContent = '--';
+          }
+
+          // Power
+          const pw = data.stats.power;
+          if (pw && pw.total_watts != null) {
+            document.getElementById('sys-power').textContent = pw.total_watts + 'W';
+            const powerCard = document.getElementById('power-card');
+            powerCard.style.borderLeft =
+              pw.total_watts < 80
+                ? '3px solid #198754'
+                : pw.total_watts < 150
+                  ? '3px solid #e6c65c'
+                  : '3px solid #ffc107';
+
+            // Monthly cost in header card
+            const costPerKwh = pw.cost_per_kwh || 0.245;
+            const monthly = (((pw.total_watts * 24 * 30) / 1000) * costPerKwh).toFixed(2);
+            document.getElementById('sys-power-cost').textContent = '~£' + monthly + '/mo';
+
+            // Power breakdown
+            document.getElementById('pw-cpu').textContent = w(pw.cpu_watts);
+            document.getElementById('pw-gpu').textContent = w(pw.gpu_watts);
+            document.getElementById('pw-ram').textContent = w(pw.ram_watts);
+            document.getElementById('pw-storage').textContent = w(pw.storage_watts);
+            document.getElementById('pw-other').textContent = w(pw.other_watts);
+            document.getElementById('pw-total').textContent = w(pw.total_watts);
+
+            // Cost breakdown
+            const daily = (((pw.total_watts * 24) / 1000) * costPerKwh).toFixed(2);
+            const yearly = (((pw.total_watts * 24 * 365) / 1000) * costPerKwh).toFixed(2);
+            document.getElementById('cost-watts').textContent = pw.total_watts + 'W';
+            document.getElementById('cost-daily').textContent = '£' + daily;
+            document.getElementById('cost-monthly').textContent = '£' + monthly;
+            document.getElementById('cost-yearly').textContent = '£' + yearly;
+            document.getElementById('cost-rate').textContent = '£' + costPerKwh + '/kWh';
+          }
+
+          // Game server
+          document.getElementById('gs-state').textContent = data.state || '--';
+          const stateEl = document.getElementById('gs-state');
+          stateEl.style.color =
+            data.state === 'running'
+              ? '#198754'
+              : data.state === 'crashed'
+                ? '#dc3545'
+                : data.state === 'offline'
+                  ? '#dc3545'
+                  : '#ffc107';
+
+          if (data.players != null && data.state === 'running') {
+            document.getElementById('gs-players').textContent = data.players + '/8';
+          } else {
+            document.getElementById('gs-players').textContent = '--';
+          }
+
+          document.getElementById('gs-uptime').textContent = formatUptime(data.uptime);
+          document.getElementById('gs-health').textContent = data.health || '--';
+          const healthEl = document.getElementById('gs-health');
+          healthEl.style.color =
+            data.health === 'good'
+              ? '#198754'
+              : data.health === 'warning'
+                ? '#ffc107'
+                : data.health === 'critical'
+                  ? '#dc3545'
+                  : '#888';
+
+          if (data.icarus && data.state === 'running') {
+            const cores = (data.icarus.cpu_raw / 100).toFixed(1);
+            document.getElementById('gs-cpu').textContent = cores + ' cores';
+            document.getElementById('gs-ram').textContent = data.icarus.ram + ' GB';
+          } else {
+            document.getElementById('gs-cpu').textContent = '--';
+            document.getElementById('gs-ram').textContent = '--';
+          }
+        } catch (err) {
+          console.error('Stats fetch failed:', err);
+          document.getElementById('sys-status').textContent = 'Offline';
+          document.getElementById('sys-status').style.color = '#dc3545';
+          document.getElementById('status-card').style.borderLeft = '3px solid #dc3545';
+        }
+      }
+
+      // ===== Fetch history for charts =====
+      async function fetchHistory() {
+        try {
+          const res = await fetch(PANEL_URL + '/api/history', { credentials: 'include' });
+          if (!res.ok) return;
+          const data = await res.json();
+
+          const labels = data.map((d) => d.timestamp);
+
+          cpuChart.data.labels = labels;
+          cpuChart.data.datasets[0].data = data.map((d) => d.system_cpu);
+          cpuChart.data.datasets[1].data = data.map((d) => d.icarus_cpu);
+          cpuChart.update();
+
+          ramChart.data.labels = labels;
+          ramChart.data.datasets[0].data = data.map((d) => d.system_ram);
+          ramChart.data.datasets[1].data = data.map((d) => d.icarus_ram);
+          ramChart.update();
+
+          powerChart.data.labels = labels;
+          powerChart.data.datasets[0].data = data.map((d) => d.power_total || 0);
+          powerChart.data.datasets[1].data = data.map((d) => d.power_cpu || 0);
+          powerChart.data.datasets[2].data = data.map((d) => d.power_gpu || 0);
+          powerChart.update();
+        } catch (err) {
+          console.error('History fetch failed:', err);
+        }
+      }
+
+      // ===== Init monitoring =====
+      fetchStats();
+      fetchHistory();
+      setInterval(fetchStats, 5000);
+      setInterval(fetchHistory, 30000);
     </script>
   </body>
 </html>
