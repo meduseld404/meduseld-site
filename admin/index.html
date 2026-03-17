@@ -174,20 +174,18 @@
 
       document.getElementById('copyright-year').textContent = new Date().getFullYear();
 
-      // Auth gate: admin only
+      // Auth gate: admin only — check immediately from JWT identity
       if (typeof MeduseldAuth !== 'undefined') {
+        if (!MeduseldAuth.hasRole('admin')) {
+          window.location.href = 'https://services.meduseld.io?restricted=user-management';
+        }
+        MeduseldAuth.renderProfile('profile-container');
+        var user = MeduseldAuth.getUser();
+        if (user) currentUserId = user.discord_id;
+        fetchUsers();
         MeduseldAuth.syncUser().then(function () {
           MeduseldAuth.renderProfile('profile-container');
-          if (!MeduseldAuth.hasRole('admin')) {
-            window.location.href = 'https://services.meduseld.io?restricted=user-management';
-            return;
-          }
-          // Store current user ID for self-protection checks
-          var user = MeduseldAuth.getUser();
-          if (user) currentUserId = user.discord_id;
-          fetchUsers();
         });
-        MeduseldAuth.renderProfile('profile-container');
       }
 
       function showToast(message, type) {

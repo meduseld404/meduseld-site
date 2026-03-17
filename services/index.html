@@ -831,12 +831,11 @@
 
       // Sync user to backend DB (best-effort, non-blocking)
       if (typeof MeduseldAuth !== 'undefined') {
+        MeduseldAuth.renderProfile('profile-container');
+        showAdminCards();
         MeduseldAuth.syncUser().then(function () {
           MeduseldAuth.renderProfile('profile-container');
-          showAdminCards();
         });
-        // Render immediately with JWT data, re-render after sync for updated role/avatar
-        MeduseldAuth.renderProfile('profile-container');
       }
 
       function showAdminCards() {
@@ -1491,11 +1490,11 @@
     <script src="https://meduseld.io/static/auth.js"></script>
     <script>
       if (typeof MeduseldAuth !== 'undefined') {
+        MeduseldAuth.renderProfile('profile-container');
+        showAdminCards();
         MeduseldAuth.syncUser().then(function () {
           MeduseldAuth.renderProfile('profile-container');
-          showAdminCards();
         });
-        MeduseldAuth.renderProfile('profile-container');
       }
     </script>
   </body>

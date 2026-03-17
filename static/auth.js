@@ -62,8 +62,8 @@ window.MeduseldAuth = (function () {
       avatar_hash: avatar,
       avatar_url: avatarUrl,
       email: email,
-      // Role comes from the backend sync — default to 'user' from JWT alone
-      role: 'user',
+      // Role comes from discord_user.is_admin claim, falls back to backend sync
+      role: discordUser.is_admin ? 'admin' : 'user',
     };
   }
 
@@ -97,6 +97,9 @@ window.MeduseldAuth = (function () {
               discordUser.avatar +
               '.png';
           }
+          if (discordUser.is_admin) {
+            _user.role = 'admin';
+          }
         } else if (custom.sub) {
           _user.discord_id = custom.sub;
           _user.username = custom.preferred_username || _user.username;
@@ -108,16 +111,15 @@ window.MeduseldAuth = (function () {
     }
   }
 
-  // Best-effort sync to backend — updates DB and gets role back
+  // Best-effort sync to backend — updates DB with Discord data.
+  // Role is already set from discord_user.is_admin in the JWT/identity,
+  // so this is non-critical. UI works even if the backend is offline.
   function syncUser() {
     if (_synced || !_user) return Promise.resolve();
     _synced = true;
 
-    // First, sync the Discord identity data to the backend
-    // (the backend only has the Cloudflare UUID from the JWT, not the real Discord ID)
     var syncPromise = Promise.resolve();
     if (_user.discord_id && _user.discord_id.length < 30) {
-      // Looks like a real Discord ID (numeric), not a Cloudflare UUID
       syncPromise = fetch('https://panel.meduseld.io/api/sync-identity', {
         method: 'POST',
         credentials: 'include',
@@ -129,7 +131,7 @@ window.MeduseldAuth = (function () {
           avatar_hash: _user.avatar_hash,
         }),
       }).catch(function (err) {
-        console.warn('MeduseldAuth: sync-identity failed', err);
+        console.warn('MeduseldAuth: sync-identity failed (non-critical)', err);
       });
     }
 
@@ -144,9 +146,7 @@ window.MeduseldAuth = (function () {
       })
       .then(function (data) {
         if (data.authenticated && data.user) {
-          _user.role = data.user.role;
           _user.is_active = data.user.is_active;
-          // Update discord_id from backend in case sync worked
           if (data.user.discord_id) {
             _user.discord_id = data.user.discord_id;
           }
@@ -156,8 +156,7 @@ window.MeduseldAuth = (function () {
         }
       })
       .catch(function (err) {
-        // Backend is down — that's fine, we still have JWT data
-        console.warn('MeduseldAuth: backend sync failed', err);
+        console.warn('MeduseldAuth: backend sync failed (non-critical)', err);
         _synced = false;
       });
   }
