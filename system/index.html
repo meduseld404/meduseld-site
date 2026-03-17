@@ -632,11 +632,18 @@
             if (!data.running) {
               clearInterval(interval);
               if (data.last_result === 'success') {
+                var filename = data.filename || '';
+                var successMsg = 'Backup uploaded successfully.';
+                if (filename) {
+                  successMsg += '<br><small style="opacity:0.7;">' + filename + '</small>';
+                }
                 // Hide spinner, show checkmark
                 statusDiv.innerHTML =
                   '<div class="d-flex align-items-center gap-2">' +
                   '<i class="bi bi-check-circle-fill text-success"></i>' +
-                  '<span style="color: #198754;">Backup uploaded successfully.</span>' +
+                  '<span style="color: #198754;">' +
+                  successMsg +
+                  '</span>' +
                   '</div>';
                 // Replace footer with just a Close button
                 btn.style.display = 'none';
