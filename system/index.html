@@ -237,7 +237,7 @@
             <div class="col-12 col-md-6">
               <div class="card bg-dark text-white">
                 <div class="card-header" style="border-bottom: 1px solid rgba(230, 198, 92, 0.2)">
-                  <i class="bi bi-currency-pound me-1"></i>
+                  <i class="bi bi-currency-dollar me-1"></i>
                   Cost Estimate (24/7)
                 </div>
                 <div class="card-body">
@@ -885,9 +885,9 @@
                   ? '3px solid #e6c65c'
                   : '3px solid #ffc107';
 
-            const costPerKwh = pw.cost_per_kwh || 0.245;
+            const costPerKwh = pw.cost_per_kwh || 0.145;
             const monthly = (((pw.total_watts * 24 * 30) / 1000) * costPerKwh).toFixed(2);
-            document.getElementById('sys-power-cost').textContent = '~£' + monthly + '/mo';
+            document.getElementById('sys-power-cost').textContent = '~$' + monthly + '/mo';
 
             // Power breakdown
             document.getElementById('pw-cpu').textContent = w(pw.cpu_watts);
@@ -901,10 +901,10 @@
             const daily = (((pw.total_watts * 24) / 1000) * costPerKwh).toFixed(2);
             const yearly = (((pw.total_watts * 24 * 365) / 1000) * costPerKwh).toFixed(2);
             document.getElementById('cost-watts').textContent = pw.total_watts + 'W';
-            document.getElementById('cost-daily').textContent = '£' + daily;
-            document.getElementById('cost-monthly').textContent = '£' + monthly;
-            document.getElementById('cost-yearly').textContent = '£' + yearly;
-            document.getElementById('cost-rate').textContent = '£' + costPerKwh + '/kWh';
+            document.getElementById('cost-daily').textContent = '$' + daily;
+            document.getElementById('cost-monthly').textContent = '$' + monthly;
+            document.getElementById('cost-yearly').textContent = '$' + yearly;
+            document.getElementById('cost-rate').textContent = '$' + costPerKwh + '/kWh';
           }
         } catch (err) {
           console.error('Stats fetch failed:', err);
