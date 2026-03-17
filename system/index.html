@@ -488,16 +488,15 @@
         backupToken: '320c8aa762861cfdf87a696410f0434e9d3122ffd677fab889493280fb1a697f',
       };
 
-      // Sync user to backend DB (best-effort, non-blocking)
+      // Admin gate — check immediately from JWT identity, no backend needed
       if (typeof MeduseldAuth !== 'undefined') {
+        if (!MeduseldAuth.hasRole('admin')) {
+          window.location.href = 'https://services.meduseld.io?restricted=system-monitor';
+        }
+        MeduseldAuth.renderProfile('profile-container');
         MeduseldAuth.syncUser().then(function () {
           MeduseldAuth.renderProfile('profile-container');
-          if (!MeduseldAuth.hasRole('admin')) {
-            window.location.href = 'https://services.meduseld.io?restricted=system-monitor';
-            return;
-          }
         });
-        MeduseldAuth.renderProfile('profile-container');
       }
 
       async function fetchServerLogs() {
@@ -710,14 +709,13 @@
     <script src="https://meduseld.io/static/auth.js"></script>
     <script>
       if (typeof MeduseldAuth !== 'undefined') {
+        if (!MeduseldAuth.hasRole('admin')) {
+          window.location.href = 'https://services.meduseld.io?restricted=system-monitor';
+        }
+        MeduseldAuth.renderProfile('profile-container');
         MeduseldAuth.syncUser().then(function () {
           MeduseldAuth.renderProfile('profile-container');
-          if (!MeduseldAuth.hasRole('admin')) {
-            window.location.href = 'https://services.meduseld.io?restricted=system-monitor';
-            return;
-          }
         });
-        MeduseldAuth.renderProfile('profile-container');
       }
     </script>
 
