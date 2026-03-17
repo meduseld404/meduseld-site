@@ -650,15 +650,16 @@
           </div>
         </div>
       </div>
-      <!-- Quick Links (Admin only) -->
-      <div class="row justify-content-center mt-4" id="quick-links" style="display: none">
+      <!-- Quick Links -->
+      <div class="row justify-content-center mt-4">
         <div class="col-12 col-lg-10">
           <div class="d-flex flex-wrap justify-content-center gap-2">
             <a
               href="https://dash.cloudflare.com"
               target="_blank"
-              class="btn btn-sm btn-outline-warning"
+              class="btn btn-sm btn-outline-warning admin-quick-link"
               title="Cloudflare Dashboard"
+              style="display: none"
             >
               <i class="bi bi-cloud me-1"></i>
               Cloudflare
@@ -666,8 +667,9 @@
             <a
               href="https://github.com/meduseld404/meduseld"
               target="_blank"
-              class="btn btn-sm btn-outline-warning"
+              class="btn btn-sm btn-outline-warning admin-quick-link"
               title="Meduseld GitHub Repository"
+              style="display: none"
             >
               <i class="bi bi-code-slash me-1"></i>
               Backend Repo
@@ -676,8 +678,9 @@
             <a
               href="https://github.com/meduseld404/meduseld-site"
               target="_blank"
-              class="btn btn-sm btn-outline-warning"
+              class="btn btn-sm btn-outline-warning admin-quick-link"
               title="Meduseld Site GitHub Repository"
+              style="display: none"
             >
               <i class="bi bi-code-slash me-1"></i>
               Site Repo
@@ -686,20 +689,14 @@
             <a
               href="https://github.com/meduseld404/meduseld-site"
               target="_blank"
-              class="btn btn-sm btn-outline-warning"
+              class="btn btn-sm btn-outline-warning admin-quick-link"
               title="Meduseld Site GitHub Repository"
+              style="display: none"
             >
               <i class="bi bi-code-slash me-1"></i>
               Herugrim Repo
               <i class="bi bi-robot"></i>
             </a>
-          </div>
-        </div>
-      </div>
-      <!-- Quick Links (All users) -->
-      <div class="row justify-content-center mt-2">
-        <div class="col-12 col-lg-10">
-          <div class="d-flex flex-wrap justify-content-center gap-2">
             <a
               href="https://mail.google.com"
               target="_blank"
@@ -875,10 +872,11 @@
         if (typeof MeduseldAuth !== 'undefined' && MeduseldAuth.hasRole('admin')) {
           var sshCard = document.getElementById('ssh-card');
           var sysCard = document.getElementById('system-monitor-card');
-          var quickLinks = document.getElementById('quick-links');
           if (sshCard) sshCard.style.display = '';
           if (sysCard) sysCard.style.display = '';
-          if (quickLinks) quickLinks.style.display = '';
+          document.querySelectorAll('.admin-quick-link').forEach(function (link) {
+            link.style.display = '';
+          });
           document.querySelectorAll('.edoras-admin-btn').forEach(function (btn) {
             btn.style.display = '';
           });
