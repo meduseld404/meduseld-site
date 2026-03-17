@@ -168,15 +168,15 @@
                 Stream movies, TV shows, and media from our Edoras server.
               </p>
               <div class="mt-auto">
-                <a
+                <button
                   id="jellyfin-button"
-                  href="https://jellyfin.meduseld.io"
                   class="btn btn-secondary btn-lg w-100"
                   disabled
+                  onclick="openEdoras()"
                 >
                   <span class="spinner-border spinner-border-sm me-2" role="status"></span>
                   Checking Status...
-                </a>
+                </button>
               </div>
             </div>
           </div>
@@ -1041,8 +1041,6 @@
           button.classList.remove('btn-secondary', 'btn-danger', 'btn-disabled-link', 'bg-warning');
           button.classList.add('btn-warning');
           button.removeAttribute('disabled');
-          button.href = CONFIG.jellyfinUrl;
-          button.onclick = null;
           button.style.cursor = '';
           button.style.backgroundColor = '';
           button.style.color = '';
@@ -1061,14 +1059,9 @@
           );
           button.classList.add('btn-disabled-link');
           button.setAttribute('disabled', 'true');
-          button.href = '#';
           button.style.backgroundColor = '#f48120';
           button.style.color = '#fff';
           button.style.cursor = 'not-allowed';
-          button.onclick = function (e) {
-            e.preventDefault();
-            return false;
-          };
           indicator.innerHTML =
             '<i class="bi bi-cloud-slash me-1" style="color:#9ca3af;"></i>Cloudflare Offline';
           indicator.classList.remove('bg-secondary', 'bg-danger', 'bg-success', 'bg-warning');
@@ -1078,20 +1071,47 @@
           button.classList.remove('btn-secondary', 'btn-warning', 'bg-warning');
           button.classList.add('btn-danger', 'btn-disabled-link');
           button.setAttribute('disabled', 'true');
-          button.href = '#';
           button.style.backgroundColor = '';
           button.style.color = '';
           button.style.cursor = 'not-allowed';
-          button.onclick = function (e) {
-            e.preventDefault();
-            return false;
-          };
           indicator.innerHTML = '<i class="bi bi-circle-fill text-danger me-1"></i>Offline';
           indicator.classList.remove('bg-secondary', 'bg-success', 'bg-warning');
           indicator.classList.add('bg-danger');
           indicator.style.backgroundColor = '';
         }
       }
+      async function openEdoras() {
+        var btn = document.getElementById('jellyfin-button');
+        var origText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Connecting...';
+        try {
+          var res = await fetch('https://panel.meduseld.io/api/jellyfin-auth', {
+            credentials: 'include',
+          });
+          var data = await res.json();
+          if (data.token && data.user_id) {
+            // Redirect to the Jellyfin SSO login page (served on jellyfin.meduseld.io
+            // via Flask proxy) which sets localStorage credentials and redirects to Jellyfin
+            window.open(
+              'https://jellyfin.meduseld.io/sso-login?token=' +
+                encodeURIComponent(data.token) +
+                '&userId=' +
+                encodeURIComponent(data.user_id) +
+                '&serverId=' +
+                encodeURIComponent(data.server_id || ''),
+              '_blank'
+            );
+          } else {
+            window.open(CONFIG.jellyfinUrl, '_blank');
+          }
+        } catch (e) {
+          window.open(CONFIG.jellyfinUrl, '_blank');
+        }
+        btn.disabled = false;
+        btn.innerHTML = origText;
+      }
+
       checkAllServicesStatus();
       setInterval(checkAllServicesStatus, 5000);
       async function fetchGameNews() {
