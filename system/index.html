@@ -978,12 +978,10 @@
 
           cpuChart.data.labels = labels;
           cpuChart.data.datasets[0].data = data.map((d) => d.system_cpu);
-          cpuChart.data.datasets[1].data = [];
           cpuChart.update();
 
           ramChart.data.labels = labels;
           ramChart.data.datasets[0].data = data.map((d) => d.system_ram);
-          ramChart.data.datasets[1].data = [];
           ramChart.update();
 
           powerChart.data.labels = labels;
