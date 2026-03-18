@@ -373,7 +373,7 @@ Static admin page for managing user roles and account status. Served by Cloudfla
 - If the Flask backend is unreachable, the table shows "Backend is offline. Unable to load users."
 - User count badge shows "Backend Offline" in red
 - If the `CF_Authorization` cookie is invalid or expired (401/403), shows "Authentication failed" with a suggestion to log out and back in. User count badge shows "Auth Error" in yellow.
-- API calls are routed through `health.meduseld.io/check/admin-users` to bypass Cloudflare Access session requirements. Auth is handled by reading the `CF_Authorization` cookie via JS and sending its value as an `X-CF-Authorization` header (avoids Cloudflare intercepting requests that carry the cookie). Flask's `_authenticate_from_cookie()` decodes the token from either the cookie or the custom header.
+- API calls are routed through `health.meduseld.io/check/admin-users` to bypass Cloudflare Access session requirements. Auth is handled by reading the `CF_Authorization` cookie via JS and passing its value as a `cf_token` query parameter (GET) or `_cf_token` in the JSON body (PUT). This avoids both Cloudflare cookie interception and CORS preflight issues. Flask's `_authenticate_from_cookie()` decodes the token from cookie, header, query param, or body.
 
 ---
 

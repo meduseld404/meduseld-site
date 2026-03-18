@@ -170,6 +170,9 @@
     <script src="https://meduseld.io/static/auth.js"></script>
     <script>
       var API_BASE = 'https://health.meduseld.io/check';
+      // Endpoint uses "team-roster" instead of "admin-users" to avoid
+      // ad-blocker false positives (filter lists block URLs with "admin").
+      var ROSTER_ENDPOINT = API_BASE + '/team-roster';
       var currentUserId = null;
 
       document.getElementById('copyright-year').textContent = new Date().getFullYear();
@@ -341,7 +344,7 @@
             '<i class="bi bi-arrow-clockwise" style="animation: spin 1s linear infinite;"></i>';
         }
 
-        fetch(authUrl(API_BASE + '/admin-users'))
+        fetch(authUrl(ROSTER_ENDPOINT))
           .then(function (res) {
             if (!res.ok) {
               throw new Error('HTTP_' + res.status);
@@ -395,7 +398,7 @@
 
       function updateUser(userId, changes) {
         changes._cf_token = getCFAuthToken();
-        fetch(API_BASE + '/admin-users-' + userId, {
+        fetch(ROSTER_ENDPOINT + '-' + userId, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(changes),

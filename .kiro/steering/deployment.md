@@ -45,7 +45,7 @@ Served via Cloudflare Pages at `/srv/meduseld-site`
   - Promote/demote users between admin and user roles
   - Activate/deactivate user accounts
   - Shows "Backend Offline" state if Flask is down
-  - Calls `health.meduseld.io/check/admin-users` for data (routed through health to bypass Cloudflare Access session requirement). The admin page reads the `CF_Authorization` cookie via JS and sends its value as an `X-CF-Authorization` header instead of using `credentials: 'include'` — this prevents Cloudflare from intercepting the request. Flask's `_authenticate_from_cookie()` accepts both the cookie and the custom header.
+  - Calls `health.meduseld.io/check/admin-users` for data (routed through health to bypass Cloudflare Access session requirement). The admin page reads the `CF_Authorization` cookie via JS and passes its value as a `cf_token` query parameter (GET) or `_cf_token` in the JSON body (PUT) — this avoids both Cloudflare cookie interception and CORS preflight issues. Flask's `_authenticate_from_cookie()` checks cookie, header, query param, and body for the token.
 
 ### meduseld Repository (Flask Backend)
 
@@ -187,7 +187,7 @@ sudo -u postgres psql -d meduseld_db -c "SELECT discord_id, username, avatar_has
 
 ### Auth Files
 
-- `meduseld/app/webserver.py` — `authenticate_request()` middleware, `_authenticate_from_cookie()` helper (for public-host routes that need auth; reads `CF_Authorization` cookie or `X-CF-Authorization` header), `@require_auth` and `@require_role` decorators, `/api/me`, `/api/sync-identity`
+- `meduseld/app/webserver.py` — `authenticate_request()` middleware, `_authenticate_from_cookie()` helper (for public-host routes that need auth; reads CF_Authorization cookie, X-CF-Authorization header, cf_token query param, or \_cf_token in JSON body), `@require_auth` and `@require_role` decorators, `/api/me`, `/api/sync-identity`
 - `meduseld-site/static/auth.js` — Client-side auth: `MeduseldAuth.getUser()`, `.isAuthenticated()`, `.getRole()`, `.hasRole()`, `.syncUser()`
 - `herugrim/worker.js` — Discord OIDC bridge worker
 
