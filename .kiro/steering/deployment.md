@@ -189,7 +189,7 @@ sudo -u postgres psql -d meduseld_db -c "SELECT discord_id, username, avatar_has
 - The `Cf-Access-Jwt-Assertion` header is only added by Cloudflare on direct requests to the protected origin, not on JS fetch calls
 - Solution: `authenticate_request()` falls back to the `CF_Authorization` cookie, which Cloudflare Access sets on `.meduseld.io` (all subdomains), so it IS available on cross-origin requests
 - The `/api/sync-identity` endpoint uses `get_or_create` to ensure users are created even on cross-origin calls from static pages
-- CORS is configured to allow `GET, POST, PUT, OPTIONS` with credentials for `*.meduseld.io` origins
+- CORS is configured to allow `GET, POST, PUT, DELETE, OPTIONS` with credentials for `*.meduseld.io` origins
 
 ### Important Cloudflare Access Quirks
 
