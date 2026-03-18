@@ -22,9 +22,23 @@
   <body class="text-light" style="background: transparent">
     <!-- Header Navigation -->
     <div class="container-fluid pt-3">
-      <div class="d-flex justify-content-between align-items-start">
-        <!-- Calendar Widget -->
-        <div id="calendar-widget" style="width: 280px; flex-shrink: 0">
+      <div class="d-flex justify-content-end align-items-start">
+        <div id="profile-container" style="display: none; position: relative"></div>
+      </div>
+    </div>
+
+    <div class="container py-4">
+      <div class="text-center mb-5">
+        <img
+          src="https://meduseld.io/static/logo.png"
+          style="max-height: 100px; margin-bottom: 20px"
+        />
+        <h1 style="color: #e6c65c; font-weight: 600">The Great Hall</h1>
+        <p style="opacity: 0.8">Choose your service</p>
+      </div>
+      <!-- Calendar Widget -->
+      <div class="row justify-content-center mb-4" id="calendar-widget">
+        <div class="col-12 col-lg-10">
           <div class="card bg-dark border-warning" style="font-size: 0.85rem">
             <div
               class="card-header d-flex justify-content-between align-items-center py-2"
@@ -59,18 +73,6 @@
             </div>
           </div>
         </div>
-        <div id="profile-container" style="display: none; position: relative"></div>
-      </div>
-    </div>
-
-    <div class="container py-4">
-      <div class="text-center mb-5">
-        <img
-          src="https://meduseld.io/static/logo.png"
-          style="max-height: 100px; margin-bottom: 20px"
-        />
-        <h1 style="color: #e6c65c; font-weight: 600">The Great Hall</h1>
-        <p style="opacity: 0.8">Choose your service</p>
       </div>
       <!-- Game News Panel -->
       <div class="row justify-content-center mb-4">
