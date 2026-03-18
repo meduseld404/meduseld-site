@@ -1835,43 +1835,49 @@
           .replace(/>/g, '&gt;');
       }
 
-      document.getElementById('save-event-btn').addEventListener('click', function () {
-        var title = document.getElementById('event-title').value.trim();
-        var date = document.getElementById('event-date').value;
-        var desc = document.getElementById('event-description').value.trim();
+      // Defer binding until the modal HTML is parsed (script runs before the modal element)
+      document.addEventListener('DOMContentLoaded', function () {
+        var saveEventBtn = document.getElementById('save-event-btn');
+        if (saveEventBtn) {
+          saveEventBtn.addEventListener('click', function () {
+            var title = document.getElementById('event-title').value.trim();
+            var date = document.getElementById('event-date').value;
+            var desc = document.getElementById('event-description').value.trim();
 
-        if (!title || !date) return alert('Title and date are required.');
+            if (!title || !date) return alert('Title and date are required.');
 
-        var btn = this;
-        btn.disabled = true;
-        btn.textContent = 'Saving...';
+            var btn = this;
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
 
-        fetch('https://panel.meduseld.io/api/calendar/events', {
-          method: 'POST',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            title: title,
-            event_date: new Date(date).toISOString(),
-            description: desc,
-          }),
-        })
-          .then(function (res) {
-            if (!res.ok) throw new Error('Create failed');
-            bootstrap.Modal.getInstance(document.getElementById('addEventModal')).hide();
-            document.getElementById('event-title').value = '';
-            document.getElementById('event-date').value = '';
-            document.getElementById('event-description').value = '';
-            fetchCalendarEvents();
-          })
-          .catch(function (err) {
-            console.error('Failed to create calendar event:', err);
-            alert('Failed to create event.');
-          })
-          .finally(function () {
-            btn.disabled = false;
-            btn.textContent = 'Save Event';
+            fetch('https://panel.meduseld.io/api/calendar/events', {
+              method: 'POST',
+              credentials: 'include',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                title: title,
+                event_date: new Date(date).toISOString(),
+                description: desc,
+              }),
+            })
+              .then(function (res) {
+                if (!res.ok) throw new Error('Create failed');
+                bootstrap.Modal.getInstance(document.getElementById('addEventModal')).hide();
+                document.getElementById('event-title').value = '';
+                document.getElementById('event-date').value = '';
+                document.getElementById('event-description').value = '';
+                fetchCalendarEvents();
+              })
+              .catch(function (err) {
+                console.error('Failed to create calendar event:', err);
+                alert('Failed to create event.');
+              })
+              .finally(function () {
+                btn.disabled = false;
+                btn.textContent = 'Save Event';
+              });
           });
+        }
       });
 
       fetchCalendarEvents();
