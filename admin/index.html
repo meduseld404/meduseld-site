@@ -169,7 +169,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://meduseld.io/static/auth.js"></script>
     <script>
-      var API_BASE = 'https://panel.meduseld.io';
+      var API_BASE = 'https://health.meduseld.io/check';
       var currentUserId = null;
 
       document.getElementById('copyright-year').textContent = new Date().getFullYear();
@@ -319,14 +319,14 @@
             '<i class="bi bi-arrow-clockwise" style="animation: spin 1s linear infinite;"></i>';
         }
 
-        fetch(API_BASE + '/api/admin/users', { credentials: 'include' })
+        fetch(API_BASE + '/admin-users', { credentials: 'include' })
           .then(function (res) {
-            var contentType = res.headers.get('content-type') || '';
-            if (!contentType.includes('application/json')) {
-              throw new Error('AUTH_REDIRECT');
-            }
             if (!res.ok) {
               throw new Error('HTTP_' + res.status);
+            }
+            var contentType = res.headers.get('content-type') || '';
+            if (!contentType.includes('application/json')) {
+              throw new Error('UNEXPECTED_RESPONSE');
             }
             return res.json();
           })
@@ -339,64 +339,25 @@
           })
           .catch(function (err) {
             console.error('Failed to fetch users:', err);
-            if (err.message === 'AUTH_REDIRECT') {
-              // Cloudflare Access hasn't established a session for panel.meduseld.io yet.
-              // Use a hidden iframe to trigger a real browser navigation — Cloudflare Access
-              // will see the CF_Authorization cookie (set on .meduseld.io), validate it,
-              // and establish the session. A fetch() won't work because Cloudflare Access
-              // intercepts non-navigational requests differently.
-              if (!fetchUsers._retried) {
-                fetchUsers._retried = true;
-                console.log('Session not established, loading panel in hidden iframe...');
-                var iframe = document.createElement('iframe');
-                iframe.style.display = 'none';
-                iframe.src = 'https://panel.meduseld.io/health';
-                iframe.onload = function () {
-                  console.log('Iframe loaded, retrying fetch...');
-                  // Give Cloudflare Access a moment to finalize the session
-                  setTimeout(function () {
-                    document.body.removeChild(iframe);
-                    fetchUsers();
-                  }, 3000);
-                };
-                iframe.onerror = function () {
-                  console.error('Iframe failed to load panel.meduseld.io/health');
-                  document.body.removeChild(iframe);
-                  fetchUsers();
-                };
-                document.body.appendChild(iframe);
-                // Fallback timeout in case onload never fires
-                setTimeout(function () {
-                  if (iframe.parentNode) {
-                    console.log('Iframe timeout, retrying fetch...');
-                    document.body.removeChild(iframe);
-                    fetchUsers();
-                  }
-                }, 8000);
-                return;
-              }
-              // Already retried via iframe — show manual connect UI
-              document.getElementById('users-table-body').innerHTML =
+            var tbody = document.getElementById('users-table-body');
+            var countBadge = document.getElementById('user-count');
+
+            if (err.message === 'HTTP_401' || err.message === 'HTTP_403') {
+              tbody.innerHTML =
                 '<tr><td colspan="7" class="text-center py-4">' +
                 '<i class="bi bi-shield-lock text-warning" style="font-size:2rem;"></i>' +
-                '<p class="mt-2 mb-0">Session not established with backend.</p>' +
-                '<p class="small" style="opacity:0.7;">Visit the panel once to connect, then refresh.</p>' +
-                '<a href="https://panel.meduseld.io" target="_blank" class="btn btn-sm btn-outline-warning mt-2">' +
-                '<i class="bi bi-box-arrow-up-right me-1"></i>Open Panel</a>' +
-                ' <button class="btn btn-sm btn-outline-light mt-2 ms-1" onclick="fetchUsers._retried=false;fetchUsers();">' +
-                '<i class="bi bi-arrow-clockwise me-1"></i>Retry</button>' +
+                '<p class="mt-2 mb-0">Authentication failed.</p>' +
+                '<p class="small" style="opacity:0.7;">Try logging out and back in.</p>' +
                 '</td></tr>';
-              var countBadge = document.getElementById('user-count');
-              countBadge.textContent = 'Not Connected';
+              countBadge.textContent = 'Auth Error';
               countBadge.classList.remove('bg-secondary', 'bg-success');
               countBadge.classList.add('bg-warning');
             } else {
-              document.getElementById('users-table-body').innerHTML =
+              tbody.innerHTML =
                 '<tr><td colspan="7" class="text-center py-4">' +
                 '<i class="bi bi-exclamation-triangle-fill text-danger" style="font-size:2rem;"></i>' +
                 '<p class="mt-2 mb-0">Backend is offline. Unable to load users.</p>' +
                 '</td></tr>';
-              var countBadge = document.getElementById('user-count');
               countBadge.textContent = 'Backend Offline';
               countBadge.classList.remove('bg-secondary', 'bg-success');
               countBadge.classList.add('bg-danger');
@@ -411,7 +372,7 @@
       }
 
       function updateUser(userId, changes) {
-        fetch(API_BASE + '/api/admin/users/' + userId, {
+        fetch(API_BASE + '/admin-users-' + userId, {
           method: 'PUT',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
