@@ -178,8 +178,8 @@ window.MeduseldAuth = (function () {
     var avatarHtml = _user.avatar_url
       ? '<img src="' +
         _user.avatar_url +
-        '" alt="Avatar" style="width:42px;height:42px;border-radius:50%;border:2px solid #e6c65c;">'
-      : '<i class="bi bi-person-circle" style="font-size:2.1rem;color:#e6c65c;"></i>';
+        '" alt="Avatar" style="width:52px;height:52px;border-radius:50%;border:2px solid #e6c65c;">'
+      : '<i class="bi bi-person-circle" style="font-size:2.6rem;color:#e6c65c;"></i>';
 
     var roleBadge = '';
     if (_user.role === 'admin') {
