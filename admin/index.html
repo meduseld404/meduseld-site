@@ -334,6 +334,9 @@
             );
           })
           .join('');
+
+        // Re-init tooltips on dynamically rendered content
+        if (typeof MeduseldTooltips !== 'undefined') MeduseldTooltips.refresh(tbody);
       }
 
       function fetchUsers() {

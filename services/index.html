@@ -1669,6 +1669,9 @@
           refreshBtn.disabled = false;
           refreshBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i>';
         }
+
+        // Re-init tooltips on dynamically rendered price badges
+        if (typeof MeduseldTooltips !== 'undefined') MeduseldTooltips.refresh();
       }
       document.getElementById('newsCollapse').addEventListener('show.bs.collapse', function () {
         document.getElementById('news-chevron').style.transform = 'rotate(180deg)';
@@ -1792,6 +1795,9 @@
               html += '</div>';
             });
             list.innerHTML = html;
+
+            // Re-init tooltips on dynamically rendered calendar events
+            if (typeof MeduseldTooltips !== 'undefined') MeduseldTooltips.refresh(list);
 
             list.querySelectorAll('.calendar-delete-btn').forEach(function (btn) {
               btn.addEventListener('click', function () {

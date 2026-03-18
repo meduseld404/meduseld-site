@@ -290,3 +290,38 @@ window.MeduseldAuth = (function () {
       badge.textContent = 'v?.?.?';
     });
 })();
+
+// ===== Fast Bootstrap/CoreUI tooltips =====
+// Converts native title attributes to Bootstrap tooltips with a short delay.
+// Works with both Bootstrap 5 and CoreUI (which extends Bootstrap).
+// Call MeduseldTooltips.refresh() after dynamically rendering content.
+var MeduseldTooltips = (function () {
+  var Tooltip =
+    (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) ||
+    (typeof coreui !== 'undefined' && coreui.Tooltip) ||
+    null;
+
+  function init(root) {
+    if (!Tooltip) return;
+    var els = (root || document).querySelectorAll('[title]');
+    for (var i = 0; i < els.length; i++) {
+      // Skip elements that already have a tooltip instance
+      if (Tooltip.getInstance(els[i])) continue;
+      // Skip <iframe>, <svg title>, and elements with empty titles
+      var title = els[i].getAttribute('title');
+      if (!title || els[i].tagName === 'IFRAME') continue;
+      new Tooltip(els[i], { delay: { show: 150, hide: 0 }, placement: 'top' });
+    }
+  }
+
+  // Init on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () {
+      init();
+    });
+  } else {
+    init();
+  }
+
+  return { refresh: init };
+})();
