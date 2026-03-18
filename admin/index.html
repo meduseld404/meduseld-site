@@ -85,6 +85,7 @@
                       <th style="color: #e6c65c">User</th>
                       <th style="color: #e6c65c">Discord ID</th>
                       <th style="color: #e6c65c">Role</th>
+                      <th style="color: #e6c65c">Services</th>
                       <th style="color: #e6c65c">Session Status</th>
                       <th style="color: #e6c65c">Last Login</th>
                       <th style="color: #e6c65c">Actions</th>
@@ -92,7 +93,7 @@
                   </thead>
                   <tbody id="users-table-body">
                     <tr>
-                      <td colspan="6" class="text-center py-4">
+                      <td colspan="7" class="text-center py-4">
                         <div class="spinner-border text-warning" role="status"></div>
                         <p class="mt-2 mb-0 text-muted">Loading users...</p>
                       </td>
@@ -218,7 +219,7 @@
 
         if (users.length === 0) {
           tbody.innerHTML =
-            '<tr><td colspan="6" class="text-center py-4 text-muted">No users found</td></tr>';
+            '<tr><td colspan="7" class="text-center py-4 text-muted">No users found</td></tr>';
           return;
         }
 
@@ -270,6 +271,10 @@
 
             var selfBadge = isSelf ? ' <span class="badge bg-info role-badge">You</span>' : '';
 
+            var servicesHtml = u.has_jellyfin
+              ? '<i class="bi bi-film" style="color:#a78bfa;font-size:1.1rem;" title="Jellyfin (Edoras)"></i>'
+              : '<span class="text-muted" style="font-size:0.8rem;">—</span>';
+
             return (
               '<tr' +
               (!u.is_active ? ' style="opacity:0.5;"' : '') +
@@ -286,6 +291,9 @@
               '</code></td>' +
               '<td>' +
               roleBadge +
+              '</td>' +
+              '<td>' +
+              servicesHtml +
               '</td>' +
               '<td>' +
               statusBadge +
@@ -338,7 +346,7 @@
               // Cloudflare Access hasn't seen this browser for panel.meduseld.io yet.
               // Show a connect button that opens panel in a new tab to establish the session.
               document.getElementById('users-table-body').innerHTML =
-                '<tr><td colspan="6" class="text-center py-4">' +
+                '<tr><td colspan="7" class="text-center py-4">' +
                 '<i class="bi bi-shield-lock text-warning" style="font-size:2rem;"></i>' +
                 '<p class="mt-2 mb-0 text-muted">Session not established with backend.</p>' +
                 '<p class="text-muted small">Visit the panel once to connect, then refresh.</p>' +
@@ -353,7 +361,7 @@
               countBadge.classList.add('bg-warning');
             } else {
               document.getElementById('users-table-body').innerHTML =
-                '<tr><td colspan="6" class="text-center py-4">' +
+                '<tr><td colspan="7" class="text-center py-4">' +
                 '<i class="bi bi-exclamation-triangle-fill text-danger" style="font-size:2rem;"></i>' +
                 '<p class="mt-2 mb-0 text-muted">Backend is offline. Unable to load users.</p>' +
                 '</td></tr>';
