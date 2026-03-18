@@ -1746,7 +1746,10 @@
       }
 
       function fetchCalendarEvents() {
-        fetch('https://panel.meduseld.io/api/calendar/events', { credentials: 'include' })
+        var token = document.cookie.match(/(?:^|;\s*)CF_Authorization=([^;]*)/);
+        var url = 'https://health.meduseld.io/check/calendar';
+        if (token) url += '?cf_token=' + encodeURIComponent(token[1]);
+        fetch(url)
           .then(function (res) {
             return res.json();
           })
@@ -1814,9 +1817,11 @@
       }
 
       function deleteCalendarEvent(id) {
-        fetch('https://panel.meduseld.io/api/calendar/events/' + id, {
+        var token = document.cookie.match(/(?:^|;\s*)CF_Authorization=([^;]*)/);
+        var url = 'https://health.meduseld.io/check/calendar-' + id;
+        if (token) url += '?cf_token=' + encodeURIComponent(token[1]);
+        fetch(url, {
           method: 'DELETE',
-          credentials: 'include',
         })
           .then(function (res) {
             if (!res.ok) throw new Error('Delete failed');
@@ -1850,14 +1855,15 @@
             btn.disabled = true;
             btn.textContent = 'Saving...';
 
-            fetch('https://panel.meduseld.io/api/calendar/events', {
+            fetch('https://health.meduseld.io/check/calendar', {
               method: 'POST',
-              credentials: 'include',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 title: title,
                 event_date: new Date(date).toISOString(),
                 description: desc,
+                _cf_token:
+                  (document.cookie.match(/(?:^|;\s*)CF_Authorization=([^;]*)/) || [])[1] || '',
               }),
             })
               .then(function (res) {
