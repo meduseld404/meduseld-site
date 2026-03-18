@@ -256,7 +256,6 @@ After the first admin is set, subsequent admins can be promoted from the admin p
 - Config: `app/config.py`
 - Database init: `app/database.py`
 - Models: `app/models.py`
-- Logs: `app/logs/webserver.log`
 - Game server: `/srv/games/icarus`
 
 ### Server Directory Structure
@@ -350,10 +349,18 @@ Flask proxy routing (`check_service()` in `webserver.py`): requests to `health.m
 
 When the server "goes offline" after pressing start:
 
-1. Check actual logs on production server: `tail -100 /srv/apps/meduseld/logs/webserver.log`
-2. Check if process is running: `ps aux | grep webserver.py`
-3. Check systemd status: `systemctl status meduseld`
-4. Run manually to see errors: `cd /srv/apps/meduseld && venv/bin/python app/webserver.py`
+1. Check systemd journal (most reliable): `sudo journalctl -u meduseld --no-pager -n 100`
+2. Check production log file: `tail -100 /srv/meduseld/logs/webserver.log`
+3. Check if process is running: `ps aux | grep webserver.py`
+4. Check systemd status: `systemctl status meduseld`
+5. Run manually to see errors: `cd /srv/apps/meduseld && venv/bin/python app/webserver.py`
+
+**Important log paths:**
+
+- Production log file: `/srv/meduseld/logs/webserver.log` (configured in `app/config.py` as `LOG_FILE_PATH`)
+- systemd journal: `sudo journalctl -u meduseld` (captures stdout/stderr, always up to date)
+- Do NOT use `/srv/apps/meduseld/logs/webserver.log` — that path is from local dev sessions and will have stale data
+- To search for specific errors: `sudo journalctl -u meduseld --no-pager -n 200 | grep -i "error\|calendar\|failed"`
 
 ## API Endpoints (panel.meduseld.io)
 
