@@ -248,12 +248,26 @@
           return;
         }
 
+        // Sort: admins first, then alphabetically by display name
+        users.sort(function (a, b) {
+          if (a.role === 'admin' && b.role !== 'admin') return -1;
+          if (a.role !== 'admin' && b.role === 'admin') return 1;
+          var nameA = (a.display_name || a.username || '').toLowerCase();
+          var nameB = (b.display_name || b.username || '').toLowerCase();
+          return nameA.localeCompare(nameB);
+        });
+
         tbody.innerHTML = users
           .map(function (u) {
             var isSelf = u.discord_id === currentUserId;
-            var avatarHtml = u.avatar_url
-              ? '<img src="' + u.avatar_url + '" class="user-avatar me-2" alt="">'
-              : '<i class="bi bi-person-circle me-2" style="font-size:1.5rem;color:#e6c65c;"></i>';
+            // Use Discord's default avatar for users without a custom one
+            var avatarSrc = u.avatar_url;
+            if (!avatarSrc) {
+              var idNum = parseInt(u.discord_id, 10);
+              var defaultIndex = isNaN(idNum) ? 0 : (idNum >>> 22) % 6;
+              avatarSrc = 'https://cdn.discordapp.com/embed/avatars/' + defaultIndex + '.png';
+            }
+            var avatarHtml = '<img src="' + avatarSrc + '" class="user-avatar me-2" alt="">';
 
             var roleBadge =
               u.role === 'admin'
