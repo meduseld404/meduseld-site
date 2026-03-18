@@ -1,7 +1,7 @@
 # Meduseld Site
 
 <div align="center">
-  <img src="static/logo.png" alt="Meduseld" width="150">
+  <img src="static/meduseldminimal.png" alt="Meduseld" width="150">
 </div>
 
 Static frontend pages for the Meduseld server management platform. Served via Cloudflare Pages.
