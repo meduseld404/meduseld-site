@@ -178,45 +178,45 @@ window.MeduseldAuth = (function () {
     var avatarHtml = _user.avatar_url
       ? '<img src="' +
         _user.avatar_url +
-        '" alt="Avatar" style="width:36px;height:36px;border-radius:50%;border:2px solid #e6c65c;">'
-      : '<i class="bi bi-person-circle" style="font-size:1.8rem;color:#e6c65c;"></i>';
+        '" alt="Avatar" style="width:42px;height:42px;border-radius:50%;border:2px solid #e6c65c;">'
+      : '<i class="bi bi-person-circle" style="font-size:2.1rem;color:#e6c65c;"></i>';
 
     var roleBadge = '';
     if (_user.role === 'admin') {
       roleBadge =
-        ' <span class="badge" style="font-size:0.6rem;background:#e6c65c;color:#0b1f14;vertical-align:middle;">Admin</span>';
+        ' <span class="badge" style="font-size:0.65rem;background:#e6c65c;color:#0b1f14;vertical-align:middle;">Admin</span>';
     }
 
     container.innerHTML =
       '<div class="d-flex align-items-center gap-2" style="cursor:pointer;" id="profile-toggle">' +
       avatarHtml +
-      '<span class="d-none d-md-inline text-light" style="font-size:0.85rem;">' +
+      '<span class="d-none d-md-inline text-light" style="font-size:0.95rem;">' +
       (_user.display_name || _user.username) +
       roleBadge +
       '</span>' +
-      '<i class="bi bi-chevron-down text-light d-none d-md-inline" style="font-size:0.7rem;"></i>' +
+      '<i class="bi bi-chevron-down text-light d-none d-md-inline" style="font-size:0.75rem;"></i>' +
       '</div>' +
       '<div id="profile-dropdown" class="position-absolute end-0 mt-2 py-2 rounded shadow-lg" ' +
-      'style="display:none;min-width:200px;background:#1a1a2e;border:1px solid rgba(230,198,92,0.3);z-index:1050;">' +
+      'style="display:none;min-width:220px;background:#1a1a2e;border:1px solid rgba(230,198,92,0.3);z-index:1050;">' +
       '<div class="px-3 py-2 border-bottom" style="border-color:rgba(230,198,92,0.2)!important;">' +
-      '<div class="text-light" style="font-size:0.85rem;font-weight:600;">' +
+      '<div class="text-light" style="font-size:0.9rem;font-weight:600;">' +
       (_user.display_name || _user.username) +
       '</div>' +
-      '<div style="font-size:0.75rem;color:#a0a0b8;">@' +
+      '<div style="font-size:0.8rem;color:#a0a0b8;">@' +
       _user.username +
       '</div>' +
       '</div>' +
       '<div class="px-3 py-2">' +
-      '<div style="font-size:0.75rem;color:#a0a0b8;">Role: ' +
+      '<div style="font-size:0.8rem;color:#a0a0b8;">Role: ' +
       (_user.role || 'user') +
       '</div>' +
       '</div>' +
       (_user.role === 'admin'
-        ? '<a href="https://admin.meduseld.io" class="d-block px-3 py-2 text-decoration-none border-top" style="border-color:rgba(230,198,92,0.2)!important;font-size:0.8rem;color:#e6c65c;">' +
+        ? '<a href="https://admin.meduseld.io" class="d-block px-3 py-2 text-decoration-none border-top" style="border-color:rgba(230,198,92,0.2)!important;font-size:0.85rem;color:#e6c65c;">' +
           '<i class="bi bi-people-fill me-1"></i>Admin Panel</a>'
         : '') +
       '<div class="px-3 py-2 border-top" style="border-color:rgba(230,198,92,0.2)!important;">' +
-      '<a href="/cdn-cgi/access/logout" class="text-danger text-decoration-none" style="font-size:0.8rem;">' +
+      '<a href="/cdn-cgi/access/logout" class="text-danger text-decoration-none" style="font-size:0.85rem;">' +
       '<i class="bi bi-box-arrow-right me-1"></i>Logout</a>' +
       '</div>' +
       '</div>';
