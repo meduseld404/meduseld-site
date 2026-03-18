@@ -178,8 +178,8 @@ window.MeduseldAuth = (function () {
     var avatarHtml = _user.avatar_url
       ? '<img src="' +
         _user.avatar_url +
-        '" alt="Avatar" style="width:36px;height:36px;border-radius:50%;border:2px solid #e6c65c;">'
-      : '<i class="bi bi-person-circle" style="font-size:1.8rem;color:#e6c65c;"></i>';
+        '" alt="Avatar" style="width:36px;height:36px;min-width:36px;flex-shrink:0;border-radius:50%;border:2px solid #e6c65c;">'
+      : '<i class="bi bi-person-circle" style="font-size:1.8rem;min-width:36px;flex-shrink:0;color:#e6c65c;"></i>';
 
     var roleBadge = '';
     if (_user.role === 'admin') {
@@ -197,7 +197,7 @@ window.MeduseldAuth = (function () {
       '<i class="bi bi-chevron-down text-light d-none d-md-inline" style="font-size:0.75rem;"></i>' +
       '</div>' +
       '<div id="profile-dropdown" class="position-absolute end-0 mt-2 py-2 rounded shadow-lg" ' +
-      'style="display:none;min-width:220px;background:#1a1a2e;border:1px solid rgba(230,198,92,0.3);z-index:1050;">' +
+      'style="display:none;width:220px;min-width:220px;white-space:nowrap;background:#1a1a2e;border:1px solid rgba(230,198,92,0.3);z-index:1050;">' +
       '<div class="px-3 py-2 border-bottom" style="border-color:rgba(230,198,92,0.2)!important;">' +
       '<div class="text-light" style="font-size:0.9rem;font-weight:600;">' +
       (_user.display_name || _user.username) +
@@ -222,6 +222,7 @@ window.MeduseldAuth = (function () {
       '</div>';
 
     container.style.display = 'block';
+    container.style.position = container.style.position || 'relative';
 
     var toggle = document.getElementById('profile-toggle');
     var dropdown = document.getElementById('profile-dropdown');

@@ -1741,16 +1741,21 @@
     <!-- Calendar Widget Script -->
     <script>
       var calendarIsAdmin = typeof MeduseldAuth !== 'undefined' && MeduseldAuth.hasRole('admin');
+      var calendarUser = typeof MeduseldAuth !== 'undefined' ? MeduseldAuth.getUser() : null;
 
       if (calendarIsAdmin) {
         var addBtn = document.getElementById('add-event-btn');
         if (addBtn) addBtn.style.display = '';
       }
 
+      function getCfToken() {
+        return (document.cookie.match(/(?:^|;\s*)CF_Authorization=([^;]*)/) || [])[1] || '';
+      }
+
       function fetchCalendarEvents() {
-        var token = document.cookie.match(/(?:^|;\s*)CF_Authorization=([^;]*)/);
+        var token = getCfToken();
         var url = 'https://health.meduseld.io/check/calendar';
-        if (token) url += '?cf_token=' + encodeURIComponent(token[1]);
+        if (token) url += '?cf_token=' + encodeURIComponent(token);
         fetch(url)
           .then(function (res) {
             if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -1773,8 +1778,59 @@
                   ev.id +
                   '" title="Delete" style="font-size:0.7rem;line-height:1;"><i class="bi bi-x-circle"></i></button>'
                 : '';
+
+              // RSVP counts
+              var rsvps = ev.rsvps || [];
+              var goingCount = rsvps.filter(function (r) {
+                return r.status === 'going';
+              }).length;
+              var maybeCount = rsvps.filter(function (r) {
+                return r.status === 'maybe';
+              }).length;
+              var notGoingCount = rsvps.filter(function (r) {
+                return r.status === 'not_going';
+              }).length;
+
+              // Current user's RSVP
+              var myRsvp = null;
+              if (calendarUser) {
+                for (var i = 0; i < rsvps.length; i++) {
+                  if (rsvps[i].discord_id === calendarUser.discord_id) {
+                    myRsvp = rsvps[i].status;
+                    break;
+                  }
+                }
+              }
+
+              // Build RSVP tooltip lists
+              var goingNames = rsvps
+                .filter(function (r) {
+                  return r.status === 'going';
+                })
+                .map(function (r) {
+                  return r.display_name;
+                })
+                .join(', ');
+              var maybeNames = rsvps
+                .filter(function (r) {
+                  return r.status === 'maybe';
+                })
+                .map(function (r) {
+                  return r.display_name;
+                })
+                .join(', ');
+              var notGoingNames = rsvps
+                .filter(function (r) {
+                  return r.status === 'not_going';
+                })
+                .map(function (r) {
+                  return r.display_name;
+                })
+                .join(', ');
+
               html +=
-                '<div class="d-flex justify-content-between align-items-start mb-2 pb-2" style="border-bottom:1px solid rgba(255,255,255,0.05);">';
+                '<div class="mb-2 pb-2" style="border-bottom:1px solid rgba(255,255,255,0.05);">';
+              html += '<div class="d-flex justify-content-between align-items-start">';
               html += '<div style="min-width:0;flex:1;">';
               html +=
                 '<div class="text-light small fw-semibold" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="' +
@@ -1799,16 +1855,71 @@
                 timeStr +
                 '</span></div>';
               html += '</div>';
+
+              // RSVP buttons row
+              html += '<div class="d-flex gap-1 mt-1">';
+              html +=
+                '<button class="btn btn-sm rsvp-btn px-1 py-0' +
+                (myRsvp === 'going' ? ' active' : '') +
+                '" data-event="' +
+                ev.id +
+                '" data-status="going" style="font-size:0.65rem;border:1px solid ' +
+                (myRsvp === 'going' ? '#198754' : 'rgba(255,255,255,0.15)') +
+                ';color:' +
+                (myRsvp === 'going' ? '#198754' : 'rgba(255,255,255,0.5)') +
+                ';border-radius:3px;"' +
+                (goingNames ? ' title="' + escapeAttr(goingNames) + '"' : '') +
+                '>✓ ' +
+                goingCount +
+                '</button>';
+              html +=
+                '<button class="btn btn-sm rsvp-btn px-1 py-0' +
+                (myRsvp === 'maybe' ? ' active' : '') +
+                '" data-event="' +
+                ev.id +
+                '" data-status="maybe" style="font-size:0.65rem;border:1px solid ' +
+                (myRsvp === 'maybe' ? '#e6c65c' : 'rgba(255,255,255,0.15)') +
+                ';color:' +
+                (myRsvp === 'maybe' ? '#e6c65c' : 'rgba(255,255,255,0.5)') +
+                ';border-radius:3px;"' +
+                (maybeNames ? ' title="' + escapeAttr(maybeNames) + '"' : '') +
+                '>? ' +
+                maybeCount +
+                '</button>';
+              html +=
+                '<button class="btn btn-sm rsvp-btn px-1 py-0' +
+                (myRsvp === 'not_going' ? ' active' : '') +
+                '" data-event="' +
+                ev.id +
+                '" data-status="not_going" style="font-size:0.65rem;border:1px solid ' +
+                (myRsvp === 'not_going' ? '#dc3545' : 'rgba(255,255,255,0.15)') +
+                ';color:' +
+                (myRsvp === 'not_going' ? '#dc3545' : 'rgba(255,255,255,0.5)') +
+                ';border-radius:3px;"' +
+                (notGoingNames ? ' title="' + escapeAttr(notGoingNames) + '"' : '') +
+                '>✗ ' +
+                notGoingCount +
+                '</button>';
+              html += '</div>';
+
+              html += '</div>';
             });
             list.innerHTML = html;
 
-            // Re-init tooltips on dynamically rendered calendar events
             if (typeof MeduseldTooltips !== 'undefined') MeduseldTooltips.refresh(list);
 
             list.querySelectorAll('.calendar-delete-btn').forEach(function (btn) {
               btn.addEventListener('click', function () {
                 var eventId = this.getAttribute('data-id');
                 if (confirm('Delete this event?')) deleteCalendarEvent(eventId);
+              });
+            });
+
+            list.querySelectorAll('.rsvp-btn').forEach(function (btn) {
+              btn.addEventListener('click', function () {
+                var eventId = this.getAttribute('data-event');
+                var status = this.getAttribute('data-status');
+                submitRSVP(eventId, status);
               });
             });
           })
@@ -1819,10 +1930,26 @@
           });
       }
 
+      function submitRSVP(eventId, status) {
+        var token = getCfToken();
+        fetch('https://health.meduseld.io/check/calendar-' + eventId, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: status, _cf_token: token }),
+        })
+          .then(function (res) {
+            if (!res.ok) throw new Error('RSVP failed: HTTP ' + res.status);
+            fetchCalendarEvents();
+          })
+          .catch(function (err) {
+            console.error('Failed to submit RSVP:', err);
+          });
+      }
+
       function deleteCalendarEvent(id) {
-        var token = document.cookie.match(/(?:^|;\s*)CF_Authorization=([^;]*)/);
+        var token = getCfToken();
         var url = 'https://health.meduseld.io/check/calendar-' + id;
-        if (token) url += '?cf_token=' + encodeURIComponent(token[1]);
+        if (token) url += '?cf_token=' + encodeURIComponent(token);
         fetch(url, {
           method: 'DELETE',
         })
@@ -1865,8 +1992,7 @@
                 title: title,
                 event_date: new Date(date).toISOString(),
                 description: desc,
-                _cf_token:
-                  (document.cookie.match(/(?:^|;\s*)CF_Authorization=([^;]*)/) || [])[1] || '',
+                _cf_token: getCfToken(),
               }),
             })
               .then(function (res) {
