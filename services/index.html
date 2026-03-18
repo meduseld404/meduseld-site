@@ -1802,48 +1802,18 @@
                 }
               }
 
-              // Build RSVP tooltip lists
-              var goingNames = rsvps
-                .filter(function (r) {
-                  return r.status === 'going';
-                })
-                .map(function (r) {
-                  return r.display_name;
-                })
-                .join(', ');
-              var maybeNames = rsvps
-                .filter(function (r) {
-                  return r.status === 'maybe';
-                })
-                .map(function (r) {
-                  return r.display_name;
-                })
-                .join(', ');
-              var notGoingNames = rsvps
-                .filter(function (r) {
-                  return r.status === 'not_going';
-                })
-                .map(function (r) {
-                  return r.display_name;
-                })
-                .join(', ');
-
               html +=
                 '<div class="mb-2 pb-2" style="border-bottom:1px solid rgba(255,255,255,0.05);">';
               html += '<div class="d-flex justify-content-between align-items-start">';
               html += '<div style="min-width:0;flex:1;">';
               html +=
-                '<div class="text-light small fw-semibold" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="' +
-                escapeAttr(ev.title) +
-                '">' +
+                '<div class="text-light small fw-semibold" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' +
                 escapeHtml(ev.title) +
                 deleteBtn +
                 '</div>';
               if (ev.description) {
                 html +=
-                  '<div class="text-muted" style="font-size:0.75rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="' +
-                  escapeAttr(ev.description) +
-                  '">' +
+                  '<div class="text-muted" style="font-size:0.75rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' +
                   escapeHtml(ev.description) +
                   '</div>';
               }
@@ -1867,9 +1837,7 @@
                 (myRsvp === 'going' ? '#198754' : 'rgba(255,255,255,0.15)') +
                 ';color:' +
                 (myRsvp === 'going' ? '#198754' : 'rgba(255,255,255,0.5)') +
-                ';border-radius:3px;"' +
-                (goingNames ? ' title="' + escapeAttr(goingNames) + '"' : '') +
-                '>✓ ' +
+                ';border-radius:3px;">✓ ' +
                 goingCount +
                 '</button>';
               html +=
@@ -1881,9 +1849,7 @@
                 (myRsvp === 'maybe' ? '#e6c65c' : 'rgba(255,255,255,0.15)') +
                 ';color:' +
                 (myRsvp === 'maybe' ? '#e6c65c' : 'rgba(255,255,255,0.5)') +
-                ';border-radius:3px;"' +
-                (maybeNames ? ' title="' + escapeAttr(maybeNames) + '"' : '') +
-                '>? ' +
+                ';border-radius:3px;">? ' +
                 maybeCount +
                 '</button>';
               html +=
@@ -1895,9 +1861,7 @@
                 (myRsvp === 'not_going' ? '#dc3545' : 'rgba(255,255,255,0.15)') +
                 ';color:' +
                 (myRsvp === 'not_going' ? '#dc3545' : 'rgba(255,255,255,0.5)') +
-                ';border-radius:3px;"' +
-                (notGoingNames ? ' title="' + escapeAttr(notGoingNames) + '"' : '') +
-                '>✗ ' +
+                ';border-radius:3px;">✗ ' +
                 notGoingCount +
                 '</button>';
               html += '</div>';
@@ -1905,8 +1869,6 @@
               html += '</div>';
             });
             list.innerHTML = html;
-
-            if (typeof MeduseldTooltips !== 'undefined') MeduseldTooltips.refresh(list);
 
             list.querySelectorAll('.calendar-delete-btn').forEach(function (btn) {
               btn.addEventListener('click', function () {
@@ -1960,14 +1922,6 @@
           .catch(function (err) {
             console.error('Failed to delete calendar event:', err);
           });
-      }
-
-      function escapeAttr(str) {
-        return str
-          .replace(/&/g, '&amp;')
-          .replace(/"/g, '&quot;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;');
       }
 
       // Defer binding until the modal HTML is parsed (script runs before the modal element)
