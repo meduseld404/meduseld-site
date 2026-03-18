@@ -30,3 +30,7 @@ except Exception:
 except Exception as e:
     logger.error("Description of what failed: %s", e)
 ```
+
+## Tooltips
+
+Always use Bootstrap tooltips (`data-bs-toggle="tooltip"` + `data-bs-title="..."`) instead of native HTML `title` attributes. Initialize with `new bootstrap.Tooltip(el)` after dynamically rendering elements. Dispose existing tooltips before re-rendering to prevent memory leaks.

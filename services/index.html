@@ -1861,7 +1861,7 @@
                 (myRsvp === 'going' ? ' active' : '') +
                 '" data-event="' +
                 ev.id +
-                '" data-status="going" title="' +
+                '" data-status="going" data-bs-toggle="tooltip" data-bs-title="' +
                 escapeHtml(goingTooltip) +
                 '" style="font-size:0.65rem;border:1px solid ' +
                 (myRsvp === 'going' ? '#198754' : 'rgba(255,255,255,0.15)') +
@@ -1875,7 +1875,7 @@
                 (myRsvp === 'maybe' ? ' active' : '') +
                 '" data-event="' +
                 ev.id +
-                '" data-status="maybe" title="' +
+                '" data-status="maybe" data-bs-toggle="tooltip" data-bs-title="' +
                 escapeHtml(maybeTooltip) +
                 '" style="font-size:0.65rem;border:1px solid ' +
                 (myRsvp === 'maybe' ? '#e6c65c' : 'rgba(255,255,255,0.15)') +
@@ -1889,7 +1889,7 @@
                 (myRsvp === 'not_going' ? ' active' : '') +
                 '" data-event="' +
                 ev.id +
-                '" data-status="not_going" title="' +
+                '" data-status="not_going" data-bs-toggle="tooltip" data-bs-title="' +
                 escapeHtml(notGoingTooltip) +
                 '" style="font-size:0.65rem;border:1px solid ' +
                 (myRsvp === 'not_going' ? '#dc3545' : 'rgba(255,255,255,0.15)') +
@@ -1902,6 +1902,12 @@
 
               html += '</div>';
             });
+            // Dispose existing Bootstrap tooltips before re-rendering
+            list.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
+              var tip = bootstrap.Tooltip.getInstance(el);
+              if (tip) tip.dispose();
+            });
+
             list.innerHTML = html;
 
             list.querySelectorAll('.calendar-delete-btn').forEach(function (btn) {
@@ -1917,6 +1923,11 @@
                 var status = this.getAttribute('data-status');
                 submitRSVP(eventId, status);
               });
+            });
+
+            // Initialize Bootstrap tooltips on RSVP buttons
+            list.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
+              new bootstrap.Tooltip(el);
             });
           })
           .catch(function (err) {

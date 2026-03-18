@@ -178,7 +178,7 @@ window.MeduseldAuth = (function () {
     var avatarHtml = _user.avatar_url
       ? '<img src="' +
         _user.avatar_url +
-        '" alt="Avatar" style="width:36px;height:36px;min-width:36px;flex-shrink:0;border-radius:50%;border:2px solid #e6c65c;">'
+        '" alt="Avatar" style="width:36px;height:36px;min-width:36px;min-height:36px;flex-shrink:0;border-radius:50%;border:2px solid #e6c65c;">'
       : '<i class="bi bi-person-circle" style="font-size:1.8rem;min-width:36px;flex-shrink:0;color:#e6c65c;"></i>';
 
     var roleBadge = '';
