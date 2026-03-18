@@ -236,6 +236,18 @@ body {
   }
 }
 
+/* Profile widget responsive */
+@media (max-width: 768px) {
+  #profile-container img {
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  #profile-container .bi-person-circle {
+    font-size: 2.2rem !important;
+  }
+}
+
 /* Service cards */
 .service-card {
   cursor: pointer;
