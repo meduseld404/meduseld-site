@@ -1867,7 +1867,11 @@
               }),
             })
               .then(function (res) {
-                if (!res.ok) throw new Error('Create failed');
+                if (!res.ok) {
+                  return res.text().then(function (body) {
+                    throw new Error('HTTP ' + res.status + ': ' + body);
+                  });
+                }
                 bootstrap.Modal.getInstance(document.getElementById('addEventModal')).hide();
                 document.getElementById('event-title').value = '';
                 document.getElementById('event-date').value = '';
@@ -1876,7 +1880,7 @@
               })
               .catch(function (err) {
                 console.error('Failed to create calendar event:', err);
-                alert('Failed to create event.');
+                alert('Failed to create event: ' + err.message);
               })
               .finally(function () {
                 btn.disabled = false;
