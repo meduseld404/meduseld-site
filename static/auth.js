@@ -262,3 +262,31 @@ window.MeduseldAuth = (function () {
     renderProfile: renderProfile,
   };
 })();
+
+// ===== Footer version badge =====
+// Fetches the latest release tag from GitHub and updates the #version-badge link.
+// Detects the repo from the badge's existing href (meduseld-site or meduseld-backend).
+(function () {
+  var badge = document.getElementById('version-badge');
+  if (!badge) return;
+
+  var href = badge.getAttribute('href') || '';
+  var repo = href.indexOf('meduseld-backend') !== -1 ? 'meduseld-backend' : 'meduseld-site';
+  var apiUrl = 'https://api.github.com/repos/meduseld404/' + repo + '/releases/latest';
+
+  fetch(apiUrl)
+    .then(function (res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    })
+    .then(function (data) {
+      if (data.tag_name) {
+        badge.textContent = data.tag_name;
+        badge.href = data.html_url;
+      }
+    })
+    .catch(function (err) {
+      console.error('Failed to fetch latest release version:', err);
+      badge.textContent = 'v?.?.?';
+    });
+})();
