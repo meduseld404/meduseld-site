@@ -1751,6 +1751,7 @@
         if (token) url += '?cf_token=' + encodeURIComponent(token[1]);
         fetch(url)
           .then(function (res) {
+            if (!res.ok) throw new Error('HTTP ' + res.status);
             return res.json();
           })
           .then(function (data) {
