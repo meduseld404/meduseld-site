@@ -1826,14 +1826,44 @@
                 '</span></div>';
               html += '</div>';
 
-              // RSVP buttons row
-              html += '<div class="d-flex gap-1 mt-1">';
+              // RSVP buttons row — build tooltip with voter names
+              var goingNames = rsvps
+                .filter(function (r) {
+                  return r.status === 'going';
+                })
+                .map(function (r) {
+                  return r.display_name || 'Unknown';
+                });
+              var maybeNames = rsvps
+                .filter(function (r) {
+                  return r.status === 'maybe';
+                })
+                .map(function (r) {
+                  return r.display_name || 'Unknown';
+                });
+              var notGoingNames = rsvps
+                .filter(function (r) {
+                  return r.status === 'not_going';
+                })
+                .map(function (r) {
+                  return r.display_name || 'Unknown';
+                });
+
+              var goingTooltip = goingNames.length ? 'Going: ' + goingNames.join(', ') : 'Going';
+              var maybeTooltip = maybeNames.length ? 'Maybe: ' + maybeNames.join(', ') : 'Maybe';
+              var notGoingTooltip = notGoingNames.length
+                ? 'Not Going: ' + notGoingNames.join(', ')
+                : 'Not Going';
+
+              html += '<div class="d-flex gap-1 mt-1 justify-content-center">';
               html +=
                 '<button class="btn btn-sm rsvp-btn px-1 py-0' +
                 (myRsvp === 'going' ? ' active' : '') +
                 '" data-event="' +
                 ev.id +
-                '" data-status="going" style="font-size:0.65rem;border:1px solid ' +
+                '" data-status="going" title="' +
+                escapeHtml(goingTooltip) +
+                '" style="font-size:0.65rem;border:1px solid ' +
                 (myRsvp === 'going' ? '#198754' : 'rgba(255,255,255,0.15)') +
                 ';color:' +
                 (myRsvp === 'going' ? '#198754' : 'rgba(255,255,255,0.5)') +
@@ -1845,7 +1875,9 @@
                 (myRsvp === 'maybe' ? ' active' : '') +
                 '" data-event="' +
                 ev.id +
-                '" data-status="maybe" style="font-size:0.65rem;border:1px solid ' +
+                '" data-status="maybe" title="' +
+                escapeHtml(maybeTooltip) +
+                '" style="font-size:0.65rem;border:1px solid ' +
                 (myRsvp === 'maybe' ? '#e6c65c' : 'rgba(255,255,255,0.15)') +
                 ';color:' +
                 (myRsvp === 'maybe' ? '#e6c65c' : 'rgba(255,255,255,0.5)') +
@@ -1857,7 +1889,9 @@
                 (myRsvp === 'not_going' ? ' active' : '') +
                 '" data-event="' +
                 ev.id +
-                '" data-status="not_going" style="font-size:0.65rem;border:1px solid ' +
+                '" data-status="not_going" title="' +
+                escapeHtml(notGoingTooltip) +
+                '" style="font-size:0.65rem;border:1px solid ' +
                 (myRsvp === 'not_going' ? '#dc3545' : 'rgba(255,255,255,0.15)') +
                 ';color:' +
                 (myRsvp === 'not_going' ? '#dc3545' : 'rgba(255,255,255,0.5)') +
