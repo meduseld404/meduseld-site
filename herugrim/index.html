@@ -16,10 +16,15 @@
         min-height: 100vh;
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        align-items: center;
         margin: 0;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+      .content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
       }
       .logo {
         max-width: 250px;
@@ -39,11 +44,24 @@
         margin-top: 8px;
         opacity: 0;
         animation: fadeIn 1.2s ease 0.5s forwards;
+        text-align: center;
+        max-width: 420px;
       }
-      .btn-github {
+      .actions {
         margin-top: 28px;
         opacity: 0;
         animation: fadeIn 1.2s ease 0.7s forwards;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+      .deploy-btn {
+        opacity: 0;
+        animation: fadeIn 1.2s ease 0.9s forwards;
+      }
+      .deploy-btn img {
+        height: 36px;
       }
       @keyframes fadeIn {
         to {
@@ -53,19 +71,85 @@
     </style>
   </head>
   <body>
-    <img
-      src="https://github.com/user-attachments/assets/a992766f-24d7-4271-88b4-62333265a1bf"
-      alt="Herugrim"
-      class="logo"
-    />
-    <h1 class="title">Herugrim</h1>
-    <p class="subtitle">Discord OIDC Provider for Cloudflare Access</p>
-    <a
-      href="https://github.com/meduseld-io/herugrim"
-      target="_blank"
-      class="btn btn-outline-warning btn-github px-4 py-2"
-    >
-      View on GitHub
-    </a>
+    <div class="content">
+      <img
+        src="https://github.com/user-attachments/assets/a992766f-24d7-4271-88b4-62333265a1bf"
+        alt="Herugrim"
+        class="logo"
+      />
+      <h1 class="title">Herugrim</h1>
+      <p class="subtitle">
+        One-click Discord OIDC provider for Cloudflare Access. Authenticate users with their Discord
+        account — no separate identity service needed.
+      </p>
+      <div class="actions">
+        <a
+          href="https://github.com/meduseld-io/herugrim"
+          target="_blank"
+          class="btn btn-outline-warning px-4 py-2"
+        >
+          View on GitHub
+        </a>
+        <a
+          href="https://deploy.workers.cloudflare.com/?url=https://github.com/meduseld-io/herugrim"
+          target="_blank"
+          class="deploy-btn"
+        >
+          <img
+            src="https://deploy.workers.cloudflare.com/button"
+            alt="Deploy to Cloudflare Workers"
+          />
+        </a>
+      </div>
+    </div>
+
+    <footer class="text-center py-3 mt-auto" style="border-top: 1px solid rgba(230, 198, 92, 0.2)">
+      <p class="text-light mb-0" style="font-size: 0.85rem">
+        &copy;
+        <span id="copyright-year"></span>
+        <a
+          href="https://github.com/meduseld-io"
+          target="_blank"
+          class="text-warning text-decoration-none"
+        >
+          meduseld.io
+        </a>
+      </p>
+      <p class="text-light mb-0" style="font-size: 0.75rem">
+        <a
+          id="version-badge"
+          href="https://github.com/meduseld-io/herugrim/releases"
+          target="_blank"
+          class="text-warning text-decoration-none"
+        >
+          loading...
+        </a>
+      </p>
+    </footer>
+
+    <script>
+      document.getElementById('copyright-year').textContent = new Date().getFullYear();
+
+      (function () {
+        var badge = document.getElementById('version-badge');
+        if (!badge) return;
+        fetch('https://api.github.com/repos/meduseld-io/herugrim/releases/latest')
+          .then(function (res) {
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return res.json();
+          })
+          .then(function (data) {
+            if (data.tag_name) {
+              badge.textContent = data.tag_name;
+              badge.href = data.html_url;
+            }
+          })
+          .catch(function (err) {
+            console.error('Failed to fetch latest Herugrim release version:', err);
+            badge.textContent = 'v0.1.0-alpha';
+            badge.href = 'https://github.com/meduseld-io/herugrim/releases';
+          });
+      })();
+    </script>
   </body>
 </html>
