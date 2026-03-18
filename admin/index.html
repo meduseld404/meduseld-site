@@ -174,20 +174,26 @@
 
       document.getElementById('copyright-year').textContent = new Date().getFullYear();
 
-      // Read CF_Authorization cookie value to send as a header.
-      // Sending it as a cookie with credentials:'include' causes Cloudflare
-      // to intercept the request before it reaches Flask. Sending it as a
-      // custom header avoids that interception entirely.
+      // Read CF_Authorization cookie value to pass as a query parameter.
+      // We can't use credentials:'include' (Cloudflare intercepts the cookie)
+      // and we can't use a custom header (triggers CORS preflight that Cloudflare blocks).
+      // A query parameter avoids both issues — it's a simple GET request.
       function getCFAuthToken() {
         var match = document.cookie.match(/(?:^|;\s*)CF_Authorization=([^;]*)/);
         return match ? match[1] : null;
       }
 
-      function authHeaders(extra) {
-        var headers = extra || {};
+      function authUrl(baseUrl) {
         var token = getCFAuthToken();
-        if (token) headers['X-CF-Authorization'] = token;
-        return headers;
+        if (token) {
+          return (
+            baseUrl +
+            (baseUrl.indexOf('?') >= 0 ? '&' : '?') +
+            'cf_token=' +
+            encodeURIComponent(token)
+          );
+        }
+        return baseUrl;
       }
 
       // Auth gate: admin only — check immediately from JWT identity
@@ -335,9 +341,7 @@
             '<i class="bi bi-arrow-clockwise" style="animation: spin 1s linear infinite;"></i>';
         }
 
-        var headers = authHeaders();
-
-        fetch(API_BASE + '/admin-users', { headers: headers })
+        fetch(authUrl(API_BASE + '/admin-users'))
           .then(function (res) {
             if (!res.ok) {
               throw new Error('HTTP_' + res.status);
@@ -390,9 +394,10 @@
       }
 
       function updateUser(userId, changes) {
+        changes._cf_token = getCFAuthToken();
         fetch(API_BASE + '/admin-users-' + userId, {
           method: 'PUT',
-          headers: authHeaders({ 'Content-Type': 'application/json' }),
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(changes),
         })
           .then(function (res) {
