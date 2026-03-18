@@ -340,30 +340,50 @@
           .catch(function (err) {
             console.error('Failed to fetch users:', err);
             if (err.message === 'AUTH_REDIRECT') {
-              // Cloudflare Access hasn't seen this browser for panel.meduseld.io yet.
-              // Try to silently establish the session via a hidden iframe, then auto-retry.
+              // Cloudflare Access hasn't established a session for panel.meduseld.io yet.
+              // Use a hidden iframe to trigger a real browser navigation — Cloudflare Access
+              // will see the CF_Authorization cookie (set on .meduseld.io), validate it,
+              // and establish the session. A fetch() won't work because Cloudflare Access
+              // intercepts non-navigational requests differently.
               if (!fetchUsers._retried) {
                 fetchUsers._retried = true;
-                console.log('Session not established, attempting silent connect via iframe...');
+                console.log('Session not established, loading panel in hidden iframe...');
                 var iframe = document.createElement('iframe');
                 iframe.style.display = 'none';
                 iframe.src = 'https://panel.meduseld.io/health';
-                document.body.appendChild(iframe);
-                setTimeout(function () {
-                  iframe.remove();
+                iframe.onload = function () {
+                  console.log('Iframe loaded, retrying fetch...');
+                  // Give Cloudflare Access a moment to finalize the session
+                  setTimeout(function () {
+                    document.body.removeChild(iframe);
+                    fetchUsers();
+                  }, 3000);
+                };
+                iframe.onerror = function () {
+                  console.error('Iframe failed to load panel.meduseld.io/health');
+                  document.body.removeChild(iframe);
                   fetchUsers();
-                }, 3000);
+                };
+                document.body.appendChild(iframe);
+                // Fallback timeout in case onload never fires
+                setTimeout(function () {
+                  if (iframe.parentNode) {
+                    console.log('Iframe timeout, retrying fetch...');
+                    document.body.removeChild(iframe);
+                    fetchUsers();
+                  }
+                }, 8000);
                 return;
               }
-              // Already retried — show manual connect UI
+              // Already retried via iframe — show manual connect UI
               document.getElementById('users-table-body').innerHTML =
                 '<tr><td colspan="7" class="text-center py-4">' +
                 '<i class="bi bi-shield-lock text-warning" style="font-size:2rem;"></i>' +
-                '<p class="mt-2 mb-0 text-muted">Session not established with backend.</p>' +
-                '<p class="text-muted small">Visit the panel once to connect, then refresh.</p>' +
+                '<p class="mt-2 mb-0">Session not established with backend.</p>' +
+                '<p class="small" style="opacity:0.7;">Visit the panel once to connect, then refresh.</p>' +
                 '<a href="https://panel.meduseld.io" target="_blank" class="btn btn-sm btn-outline-warning mt-2">' +
                 '<i class="bi bi-box-arrow-up-right me-1"></i>Open Panel</a>' +
-                ' <button class="btn btn-sm btn-outline-light mt-2 ms-1" onclick="fetchUsers()">' +
+                ' <button class="btn btn-sm btn-outline-light mt-2 ms-1" onclick="fetchUsers._retried=false;fetchUsers();">' +
                 '<i class="bi bi-arrow-clockwise me-1"></i>Retry</button>' +
                 '</td></tr>';
               var countBadge = document.getElementById('user-count');
@@ -374,7 +394,7 @@
               document.getElementById('users-table-body').innerHTML =
                 '<tr><td colspan="7" class="text-center py-4">' +
                 '<i class="bi bi-exclamation-triangle-fill text-danger" style="font-size:2rem;"></i>' +
-                '<p class="mt-2 mb-0 text-muted">Backend is offline. Unable to load users.</p>' +
+                '<p class="mt-2 mb-0">Backend is offline. Unable to load users.</p>' +
                 '</td></tr>';
               var countBadge = document.getElementById('user-count');
               countBadge.textContent = 'Backend Offline';
