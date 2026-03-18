@@ -321,9 +321,6 @@
 
         fetch(API_BASE + '/api/admin/users', { credentials: 'include' })
           .then(function (res) {
-            // Cloudflare Access may return a redirect/HTML page if the browser
-            // hasn't established a session on panel.meduseld.io yet.
-            // Check content-type before parsing JSON.
             var contentType = res.headers.get('content-type') || '';
             if (!contentType.includes('application/json')) {
               throw new Error('AUTH_REDIRECT');
@@ -344,7 +341,21 @@
             console.error('Failed to fetch users:', err);
             if (err.message === 'AUTH_REDIRECT') {
               // Cloudflare Access hasn't seen this browser for panel.meduseld.io yet.
-              // Show a connect button that opens panel in a new tab to establish the session.
+              // Try to silently establish the session via a hidden iframe, then auto-retry.
+              if (!fetchUsers._retried) {
+                fetchUsers._retried = true;
+                console.log('Session not established, attempting silent connect via iframe...');
+                var iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = 'https://panel.meduseld.io/health';
+                document.body.appendChild(iframe);
+                setTimeout(function () {
+                  iframe.remove();
+                  fetchUsers();
+                }, 3000);
+                return;
+              }
+              // Already retried — show manual connect UI
               document.getElementById('users-table-body').innerHTML =
                 '<tr><td colspan="7" class="text-center py-4">' +
                 '<i class="bi bi-shield-lock text-warning" style="font-size:2rem;"></i>' +

@@ -294,3 +294,8 @@ body {
     transform: rotate(360deg);
   }
 }
+
+/* Override Bootstrap text-muted for dark backgrounds */
+.text-muted {
+  color: rgba(255, 255, 255, 0.55) !important;
+}
