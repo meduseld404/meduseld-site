@@ -4,7 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#0a0a0a" />
-    <link rel="icon" type="image/x-icon" href="https://meduseld.io/static/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/herugrim/favicon/favicon-96x96.png" />
+    <link rel="icon" type="image/svg+xml" href="/herugrim/favicon/favicon.svg" />
+    <link rel="shortcut icon" href="/herugrim/favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/herugrim/favicon/apple-touch-icon.png" />
+    <link rel="manifest" href="/herugrim/favicon/site.webmanifest" />
     <title>Herugrim — Discord OIDC for Cloudflare Access</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
@@ -47,21 +51,23 @@
         text-align: center;
         max-width: 420px;
       }
-      .actions {
-        margin-top: 28px;
+      .deploy-btn {
         opacity: 0;
         animation: fadeIn 1.2s ease 0.7s forwards;
+      }
+      .deploy-btn img {
+        height: 42px;
+      }
+      .btn-github {
+        opacity: 0;
+        animation: fadeIn 1.2s ease 0.9s forwards;
+      }
+      .actions {
+        margin-top: 28px;
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 12px;
-      }
-      .deploy-btn {
-        opacity: 0;
-        animation: fadeIn 1.2s ease 0.9s forwards;
-      }
-      .deploy-btn img {
-        height: 36px;
       }
       @keyframes fadeIn {
         to {
@@ -84,13 +90,6 @@
       </p>
       <div class="actions">
         <a
-          href="https://github.com/meduseld-io/herugrim"
-          target="_blank"
-          class="btn btn-outline-warning px-4 py-2"
-        >
-          View on GitHub
-        </a>
-        <a
           href="https://deploy.workers.cloudflare.com/?url=https://github.com/meduseld-io/herugrim"
           target="_blank"
           class="deploy-btn"
@@ -99,6 +98,13 @@
             src="https://deploy.workers.cloudflare.com/button"
             alt="Deploy to Cloudflare Workers"
           />
+        </a>
+        <a
+          href="https://github.com/meduseld-io/herugrim"
+          target="_blank"
+          class="btn btn-outline-warning btn-github px-4 py-2"
+        >
+          View on GitHub
         </a>
       </div>
     </div>
