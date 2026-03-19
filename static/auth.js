@@ -325,3 +325,28 @@ var MeduseldTooltips = (function () {
 
   return { refresh: init };
 })();
+
+// ===== Auto-dismiss tooltips on touch devices =====
+// Bootstrap tooltips don't get a mouseleave on mobile, so they stick.
+// This listens for tooltip show events and auto-hides after 2 seconds on touch.
+(function () {
+  var Tooltip =
+    (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) ||
+    (typeof coreui !== 'undefined' && coreui.Tooltip) ||
+    null;
+  if (!Tooltip) return;
+
+  document.addEventListener('shown.bs.tooltip', function (e) {
+    // Only auto-dismiss on touch-capable devices
+    if (!('ontouchstart' in window)) return;
+    var tip = Tooltip.getInstance(e.target);
+    if (!tip) return;
+    setTimeout(function () {
+      try {
+        tip.hide();
+      } catch (err) {
+        console.error('Failed to auto-hide tooltip:', err);
+      }
+    }, 2000);
+  });
+})();
