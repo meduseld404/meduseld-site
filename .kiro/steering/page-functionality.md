@@ -107,7 +107,7 @@ Admin-only links (hidden for non-admin users):
 - Cloudflare Dashboard → `https://dash.cloudflare.com`
 - Backend Repo → `https://github.com/meduseld404/meduseld`
 - Site Repo → `https://github.com/meduseld404/meduseld-site`
-- Herugrim Repo → same as site repo link (likely needs updating)
+- Herugrim Repo → `https://github.com/meduseld-io/herugrim`
 
 Visible to all users (always shown, displayed below admin links):
 
