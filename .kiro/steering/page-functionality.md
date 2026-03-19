@@ -288,12 +288,13 @@ After any action: polling increases to 1-second intervals for 30 seconds, then r
 - "Clear Logs" button → `POST /api/clear-startup-logs` (with confirmation dialog, archives current logs)
 - Color-coded entries:
   - Green: success messages (✓, "Server started successfully", "Clean shutdown")
-  - Red: errors (ERROR:), crashes, kills, process deaths
+  - Red: errors (ERROR:), crashes, unexpected process deaths
   - Yellow: warnings (WARNING:)
-  - Purple: kill events (SIGKILL, force kill)
-  - Gray: process health checks
-  - Gold: Wine errors (only err: level, warn: and fixme: filtered out)
-- Visual separators for: SERVER START, SERVER STOPPED, PROCESS DIED, SERVER KILLED, SERVER CRASHED
+  - Purple: kill events (User kill, SIGKILL, force kill)
+  - Gold: idle shutdown events, Wine errors (only err: level, warn: and fixme: filtered out)
+  - Gray: process health checks, expected process monitor messages (after user stop/kill/idle shutdown)
+- Visual separators for: SERVER START, SERVER STOP INITIATED, SERVER STOPPED, IDLE SHUTDOWN, SERVER KILLED, SERVER CRASHED, PROCESS DIED UNEXPECTEDLY
+- The stop, kill, and idle shutdown actions write markers to `startup.log` ("User stop:", "User kill:", "Idle shutdown:") so the panel can distinguish intentional shutdowns from unexpected process deaths. When the process monitor detects the server is gone, it checks the preceding log lines for these markers — if found, the event is shown as a quiet gray line; if not, it shows the red "💥 PROCESS DIED UNEXPECTEDLY" separator.
 
 ### CPU & RAM Charts
 
