@@ -195,16 +195,20 @@
               </div>
               <h3 class="card-title mb-3" style="color: #e6c65c">Edoras</h3>
               <div class="mb-2">
-                <span id="jellyfin-status-indicator" class="badge bg-secondary">
-                  <span class="spinner-border spinner-border-sm me-1" role="status"></span>
-                  Checking...
+                <span
+                  id="jellyfin-status-indicator"
+                  class="badge"
+                  style="background-color: #f48120"
+                >
+                  <i class="bi bi-cone-striped me-1"></i>
+                  Under Construction
                 </span>
               </div>
               <p
                 class="card-text flex-grow-1 d-flex align-items-center justify-content-center"
                 id="jellyfin-description"
               >
-                Stream movies, TV shows, and media from our Edoras server.
+                Stream movies, TV shows, and media from our Edoras server. Currently being set up.
               </p>
               <div class="mt-auto">
                 <a
@@ -213,9 +217,9 @@
                   class="btn btn-secondary btn-lg w-100 btn-disabled-link"
                   role="button"
                   style="cursor: not-allowed"
+                  disabled
                 >
-                  <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                  Checking Status...
+                  Under Construction
                 </a>
               </div>
             </div>
@@ -1104,14 +1108,16 @@
             services.panel || { status: 'error', color: 'red', message: 'Unknown' }
           );
           updateSSHStatus(services.ssh || { status: 'error', color: 'red', message: 'Unknown' });
-          updateJellyfinStatus(
-            services.jellyfin || { status: 'error', color: 'red', message: 'Unknown' }
-          );
+          // Edoras health check disabled while under construction — keep the logic for when the service is ready
+          // updateJellyfinStatus(
+          //   services.jellyfin || { status: 'error', color: 'red', message: 'Unknown' }
+          // );
         } catch (error) {
           console.error('Health check failed:', error);
           updatePanelStatus({ status: 'error', color: 'red', message: 'Health check failed' });
           updateSSHStatus({ status: 'error', color: 'red', message: 'Health check failed' });
-          updateJellyfinStatus({ status: 'error', color: 'red', message: 'Health check failed' });
+          // Edoras health check disabled while under construction
+          // updateJellyfinStatus({ status: 'error', color: 'red', message: 'Health check failed' });
         }
       }
       function updatePanelStatus(data) {
