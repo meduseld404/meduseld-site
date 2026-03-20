@@ -332,94 +332,7 @@
             </div>
           </div>
         </div>
-        <!-- SSH Access -->
-        <div class="col-md-6 col-lg-4" id="ssh-card" style="display: none">
-          <div
-            class="card h-100 text-white bg-dark border-warning service-card"
-            style="position: relative"
-          >
-            <span
-              class="badge"
-              style="
-                font-size: 0.6rem;
-                background: #e6c65c;
-                color: #0b1f14;
-                position: absolute;
-                top: 10px;
-                left: 10px;
-                z-index: 1;
-              "
-            >
-              Admin
-            </span>
-            <div class="card-body d-flex flex-column text-center p-4">
-              <div class="mb-3">
-                <i class="bi bi-terminal" style="font-size: 3rem; color: #e6c65c"></i>
-              </div>
-              <h3 class="card-title mb-3" style="color: #e6c65c">SSH Access</h3>
-              <div class="mb-2">
-                <span id="ssh-status-indicator" class="badge bg-secondary">
-                  <span class="spinner-border spinner-border-sm me-1" role="status"></span>
-                  Checking...
-                </span>
-              </div>
-              <p class="card-text flex-grow-1 d-flex align-items-center justify-content-center">
-                Secure shell access to the server. Connect via web terminal.
-              </p>
-              <div class="mt-auto">
-                <a
-                  id="ssh-button"
-                  href="https://ssh.meduseld.io"
-                  class="btn btn-secondary btn-lg w-100"
-                  disabled
-                >
-                  <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                  Checking Status...
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- System Monitor -->
-        <div class="col-md-6 col-lg-4" id="system-monitor-card" style="display: none">
-          <div
-            class="card h-100 text-white bg-dark border-warning service-card"
-            style="position: relative"
-          >
-            <span
-              class="badge"
-              style="
-                font-size: 0.6rem;
-                background: #e6c65c;
-                color: #0b1f14;
-                position: absolute;
-                top: 10px;
-                left: 10px;
-                z-index: 1;
-              "
-            >
-              Admin
-            </span>
-            <div class="card-body d-flex flex-column text-center p-4">
-              <div class="mb-3">
-                <i class="bi bi-hdd-rack" style="font-size: 3rem; color: #e6c65c"></i>
-              </div>
-              <h3 class="card-title mb-3" style="color: #e6c65c">System Monitor</h3>
-              <div class="mb-2">
-                <span class="badge bg-success">
-                  <i class="bi bi-circle-fill text-success status-online me-1"></i>
-                  Online
-                </span>
-              </div>
-              <p class="card-text flex-grow-1 d-flex align-items-center justify-content-center">
-                View server logs, system diagnostics, and monitor server health.
-              </p>
-              <a href="https://system.meduseld.io" class="btn btn-warning btn-lg">
-                Open System Monitor
-              </a>
-            </div>
-          </div>
-        </div>
+
         <div class="col-md-6 col-lg-4">
           <div class="card h-100 text-white bg-dark border-secondary disabled-card">
             <div class="card-body d-flex flex-column text-center p-4">
@@ -986,8 +899,6 @@
         gameName: 'Icarus',
         gameAppId: '1149460',
         panelUrl: 'https://panel.meduseld.io',
-        sshUrl: 'https://ssh.meduseld.io',
-        terminalUrl: 'https://terminal.meduseld.io',
         wikiUrl: 'https://wiki.meduseld.io',
         jellyfinUrl: 'https://jellyfin.meduseld.io',
         healthApiUrl: 'https://meduseld-health.404-41f.workers.dev',
@@ -1082,10 +993,6 @@
 
       function showAdminCards() {
         if (typeof MeduseldAuth !== 'undefined' && MeduseldAuth.hasRole('admin')) {
-          var sshCard = document.getElementById('ssh-card');
-          var sysCard = document.getElementById('system-monitor-card');
-          if (sshCard) sshCard.style.display = '';
-          if (sysCard) sysCard.style.display = '';
           document.querySelectorAll('.admin-quick-link').forEach(function (link) {
             link.style.display = '';
           });
@@ -1120,7 +1027,7 @@
           updatePanelStatus(
             services.panel || { status: 'error', color: 'red', message: 'Unknown' }
           );
-          updateSSHStatus(services.ssh || { status: 'error', color: 'red', message: 'Unknown' });
+
           // Edoras health check disabled while under construction — keep the logic for when the service is ready
           // updateJellyfinStatus(
           //   services.jellyfin || { status: 'error', color: 'red', message: 'Unknown' }
@@ -1128,7 +1035,7 @@
         } catch (error) {
           console.error('Health check failed:', error);
           updatePanelStatus({ status: 'error', color: 'red', message: 'Health check failed' });
-          updateSSHStatus({ status: 'error', color: 'red', message: 'Health check failed' });
+
           // Edoras health check disabled while under construction
           // updateJellyfinStatus({ status: 'error', color: 'red', message: 'Health check failed' });
         }
@@ -1196,65 +1103,6 @@
           indicator.style.backgroundColor = '';
           document.getElementById('game-description').textContent =
             'Use the Discord button on this page to report a problem to the server channel.';
-        }
-      }
-      function updateSSHStatus(data) {
-        const button = document.getElementById('ssh-button');
-        const indicator = document.getElementById('ssh-status-indicator');
-        if (data.color === 'green') {
-          button.innerHTML = 'Open SSH Terminal';
-          button.classList.remove('btn-secondary', 'btn-danger', 'btn-disabled-link', 'bg-warning');
-          button.classList.add('btn-warning');
-          button.removeAttribute('disabled');
-          button.href = CONFIG.sshUrl;
-          button.onclick = null;
-          button.style.cursor = '';
-          button.style.backgroundColor = '';
-          button.style.color = '';
-          indicator.innerHTML =
-            '<i class="bi bi-circle-fill text-success status-online me-1"></i>Online';
-          indicator.classList.remove('bg-secondary', 'bg-danger', 'bg-warning');
-          indicator.classList.add('bg-success');
-          indicator.style.backgroundColor = '';
-        } else if (data.color === 'orange') {
-          button.innerHTML = 'Cloudflare Tunnel Down';
-          button.classList.remove(
-            'btn-secondary',
-            'btn-danger',
-            'btn-warning',
-            'btn-disabled-link'
-          );
-          button.classList.add('btn-disabled-link');
-          button.setAttribute('disabled', 'true');
-          button.href = '#';
-          button.style.backgroundColor = '#f48120';
-          button.style.color = '#fff';
-          button.style.cursor = 'not-allowed';
-          button.onclick = function (e) {
-            e.preventDefault();
-            return false;
-          };
-          indicator.innerHTML =
-            '<i class="bi bi-cloud-slash me-1" style="color:#9ca3af;"></i>Cloudflare Offline';
-          indicator.classList.remove('bg-secondary', 'bg-danger', 'bg-success', 'bg-warning');
-          indicator.style.backgroundColor = '#f48120';
-        } else {
-          button.innerHTML = 'Terminal Offline';
-          button.classList.remove('btn-secondary', 'btn-warning', 'bg-warning');
-          button.classList.add('btn-danger', 'btn-disabled-link');
-          button.setAttribute('disabled', 'true');
-          button.href = '#';
-          button.style.backgroundColor = '';
-          button.style.color = '';
-          button.style.cursor = 'not-allowed';
-          button.onclick = function (e) {
-            e.preventDefault();
-            return false;
-          };
-          indicator.innerHTML = '<i class="bi bi-circle-fill text-danger me-1"></i>Offline';
-          indicator.classList.remove('bg-secondary', 'bg-success', 'bg-warning');
-          indicator.classList.add('bg-danger');
-          indicator.style.backgroundColor = '';
         }
       }
       function updateJellyfinStatus(data) {
