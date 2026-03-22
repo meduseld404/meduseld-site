@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ExSpire</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --bg: #0f1117;
+        --surface: #1a1d27;
+        --surface-hover: #222632;
+        --border: #2a2e3a;
+        --text: #e4e4e7;
+        --text-muted: #8b8d97;
+        --accent: #6366f1;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --success: #22c55e;
+        --radius: 8px;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.5;
+        min-height: 100vh;
+      }
+      .app-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+      }
+      .app-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+      .app-logo-group {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+      .app-logo {
+        height: 40px;
+        width: auto;
+      }
+      .app-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+      .tower {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+      }
+      .tower-row {
+        transition: width 0.3s ease;
+      }
+      .tower-block {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--accent);
+        border-radius: var(--radius);
+        padding: 0.65rem 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background 0.15s;
+      }
+      .tower-block:hover {
+        background: var(--surface-hover);
+      }
+      .tower-block--expired {
+        opacity: 0.5;
+      }
+      .tower-block-left {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+        min-width: 0;
+        overflow: hidden;
+      }
+      .tower-block-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .tower-block-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .tower-block-category {
+        font-size: 0.65rem;
+        padding: 0.05rem 0.45rem;
+        border-radius: 999px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        font-weight: 600;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .tower-block-meta {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .tower-block-right {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-shrink: 0;
+        margin-left: 0.75rem;
+      }
+      .tower-block-urgency {
+        font-weight: 700;
+        font-size: 0.85rem;
+        white-space: nowrap;
+      }
+      .tower-btn {
+        background: transparent;
+        color: var(--text-muted);
+        padding: 0.2rem 0.4rem;
+        font-size: 0.8rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .tower-btn:hover {
+        background: var(--surface-hover);
+      }
+      .tower-btn--danger {
+        color: var(--danger);
+      }
+      .tower-btn--danger:hover {
+        background: rgba(239, 68, 68, 0.1);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <header class="app-header">
+        <div class="app-logo-group">
+          <img src="/static/exspire-logo.png" alt="ExSpire" class="app-logo" />
+          <span class="app-title">ExSpire</span>
+        </div>
+      </header>
+      <div class="tower" id="tower"></div>
+    </div>
+    <script>
+      const items = [
+        { name: 'Old Passport', category: 'document', expiry_date: '2026-02-28' },
+        { name: 'Disney+', category: 'subscription', expiry_date: '2026-03-15' },
+        { name: 'YouTube Premium', category: 'subscription', expiry_date: '2026-03-22' },
+        { name: 'Parking Permit', category: 'document', expiry_date: '2026-03-23' },
+        { name: 'Car Insurance', category: 'insurance', expiry_date: '2026-03-25' },
+        { name: 'NordVPN', category: 'subscription', expiry_date: '2026-03-26' },
+        { name: 'Car Registration', category: 'document', expiry_date: '2026-03-27' },
+        { name: 'Spotify', category: 'subscription', expiry_date: '2026-03-29' },
+        { name: 'Costco Membership', category: 'membership', expiry_date: '2026-04-01' },
+        { name: 'Passport', category: 'document', expiry_date: '2026-04-02' },
+        { name: 'AWS Domain', category: 'domain', expiry_date: '2026-04-05' },
+        { name: 'Gym Pass', category: 'membership', expiry_date: '2026-04-20' },
+        { name: 'Renters Insurance', category: 'insurance', expiry_date: '2026-04-30' },
+        { name: 'Adobe Creative Cloud', category: 'subscription', expiry_date: '2026-05-01' },
+        { name: 'Gym Membership', category: 'membership', expiry_date: '2026-05-15' },
+        { name: 'Health Insurance', category: 'insurance', expiry_date: '2026-05-15' },
+        { name: 'SSL Certificate', category: 'license', expiry_date: '2026-06-15' },
+        { name: 'quietarcade.com', category: 'domain', expiry_date: '2026-07-22' },
+        { name: 'JetBrains License', category: 'license', expiry_date: '2026-08-10' },
+        { name: 'Washer Warranty', category: 'warranty', expiry_date: '2026-09-01' },
+        { name: 'meduseld.io', category: 'domain', expiry_date: '2026-09-12' },
+        { name: 'Drivers License', category: 'document', expiry_date: '2026-11-15' },
+        { name: 'Laptop Warranty', category: 'warranty', expiry_date: '2027-01-20' },
+        { name: 'AAA Membership', category: 'membership', expiry_date: '2027-03-10' },
+        { name: 'Home Insurance', category: 'insurance', expiry_date: '2027-06-01' },
+      ];
+
+      const catColors = {
+        subscription: '#6366f1',
+        document: '#f59e0b',
+        warranty: '#22c55e',
+        membership: '#ec4899',
+        insurance: '#14b8a6',
+        domain: '#8b5cf6',
+        license: '#f97316',
+        other: '#64748b',
+      };
+
+      function daysUntil(dateStr) {
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+        const t = new Date(dateStr);
+        t.setHours(0, 0, 0, 0);
+        return Math.ceil((t - now) / 86400000);
+      }
+
+      function urgencyColor(d) {
+        if (d < 0) return 'var(--text-muted)';
+        if (d <= 3) return 'var(--danger)';
+        if (d <= 14) return 'var(--warning)';
+        return 'var(--success)';
+      }
+
+      function urgencyLabel(d) {
+        if (d < 0) return 'Expired';
+        if (d === 0) return 'Today';
+        if (d === 1) return 'Tomorrow';
+        return d + 'd';
+      }
+
+      function formatDate(dateStr) {
+        return new Date(dateStr).toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+        });
+      }
+
+      const sorted = items.sort((a, b) => daysUntil(a.expiry_date) - daysUntil(b.expiry_date));
+      const tower = document.getElementById('tower');
+      const count = sorted.length;
+      const MIN_W = 45,
+        MAX_W = 100;
+
+      sorted.forEach((item, i) => {
+        const days = daysUntil(item.expiry_date);
+        const color = urgencyColor(days);
+        const catColor = catColors[item.category] || catColors.other;
+        const w = count === 1 ? MAX_W : MIN_W + ((MAX_W - MIN_W) * i) / (count - 1);
+
+        const row = document.createElement('div');
+        row.className = 'tower-row';
+        row.style.width = w + '%';
+
+        row.innerHTML = `
+        <div class="tower-block ${days < 0 ? 'tower-block--expired' : ''}" style="border-left-color: ${color}">
+          <div class="tower-block-left">
+            <div class="tower-block-header">
+              <span class="tower-block-name">${item.name}</span>
+              <span class="tower-block-category" style="background:${catColor}22;color:${catColor}">${item.category}</span>
+            </div>
+            <div class="tower-block-meta">${formatDate(item.expiry_date)} · notify 7d before</div>
+          </div>
+          <div class="tower-block-right">
+            <span class="tower-block-urgency" style="color:${color}">${urgencyLabel(days)}</span>
+            <button class="tower-btn" aria-label="Edit ${item.name}">✏️</button>
+            <button class="tower-btn tower-btn--danger" aria-label="Delete ${item.name}">🗑️</button>
+          </div>
+        </div>`;
+        tower.appendChild(row);
+      });
+    </script>
+  </body>
+</html>
