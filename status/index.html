@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="https://meduseld.io/static/apple-touch-icon.png"
+    />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Meduseld" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b1f14" />
+    <link rel="icon" type="image/x-icon" href="https://meduseld.io/static/favicon.ico" />
+    <title>Meduseld - Server Status</title>
+    <link rel="stylesheet" href="https://meduseld.io/static/style.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .status-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+      }
+      .status-card {
+        background: rgba(20, 36, 26, 0.85);
+        backdrop-filter: blur(6px);
+        border: 1px solid rgba(201, 162, 39, 0.4);
+        border-radius: 12px;
+        padding: 2.5rem 2rem;
+        max-width: 550px;
+        width: 100%;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+      }
+      .pulse-ring {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #e6c65c;
+        position: relative;
+      }
+      .pulse-ring::before {
+        content: '';
+        position: absolute;
+        inset: -4px;
+        border-radius: 50%;
+        border: 2px solid #e6c65c;
+        animation: ring-pulse 2s ease-in-out infinite;
+      }
+      @keyframes ring-pulse {
+        0%,
+        100% {
+          opacity: 0.6;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0;
+          transform: scale(1.8);
+        }
+      }
+      .service-status {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.6rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .service-status:last-child {
+        border-bottom: none;
+      }
+      .status-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+      .status-dot.offline {
+        background: #dc3545;
+      }
+      .status-dot.online {
+        background: #28a745;
+      }
+      .status-dot.checking {
+        background: #e6c65c;
+        animation: pulse 1.5s ease-in-out infinite;
+      }
+    </style>
+  </head>
+  <body class="d-flex flex-column min-vh-100 text-light" style="background: transparent">
+    <div
+      class="d-flex flex-column justify-content-center align-items-center text-center flex-grow-1 px-3"
+    >
+      <img
+        src="https://meduseld.io/static/meduseldminimal.png"
+        style="max-height: 100px; margin-bottom: 1.5rem"
+        alt="Meduseld"
+      />
+
+      <div class="status-card">
+        <div class="status-icon">⚔️</div>
+        <h2 style="color: #e6c65c; font-weight: 600; margin-bottom: 0.5rem">The Hall is Quiet</h2>
+        <p style="opacity: 0.7; margin-bottom: 1.5rem">
+          The Meduseld server is currently offline. Services will return once the server is back up.
+        </p>
+
+        <div class="mb-3" style="text-align: left">
+          <div class="service-status">
+            <span style="opacity: 0.85">Control Panel</span>
+            <span
+              class="status-dot checking"
+              id="dot-panel"
+              data-bs-toggle="tooltip"
+              data-bs-title="Checking..."
+            ></span>
+          </div>
+          <div class="service-status">
+            <span style="opacity: 0.85">SSH Terminal</span>
+            <span
+              class="status-dot checking"
+              id="dot-ssh"
+              data-bs-toggle="tooltip"
+              data-bs-title="Checking..."
+            ></span>
+          </div>
+          <div class="service-status">
+            <span style="opacity: 0.85">Jellyfin Media</span>
+            <span
+              class="status-dot checking"
+              id="dot-jellyfin"
+              data-bs-toggle="tooltip"
+              data-bs-title="Checking..."
+            ></span>
+          </div>
+        </div>
+
+        <p id="last-checked" style="font-size: 0.75rem; opacity: 0.4; margin-bottom: 1.5rem">
+          Checking status...
+        </p>
+
+        <a href="https://services.meduseld.io" class="btn btn-warning px-4 py-2">
+          Back to The Great Hall
+        </a>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-3 mt-auto" style="border-top: 1px solid rgba(230, 198, 92, 0.2)">
+      <p class="text-light mb-0" style="font-size: 0.85rem">
+        &copy;
+        <span id="copyright-year"></span>
+        <a href="https://quietarca.de" target="_blank" class="text-warning text-decoration-none">
+          quietarcade
+        </a>
+        ~ All rights reserved.
+      </p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.getElementById('copyright-year').textContent = new Date().getFullYear();
+
+      const HEALTH_URL = 'https://meduseld-health.404-41f.workers.dev';
+      const serviceNames = ['panel', 'ssh', 'jellyfin'];
+      const tooltips = {};
+
+      // Initialize tooltips
+      serviceNames.forEach(function (name) {
+        var el = document.getElementById('dot-' + name);
+        if (el) tooltips[name] = new bootstrap.Tooltip(el);
+      });
+
+      function updateDot(name, status) {
+        var dot = document.getElementById('dot-' + name);
+        if (!dot) return;
+
+        // Dispose old tooltip
+        if (tooltips[name]) tooltips[name].dispose();
+
+        dot.className = 'status-dot';
+        var label = '';
+
+        if (status === 'online') {
+          dot.classList.add('online');
+          label = 'Online';
+        } else if (status === 'tunnel-down') {
+          dot.classList.add('offline');
+          label = 'Tunnel Down';
+        } else if (status === 'offline') {
+          dot.classList.add('offline');
+          label = 'Offline';
+        } else {
+          dot.classList.add('offline');
+          label = 'Unreachable';
+        }
+
+        dot.setAttribute('data-bs-title', label);
+        tooltips[name] = new bootstrap.Tooltip(dot);
+      }
+
+      function checkStatus() {
+        fetch(HEALTH_URL)
+          .then(function (res) {
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return res.json();
+          })
+          .then(function (data) {
+            serviceNames.forEach(function (name) {
+              if (data[name]) {
+                updateDot(name, data[name].status);
+              }
+            });
+            document.getElementById('last-checked').textContent =
+              'Last checked: ' + new Date().toLocaleTimeString();
+          })
+          .catch(function (err) {
+            console.error('Failed to fetch health status:', err);
+            serviceNames.forEach(function (name) {
+              updateDot(name, 'error');
+            });
+            document.getElementById('last-checked').textContent = 'Failed to check status';
+          });
+      }
+
+      checkStatus();
+      setInterval(checkStatus, 15000);
+    </script>
+  </body>
+</html>
