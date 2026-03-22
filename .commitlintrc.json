@@ -19,7 +19,8 @@
         "header",
         "news",
         "prices",
-        "release"
+        "release",
+        "status"
       ]
     ],
     "scope-empty": [1, "never"],
