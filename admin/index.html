@@ -494,16 +494,13 @@
             'btn-warning',
             'btn-disabled-link'
           );
-          button.classList.add('btn-disabled-link');
-          button.setAttribute('disabled', 'true');
-          button.href = '#';
+          button.classList.add('btn-warning');
+          button.removeAttribute('disabled');
+          button.href = 'https://status.meduseld.io';
           button.style.backgroundColor = '#f48120';
           button.style.color = '#fff';
-          button.style.cursor = 'not-allowed';
-          button.onclick = function (e) {
-            e.preventDefault();
-            return false;
-          };
+          button.style.cursor = 'pointer';
+          button.onclick = null;
           indicator.innerHTML =
             '<i class="bi bi-cloud-slash me-1" style="color:#9ca3af;"></i>Cloudflare Offline';
           indicator.classList.remove('bg-secondary', 'bg-danger', 'bg-success', 'bg-warning');
