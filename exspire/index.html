@@ -19,7 +19,7 @@
         --border: #2a2e3a;
         --text: #e4e4e7;
         --text-muted: #8b8d97;
-        --accent: #6366f1;
+        --accent: #1589cf;
         --danger: #ef4444;
         --warning: #f59e0b;
         --success: #22c55e;
@@ -56,16 +56,16 @@
         font-size: 1.5rem;
         font-weight: 700;
       }
-      .tower {
+      .spire {
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 4px;
       }
-      .tower-row {
+      .spire-row {
         transition: width 0.3s ease;
       }
-      .tower-block {
+      .spire-block {
         background: var(--surface);
         border: 1px solid var(--border);
         border-left: 3px solid var(--accent);
@@ -76,32 +76,32 @@
         align-items: center;
         transition: background 0.15s;
       }
-      .tower-block:hover {
+      .spire-block:hover {
         background: var(--surface-hover);
       }
-      .tower-block--expired {
+      .spire-block--expired {
         opacity: 0.5;
       }
-      .tower-block-left {
+      .spire-block-left {
         display: flex;
         flex-direction: column;
         gap: 0.15rem;
         min-width: 0;
         overflow: hidden;
       }
-      .tower-block-header {
+      .spire-block-header {
         display: flex;
         align-items: center;
         gap: 0.5rem;
       }
-      .tower-block-name {
+      .spire-block-name {
         font-weight: 600;
         font-size: 0.9rem;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      .tower-block-category {
+      .spire-block-category {
         font-size: 0.65rem;
         padding: 0.05rem 0.45rem;
         border-radius: 999px;
@@ -111,26 +111,26 @@
         white-space: nowrap;
         flex-shrink: 0;
       }
-      .tower-block-meta {
+      .spire-block-meta {
         font-size: 0.75rem;
         color: var(--text-muted);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      .tower-block-right {
+      .spire-block-right {
         display: flex;
         align-items: center;
         gap: 0.5rem;
         flex-shrink: 0;
         margin-left: 0.75rem;
       }
-      .tower-block-urgency {
+      .spire-block-urgency {
         font-weight: 700;
         font-size: 0.85rem;
         white-space: nowrap;
       }
-      .tower-btn {
+      .spire-btn {
         background: transparent;
         color: var(--text-muted);
         padding: 0.2rem 0.4rem;
@@ -139,13 +139,13 @@
         border-radius: 4px;
         cursor: pointer;
       }
-      .tower-btn:hover {
+      .spire-btn:hover {
         background: var(--surface-hover);
       }
-      .tower-btn--danger {
+      .spire-btn--danger {
         color: var(--danger);
       }
-      .tower-btn--danger:hover {
+      .spire-btn--danger:hover {
         background: rgba(239, 68, 68, 0.1);
       }
     </style>
@@ -158,7 +158,7 @@
           <span class="app-title">ExSpire</span>
         </div>
       </header>
-      <div class="tower" id="tower"></div>
+      <div class="spire" id="spire"></div>
     </div>
     <script>
       const items = [
@@ -231,7 +231,7 @@
       }
 
       const sorted = items.sort((a, b) => daysUntil(a.expiry_date) - daysUntil(b.expiry_date));
-      const tower = document.getElementById('tower');
+      const spire = document.getElementById('spire');
       const count = sorted.length;
       const MIN_W = 45,
         MAX_W = 100;
@@ -243,25 +243,25 @@
         const w = count === 1 ? MAX_W : MIN_W + ((MAX_W - MIN_W) * i) / (count - 1);
 
         const row = document.createElement('div');
-        row.className = 'tower-row';
+        row.className = 'spire-row';
         row.style.width = w + '%';
 
         row.innerHTML = `
-        <div class="tower-block ${days < 0 ? 'tower-block--expired' : ''}" style="border-left-color: ${color}">
-          <div class="tower-block-left">
-            <div class="tower-block-header">
-              <span class="tower-block-name">${item.name}</span>
-              <span class="tower-block-category" style="background:${catColor}22;color:${catColor}">${item.category}</span>
+        <div class="spire-block ${days < 0 ? 'spire-block--expired' : ''}" style="border-left-color: ${color}">
+          <div class="spire-block-left">
+            <div class="spire-block-header">
+              <span class="spire-block-name">${item.name}</span>
+              <span class="spire-block-category" style="background:${catColor}22;color:${catColor}">${item.category}</span>
             </div>
-            <div class="tower-block-meta">${formatDate(item.expiry_date)} · notify 7d before</div>
+            <div class="spire-block-meta">${formatDate(item.expiry_date)} · notify 7d before</div>
           </div>
-          <div class="tower-block-right">
-            <span class="tower-block-urgency" style="color:${color}">${urgencyLabel(days)}</span>
-            <button class="tower-btn" aria-label="Edit ${item.name}">✏️</button>
-            <button class="tower-btn tower-btn--danger" aria-label="Delete ${item.name}">🗑️</button>
+          <div class="spire-block-right">
+            <span class="spire-block-urgency" style="color:${color}">${urgencyLabel(days)}</span>
+            <button class="spire-btn" aria-label="Edit ${item.name}">✏️</button>
+            <button class="spire-btn spire-btn--danger" aria-label="Delete ${item.name}">🗑️</button>
           </div>
         </div>`;
-        tower.appendChild(row);
+        spire.appendChild(row);
       });
     </script>
   </body>
