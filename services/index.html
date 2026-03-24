@@ -221,6 +221,19 @@
                 >
                   Under Construction
                 </a>
+                <a
+                  id="jellyfin-button-admin"
+                  href="#"
+                  class="btn btn-warning text-dark btn-lg w-100"
+                  role="button"
+                  style="display: none"
+                  onclick="
+                    event.preventDefault();
+                    new bootstrap.Modal(document.getElementById('edorasModal')).show();
+                  "
+                >
+                  Open Edoras
+                </a>
               </div>
             </div>
           </div>
@@ -732,6 +745,65 @@
         </div>
       </div>
     </div>
+    <!-- Edoras Modal (Admin) -->
+    <div
+      class="modal fade"
+      id="edorasModal"
+      tabindex="-1"
+      aria-labelledby="edorasModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content bg-dark text-light border-warning">
+          <div class="modal-header" style="border-bottom: 1px solid rgba(230, 198, 92, 0.3)">
+            <h5 class="modal-title" id="edorasModalLabel" style="color: #e6c65c">
+              <i class="bi bi-film me-2"></i>
+              Edoras
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body d-flex flex-column gap-2">
+            <a
+              href="#"
+              class="btn btn-warning text-dark w-100"
+              onclick="
+                event.preventDefault();
+                bootstrap.Modal.getInstance(document.getElementById('edorasModal')).hide();
+                openEdoras();
+              "
+            >
+              <i class="bi bi-play-circle me-2"></i>
+              View Library
+            </a>
+            <a
+              href="https://overseerr.meduseld.io"
+              target="_blank"
+              class="btn btn-outline-warning w-100"
+            >
+              <i class="bi bi-plus-circle me-2"></i>
+              Request
+            </a>
+            <a
+              href="https://edoras.meduseld.io"
+              target="_blank"
+              class="btn btn-outline-warning w-100"
+            >
+              <i class="bi bi-gear me-2"></i>
+              Manage
+              <span class="badge ms-1" style="background: #e6c65c; color: #000; font-size: 0.65rem">
+                Admin
+              </span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Changelog Modal -->
     <div
       class="modal fade"
@@ -1015,6 +1087,11 @@
           document.querySelectorAll('.edoras-admin-btn').forEach(function (btn) {
             btn.style.display = '';
           });
+          // Show admin Edoras button, hide the disabled one
+          var adminBtn = document.getElementById('jellyfin-button-admin');
+          var disabledBtn = document.getElementById('jellyfin-button');
+          if (adminBtn) adminBtn.style.display = '';
+          if (disabledBtn) disabledBtn.style.display = 'none';
         }
       }
 
