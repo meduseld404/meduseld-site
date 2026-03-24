@@ -123,6 +123,7 @@ window.MeduseldAuth = (function () {
       syncPromise = fetch('https://panel.meduseld.io/api/sync-identity', {
         method: 'POST',
         credentials: 'include',
+        redirect: 'manual',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           discord_id: _user.discord_id,
@@ -131,18 +132,33 @@ window.MeduseldAuth = (function () {
           avatar_hash: _user.avatar_hash,
           is_admin: _user.role === 'admin',
         }),
-      }).catch(function (err) {
-        console.warn('MeduseldAuth: sync-identity failed (non-critical)', err);
-      });
+      })
+        .then(function (res) {
+          // If Cloudflare Access intercepted and returned a redirect (opaqueredirect),
+          // treat it as a non-critical failure — don't follow the redirect
+          if (res.type === 'opaqueredirect' || !res.ok) {
+            console.warn('MeduseldAuth: sync-identity returned redirect or error (non-critical)');
+            return;
+          }
+        })
+        .catch(function (err) {
+          console.warn('MeduseldAuth: sync-identity failed (non-critical)', err);
+        });
     }
 
     return syncPromise
       .then(function () {
         return fetch('https://panel.meduseld.io/api/me', {
           credentials: 'include',
+          redirect: 'manual',
         });
       })
       .then(function (res) {
+        // If Cloudflare Access intercepted, bail out silently
+        if (res.type === 'opaqueredirect') {
+          console.warn('MeduseldAuth: /api/me returned redirect (non-critical)');
+          return { authenticated: false };
+        }
         return res.json();
       })
       .then(function (data) {
