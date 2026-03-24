@@ -195,44 +195,27 @@
               </div>
               <h3 class="card-title mb-3" style="color: #e6c65c">Edoras</h3>
               <div class="mb-2">
-                <span
-                  id="jellyfin-status-indicator"
-                  class="badge"
-                  style="background-color: #f48120"
-                >
-                  <i class="bi bi-cone-striped me-1"></i>
-                  Under Construction
+                <span id="jellyfin-status-indicator" class="badge bg-secondary">
+                  <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                  Checking...
                 </span>
               </div>
               <p
                 class="card-text flex-grow-1 d-flex align-items-center justify-content-center"
                 id="jellyfin-description"
               >
-                Stream movies, TV shows, and media from our Edoras server. Currently being set up.
+                Stream movies, TV shows, and media from our Edoras server.
               </p>
               <div class="mt-auto">
                 <a
                   id="jellyfin-button"
                   href="#"
-                  class="btn btn-secondary btn-lg w-100 btn-disabled-link"
+                  class="btn btn-secondary btn-lg w-100"
                   role="button"
-                  style="cursor: not-allowed"
                   disabled
                 >
-                  Under Construction
-                </a>
-                <a
-                  id="jellyfin-button-admin"
-                  href="#"
-                  class="btn btn-warning text-dark btn-lg w-100"
-                  role="button"
-                  style="display: none"
-                  onclick="
-                    event.preventDefault();
-                    new bootstrap.Modal(document.getElementById('edorasModal')).show();
-                  "
-                >
-                  Open Edoras
+                  <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  Checking Status...
                 </a>
               </div>
             </div>
@@ -797,7 +780,8 @@
             <a
               href="https://edoras.meduseld.io"
               target="_blank"
-              class="btn btn-outline-warning w-100"
+              class="btn btn-outline-warning w-100 edoras-admin-btn"
+              style="display: none"
             >
               <i class="bi bi-gear me-2"></i>
               Manage
@@ -1093,11 +1077,6 @@
           document.querySelectorAll('.edoras-admin-btn').forEach(function (btn) {
             btn.style.display = '';
           });
-          // Show admin Edoras button, hide the disabled one
-          var adminBtn = document.getElementById('jellyfin-button-admin');
-          var disabledBtn = document.getElementById('jellyfin-button');
-          if (adminBtn) adminBtn.style.display = '';
-          if (disabledBtn) disabledBtn.style.display = 'none';
         }
       }
 
@@ -1127,16 +1106,14 @@
             services.panel || { status: 'error', color: 'red', message: 'Unknown' }
           );
 
-          // Edoras health check disabled while under construction — keep the logic for when the service is ready
-          // updateJellyfinStatus(
-          //   services.jellyfin || { status: 'error', color: 'red', message: 'Unknown' }
-          // );
+          updateJellyfinStatus(
+            services.jellyfin || { status: 'error', color: 'red', message: 'Unknown' }
+          );
         } catch (error) {
           console.error('Health check failed:', error);
           updatePanelStatus({ status: 'error', color: 'red', message: 'Health check failed' });
 
-          // Edoras health check disabled while under construction
-          // updateJellyfinStatus({ status: 'error', color: 'red', message: 'Health check failed' });
+          updateJellyfinStatus({ status: 'error', color: 'red', message: 'Health check failed' });
         }
       }
       function updatePanelStatus(data) {
@@ -1259,9 +1236,7 @@
         }
       }
       async function openEdoras() {
-        var btn =
-          document.getElementById('jellyfin-button-admin') ||
-          document.getElementById('jellyfin-button');
+        var btn = document.getElementById('jellyfin-button');
         var origText = btn ? btn.innerHTML : '';
         if (btn) {
           btn.disabled = true;
