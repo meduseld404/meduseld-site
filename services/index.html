@@ -1243,17 +1243,38 @@
           btn.innerHTML =
             '<span class="spinner-border spinner-border-sm me-2"></span>Connecting...';
         }
+        function resetBtn() {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = origText;
+          }
+        }
         try {
           var cfCookie = document.cookie.split('; ').find(function (c) {
             return c.startsWith('CF_Authorization=');
           });
           var cfToken = cfCookie ? cfCookie.split('=')[1] : '';
+          if (!cfToken) {
+            console.error('Edoras SSO: No CF_Authorization cookie found');
+            resetBtn();
+            alert('Authentication error. Please log out and log back in.');
+            return;
+          }
           var res = await fetch(
             'https://health.meduseld.io/check/media-auth?cf_token=' + encodeURIComponent(cfToken),
             {
               credentials: 'include',
             }
           );
+          if (!res.ok) {
+            var errText = await res.text().catch(function () {
+              return 'Unknown error';
+            });
+            console.error('Edoras SSO auth returned ' + res.status + ':', errText);
+            resetBtn();
+            alert('Could not connect to Edoras. The server may be restarting.');
+            return;
+          }
           var data = await res.json();
           if (data.token && data.user_id) {
             window.location.href =
@@ -1265,12 +1286,15 @@
               encodeURIComponent(data.server_id || '');
             return;
           } else {
-            window.location.href = CONFIG.jellyfinUrl;
+            console.error('Edoras SSO: No token in response:', data);
+            resetBtn();
+            alert('Could not authenticate with Edoras. Please try again.');
             return;
           }
         } catch (e) {
           console.error('Edoras SSO auth failed:', e);
-          window.location.href = CONFIG.jellyfinUrl;
+          resetBtn();
+          alert('Could not connect to Edoras. Please try again.');
           return;
         }
       }
