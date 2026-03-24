@@ -419,7 +419,7 @@ Each card has an icon, title, description, and "Open" button that opens the serv
 2. **Sonarr** → `https://sonarr.meduseld.io` — TV show management and automation
 3. **Radarr** → `https://radarr.meduseld.io` — Movie management and automation
 4. **Prowlarr** → `https://prowlarr.meduseld.io` — Indexer management for Sonarr and Radarr
-5. **qBittorrent** → `https://qbit.meduseld.io` — Download client management
+5. **qBittorrent** → `https://qb.meduseld.io` — Download client management
 6. **Chaptarr** → `https://chaptarr.meduseld.io` — Book management and automation
 
 ---
