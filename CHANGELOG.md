@@ -2,6 +2,87 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.7.0-alpha](https://github.com/meduseld404/meduseld-site/compare/v0.6.0-alpha...v0.7.0-alpha) (2026-03-24)
+
+
+### New Features
+
+* **footer:** Add dynamic version badge fetched from GitHub releases ([c0b8e92](https://github.com/meduseld404/meduseld-site/commit/c0b8e92cddb3fcf231f1075fc5ce9c12c18c72ab))
+* **landing:** Add contact button and modal to herugrim page ([be7a3d7](https://github.com/meduseld404/meduseld-site/commit/be7a3d770b8c2644b7bdb0ea30db0a499ade0f87))
+* **landing:** Add deploy button, description, and footer to herugrim page ([c616290](https://github.com/meduseld404/meduseld-site/commit/c6162900835fd8f71adbc4f9d9391eeb5d14e3be))
+* **landing:** Add Herugrim link to landing page ([fd9e648](https://github.com/meduseld404/meduseld-site/commit/fd9e648143293ce6788255cf33b57d92987d9f9b))
+* **landing:** Add herugrim.meduseld.io landing page ([0db17a5](https://github.com/meduseld404/meduseld-site/commit/0db17a5f345d46fd5c616dbde7ed2ac7367f9fb0))
+* **services:** Activate FellowSync card with custom icon and link ([f037e24](https://github.com/meduseld404/meduseld-site/commit/f037e24e7a2355f24baff7874ed5a683f4b31f02))
+* **services:** Add calendar event editing for admins ([bc315b2](https://github.com/meduseld404/meduseld-site/commit/bc315b2d47a1b2ffc077912902b4b6b534d87be9))
+* **services:** Add calendar widget for upcoming group events ([6f35e51](https://github.com/meduseld404/meduseld-site/commit/6f35e51c3929b71e0dfa9c46a4b246d2dc4ff3d3))
+* **services:** Add D&D Companion coming soon card and Jellyfin services column to admin ([fa4bdd3](https://github.com/meduseld404/meduseld-site/commit/fa4bdd31e234660d3f6aea95c2a8422a19b5827b))
+* **services:** Add FellowSync coming soon card ([ced7adb](https://github.com/meduseld404/meduseld-site/commit/ced7adb4edd79770b4815bf2fd14f3cdde08697c))
+* **services:** Add RSVP buttons to calendar events ([9cbd2ab](https://github.com/meduseld404/meduseld-site/commit/9cbd2ab5b9e612cec8a19d23d972fe409d59d788))
+* **services:** Link tunnel-down buttons to status page ([a28cc10](https://github.com/meduseld404/meduseld-site/commit/a28cc10b93d2ab572eb73b69b4b0dd5dcb767372))
+* **services:** Set Edoras card to Under Construction status ([609b02c](https://github.com/meduseld404/meduseld-site/commit/609b02c6a314df6525959c75e121c6a97c2ee945))
+* **ui:** Add server status page for tunnel downtime ([d08ab90](https://github.com/meduseld404/meduseld-site/commit/d08ab90150a759bf7392cff01cd61db39319c5e6))
+
+
+### Bug Fixes
+
+* **landing:** Update contact email to admin@meduseld.io ([509f14e](https://github.com/meduseld404/meduseld-site/commit/509f14e8f3b2f7a3745bf5256467bddbffffc66a))
+* **services:** Check response status before parsing calendar JSON ([3213234](https://github.com/meduseld404/meduseld-site/commit/3213234c880d2a847502fb956fb2129e4bac575d))
+* **services:** Fix changelog renderer and update button color to gold ([b85072d](https://github.com/meduseld404/meduseld-site/commit/b85072dff5ecdf6d34f1daa4686b060afb11461d))
+* **services:** Fix FellowSync card icon size and button alignment ([4a0e7bd](https://github.com/meduseld404/meduseld-site/commit/4a0e7bd9abf2dbf2f24a0f2c216674829951279c))
+* **services:** Fix FellowSync card styling and broken icon ([db13849](https://github.com/meduseld404/meduseld-site/commit/db13849c527b9ad98d79e985dc1285697540ee3d))
+* **services:** Fix null reference error for calendar save button ([c648cc5](https://github.com/meduseld404/meduseld-site/commit/c648cc574324c07dcd153021acdea2dcf7707008))
+* **services:** Point Herugrim Repo quick link to correct URL ([3fa04a6](https://github.com/meduseld404/meduseld-site/commit/3fa04a682767fe2b67274732d87f499d7809b3f6))
+* **services:** Remove temporary redirect to status page ([055b951](https://github.com/meduseld404/meduseld-site/commit/055b951abe44b7a9c91e9e6627cc0a9a126888c8))
+* **services:** Route calendar API through health.meduseld.io ([2c91a94](https://github.com/meduseld404/meduseld-site/commit/2c91a94cfe15c8233ea318cbfd1657d845a3cb65))
+* **services:** Show detailed error message on calendar event creation failure ([34e63df](https://github.com/meduseld404/meduseld-site/commit/34e63df6e549585ea2b95cf797d743b1e9aa2eb8))
+* **ui:** Auto-dismiss Bootstrap tooltips on touch devices ([2571c75](https://github.com/meduseld404/meduseld-site/commit/2571c75a4888c68855dbdd35980e1ce017ad6a21))
+* **ui:** Fix broken HTML structure in edoras page ([1a874af](https://github.com/meduseld404/meduseld-site/commit/1a874afb23d0aa5b7c4bf5f20a23c98b0d56c953))
+* **ui:** Fix status page background and add temp services redirect ([c40a799](https://github.com/meduseld404/meduseld-site/commit/c40a799b7839d5c30bc09b247ba2609c937f901e))
+* **ui:** Fix unreadable text-muted color and add silent session establishment on admin page ([164892d](https://github.com/meduseld404/meduseld-site/commit/164892db12057c2755b69b79fec1835808cca7b5))
+* **ui:** Pass auth token via query param and body instead of header ([5d02ef0](https://github.com/meduseld404/meduseld-site/commit/5d02ef09ef91f5be21414e02c1f71eaedaa3b404))
+* **ui:** Prevent Cloudflare Access redirects on backend sync calls ([ec2e675](https://github.com/meduseld404/meduseld-site/commit/ec2e6758943da3174c3864f5a78e5254c9541762))
+* **ui:** Rename admin API endpoint to avoid ad-blocker false positives ([3059c0d](https://github.com/meduseld404/meduseld-site/commit/3059c0dc503d0434e8656edaf30ce6939bebda86))
+* **ui:** Route admin page API calls through health.meduseld.io ([474182b](https://github.com/meduseld404/meduseld-site/commit/474182b1f9dd7d6f7d30d218a5af05bffecc9008))
+* **ui:** Send CF auth token via header instead of cookie on admin page ([20b0154](https://github.com/meduseld404/meduseld-site/commit/20b015486e69ab915985471a824ff6de90e5fd5a))
+* **ui:** Use Discord default avatar for users without custom avatar ([6c0ff3c](https://github.com/meduseld404/meduseld-site/commit/6c0ff3cf341372acf84d637a86fa3eaa370cf060))
+* **ui:** Use hidden iframe for admin page session establishment ([533a351](https://github.com/meduseld404/meduseld-site/commit/533a3512894981adadfef110f41ce9c845082bcb))
+
+
+### Refactoring
+
+* **services:** Move SSH and System Monitor cards to admin page ([b0520ee](https://github.com/meduseld404/meduseld-site/commit/b0520ee3e333e2c5cea80ff4e74665f4a2ca28db))
+* **services:** Remove static ExSpire demo page ([fa52f2c](https://github.com/meduseld404/meduseld-site/commit/fa52f2cc8e2ea748618a88220801606cfe357e95))
+* **ui:** Remove Session Status column from admin users table ([cb7e834](https://github.com/meduseld404/meduseld-site/commit/cb7e834e4236f994cd32660374ee10920190ddaa))
+* **ui:** Rename tower to spire in ExSpire landing page ([8e44de8](https://github.com/meduseld404/meduseld-site/commit/8e44de803dcf3ebde9b706467256ba83d2ccfd62))
+
+
+### Styling
+
+* **footer:** Change version badge color to warning yellow to match quietarcade link ([3ae326e](https://github.com/meduseld404/meduseld-site/commit/3ae326e7abe5d8ed1d38a5470f57e4793e7bdced))
+* **icons:** Update apple-touch-icon ([04bde83](https://github.com/meduseld404/meduseld-site/commit/04bde83244c42ffc6eeec405c37b1786c70a1b25))
+* **icons:** Update apple-touch-icon and add backup ([91cfdd9](https://github.com/meduseld404/meduseld-site/commit/91cfdd9568313a1f684595c3ff9259a489066854))
+* **icons:** Update apple-touch-icon and remove backup ([d581bcd](https://github.com/meduseld404/meduseld-site/commit/d581bcd0a4bdb3b6e59c2ce412465d0d25dd36c6))
+* **icons:** Update FellowSync icon ([aa0f02d](https://github.com/meduseld404/meduseld-site/commit/aa0f02d880e38a68133079dca600f93145412b83))
+* **icons:** Update FellowSync icon ([90c11a2](https://github.com/meduseld404/meduseld-site/commit/90c11a2207ed7461e482b3925db322075306e990))
+* **landing:** Add custom herugrim favicon and reorder deploy button ([e88e7db](https://github.com/meduseld404/meduseld-site/commit/e88e7dbc95401e7b7044b4493228d3d52cb15c5a))
+* **landing:** Add mobile-friendly meta tags and safe area padding to herugrim page ([82855ec](https://github.com/meduseld404/meduseld-site/commit/82855ec6dad404f79e98d8671a0a3281bf364fce))
+* **services:** Align FellowSync card with other service cards ([7dd1cbd](https://github.com/meduseld404/meduseld-site/commit/7dd1cbd49bb2e41c5d09e90e6b7a5435960d3915))
+* **services:** Increase FellowSync icon size to match other cards ([0962896](https://github.com/meduseld404/meduseld-site/commit/09628968c5b426981abb98dcecfcc1b684085b9a))
+* **services:** Keep original 280px width for calendar widget ([788af96](https://github.com/meduseld404/meduseld-site/commit/788af964e83b233ee1769678b00abebe8bee13d0))
+* **services:** Match calendar widget gutter to service cards row ([8b5dbb5](https://github.com/meduseld404/meduseld-site/commit/8b5dbb518f2d55bb7d6e6cb287986e729387eb59))
+* **services:** Match calendar widget width to service card columns ([21e5d8a](https://github.com/meduseld404/meduseld-site/commit/21e5d8a4a4798bdc95eac1ac46df50a9cc9ca382))
+* **services:** Move calendar widget below header, above news panel ([a21fa3e](https://github.com/meduseld404/meduseld-site/commit/a21fa3e4987f51299a35b632879148f4a21aff99))
+* **services:** Remove tooltips from calendar widget ([8b2d7a6](https://github.com/meduseld404/meduseld-site/commit/8b2d7a69d72888a8974d5bda42ec52fc8d97ba09))
+* **status:** Update offline heading text ([4d5d708](https://github.com/meduseld404/meduseld-site/commit/4d5d708a177adfd43ed442e2789f43f759510ad3))
+* **status:** Update offline page with new image and copy ([badb8a0](https://github.com/meduseld404/meduseld-site/commit/badb8a0d657da4d096c4b570608902dd58c9294e))
+* **ui:** Constrain Edoras service cards width on wide screens ([6c4a328](https://github.com/meduseld404/meduseld-site/commit/6c4a3283c3d9943081be29535d269f0526cc0623))
+* **ui:** Convert native title tooltips to Bootstrap tooltips ([c0e2fd7](https://github.com/meduseld404/meduseld-site/commit/c0e2fd71a7f7c879e52554ef756c0f734076a8d1))
+* **ui:** Increase profile avatar to 52px ([1c6d0c6](https://github.com/meduseld404/meduseld-site/commit/1c6d0c6d708e921ade36d913557b44be8b2d8eff))
+* **ui:** Increase profile widget size across all pages ([70356aa](https://github.com/meduseld404/meduseld-site/commit/70356aad2fc73ffa10197f5901b798e3f3e73086))
+* **ui:** Standardize profile widget across all pages and add RSVP tooltips ([ed1dd84](https://github.com/meduseld404/meduseld-site/commit/ed1dd8415640d67391b138eae24c2b2d8cc659d5))
+* **ui:** Update tooltips and README logo ([cb495ce](https://github.com/meduseld404/meduseld-site/commit/cb495ceed2b74495a557b1cedc989b8aa9f73c8b))
+* **ui:** Use Bootstrap tooltips for RSVP buttons and fix avatar squish ([871a280](https://github.com/meduseld404/meduseld-site/commit/871a2805e5eee504a257e716bba99f9ba4adde39))
+
 ## [0.6.0-alpha](https://github.com/meduseld404/meduseld-site/compare/v0.5.0-alpha...v0.6.0-alpha) (2026-03-18)
 
 
