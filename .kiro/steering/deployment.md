@@ -105,8 +105,10 @@ Express application at `/srv/apps/exspire`
   - systemd: `exspire.service`
   - Database: sql.js (SQLite via WebAssembly)
   - Env: `PORT`, `JWT_SECRET`, SMTP config for email notifications, VAPID keys for push notifications
-  - Deployment: `cd /srv/apps/exspire/frontend && npm run build && sudo systemctl restart exspire`
+  - Deployment: `cd /srv/apps/exspire && git pull && cd frontend && npm run build && sudo systemctl restart exspire`
+  - Auto-deploy: `exspire-deploy.timer` runs every 5 minutes, checks for new commits on `main`, pulls + rebuilds + restarts if changes detected. Logs: `journalctl -u exspire-deploy.service`
   - Repo: separate `exspire` workspace folder
+  - Note: The old static demo page at `meduseld-site/exspire/index.html` has been removed. ExSpire is served entirely through the Cloudflare Tunnel via its Express backend.
 
 ### herugrim Repository (Discord OIDC Worker)
 
