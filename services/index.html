@@ -1244,9 +1244,16 @@
             '<span class="spinner-border spinner-border-sm me-2"></span>Connecting...';
         }
         try {
-          var res = await fetch('https://panel.meduseld.io/api/jellyfin-auth', {
-            credentials: 'include',
+          var cfCookie = document.cookie.split('; ').find(function (c) {
+            return c.startsWith('CF_Authorization=');
           });
+          var cfToken = cfCookie ? cfCookie.split('=')[1] : '';
+          var res = await fetch(
+            'https://health.meduseld.io/check/media-auth?cf_token=' + encodeURIComponent(cfToken),
+            {
+              credentials: 'include',
+            }
+          );
           var data = await res.json();
           if (data.token && data.user_id) {
             window.location.href =
