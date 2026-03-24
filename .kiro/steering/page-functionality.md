@@ -63,11 +63,15 @@ Each active service card has a status indicator badge that shows Online/Offline/
    - Description: "One does not simply listen alone..."
    - No status badge (external app, not health-checked)
 
+4. **The Red Book (E-books & Audiobooks)**
+   - "Open The Red Book" button → links to `https://redbook.meduseld.io`
+   - Description: "Browse and listen to e-books and audiobooks from our collection."
+   - No status badge (external app, not health-checked)
+
 ### Service Cards (Coming Soon — Disabled)
 
 - VPN Access — Mullvad remote access
 - Game Wiki — community wiki for current game
-- The Red Book — e-books and audiobooks
 - Trivia Game — trivia questions
 - D&D Companion — session hub, DM soundboard, and campaign wiki for Roll20 adventures
 - Remote Desktop — screen sharing/collaboration
