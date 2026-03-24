@@ -1267,12 +1267,27 @@
             }
           );
           if (!res.ok) {
-            var errText = await res.text().catch(function () {
-              return 'Unknown error';
-            });
-            console.error('Edoras SSO auth returned ' + res.status + ':', errText);
+            var errBody = '';
+            try {
+              errBody = await res.text();
+            } catch (_e) {
+              errBody = 'No response body';
+            }
+            console.error('Edoras SSO auth returned ' + res.status + ':', errBody);
             resetBtn();
-            alert('Could not connect to Edoras. The server may be restarting.');
+            alert(
+              'Edoras auth error (' +
+                res.status +
+                '): ' +
+                (function () {
+                  try {
+                    var j = JSON.parse(errBody);
+                    return j.error || errBody;
+                  } catch (_e) {
+                    return errBody.substring(0, 200);
+                  }
+                })()
+            );
             return;
           }
           var data = await res.json();
