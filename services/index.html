@@ -1250,10 +1250,15 @@
         }
       }
       async function openEdoras() {
-        var btn = document.getElementById('jellyfin-button');
-        var origText = btn.innerHTML;
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Connecting...';
+        var btn =
+          document.getElementById('jellyfin-button-admin') ||
+          document.getElementById('jellyfin-button');
+        var origText = btn ? btn.innerHTML : '';
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML =
+            '<span class="spinner-border spinner-border-sm me-2"></span>Connecting...';
+        }
         try {
           var res = await fetch('https://panel.meduseld.io/api/jellyfin-auth', {
             credentials: 'include',
@@ -2194,71 +2199,6 @@
       </div>
     </div>
 
-    <!-- Edoras Modal -->
-    <div
-      class="modal fade"
-      id="edorasModal"
-      tabindex="-1"
-      aria-labelledby="edorasModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content bg-dark text-light border-warning">
-          <div class="modal-header border-0 pb-0">
-            <h5 class="modal-title" id="edorasModalLabel" style="color: #e6c65c">
-              <i class="bi bi-film me-2"></i>
-              Edoras
-            </h5>
-            <button
-              type="button"
-              class="btn-close btn-close-white"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body pt-2">
-            <div class="d-grid gap-2">
-              <button type="button" class="btn btn-warning btn-lg" id="edoras-view-btn">
-                <i class="bi bi-play-circle me-2"></i>
-                View Library
-              </button>
-              <a
-                href="https://overseerr.meduseld.io"
-                class="btn btn-outline-warning btn-lg"
-                target="_blank"
-              >
-                <i class="bi bi-plus-circle me-2"></i>
-                Request
-              </a>
-              <a
-                href="https://edoras.meduseld.io"
-                class="btn btn-outline-light btn-lg edoras-admin-btn"
-                style="display: none; border-color: rgba(230, 198, 92, 0.4)"
-              >
-                <i class="bi bi-gear me-2"></i>
-                Manage
-                <span
-                  class="badge ms-1"
-                  style="background: #e6c65c; color: #0b1f14; font-size: 0.6rem"
-                >
-                  Admin
-                </span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <script>
-      document.getElementById('edoras-view-btn').addEventListener('click', function () {
-        bootstrap.Modal.getInstance(document.getElementById('edorasModal')).hide();
-        openEdoras();
-      });
-      // Show manage button for admins (modal is now in DOM)
-      if (typeof MeduseldAuth !== 'undefined' && MeduseldAuth.hasRole('admin')) {
-        var manageBtn = document.querySelector('.edoras-admin-btn');
-        if (manageBtn) manageBtn.style.display = '';
-      }
-    </script>
+    <!-- Edoras modal is defined earlier in the page (inside the card section) -->
   </body>
 </html>
