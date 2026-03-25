@@ -20,7 +20,8 @@
         "news",
         "prices",
         "release",
-        "status"
+        "status",
+        "trivia"
       ]
     ],
     "scope-empty": [1, "never"],

@@ -80,6 +80,10 @@
         background: rgba(220, 53, 69, 0.2);
         color: #dc3545;
       }
+      .answer-btn.selected {
+        border-color: #e6c65c;
+        background: rgba(230, 198, 92, 0.15);
+      }
       .answer-btn:disabled {
         opacity: 0.7;
       }
@@ -106,6 +110,100 @@
         background: #e6c65c;
         box-shadow: 0 0 6px rgba(230, 198, 92, 0.5);
       }
+      .lobby-card {
+        background: rgba(20, 36, 26, 0.85);
+        backdrop-filter: blur(6px);
+        border: 1px solid rgba(230, 198, 92, 0.3);
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        transition: all 0.2s;
+        cursor: pointer;
+      }
+      .lobby-card:hover {
+        border-color: #e6c65c;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      }
+      .player-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(20, 36, 26, 0.9);
+        border: 1px solid rgba(230, 198, 92, 0.2);
+        border-radius: 20px;
+        padding: 4px 12px 4px 4px;
+        font-size: 0.85rem;
+      }
+      .player-chip img {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+      }
+      .player-chip .host-badge {
+        font-size: 0.65rem;
+        background: #e6c65c;
+        color: #0f1a14;
+        padding: 1px 6px;
+        border-radius: 8px;
+        font-weight: 600;
+      }
+      .player-chip.answered {
+        border-color: #28a745;
+      }
+      .timer-bar {
+        height: 4px;
+        background: #e6c65c;
+        border-radius: 2px;
+        transition: width 0.25s linear;
+      }
+      .timer-bar-track {
+        height: 4px;
+        background: rgba(230, 198, 92, 0.15);
+        border-radius: 2px;
+        margin-bottom: 1rem;
+      }
+      .scoreboard-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        background: rgba(20, 36, 26, 0.6);
+        margin-bottom: 4px;
+      }
+      .scoreboard-row img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+      }
+      .scoreboard-row.winner {
+        border: 1px solid #ffd700;
+        background: rgba(255, 215, 0, 0.08);
+      }
+      .countdown-number {
+        font-size: 5rem;
+        font-weight: 700;
+        color: #e6c65c;
+        animation: pulse 1s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.15);
+          opacity: 0.8;
+        }
+      }
+      .solo-badge {
+        font-size: 0.7rem;
+        background: rgba(108, 117, 125, 0.3);
+        color: #adb5bd;
+        padding: 2px 8px;
+        border-radius: 8px;
+      }
     </style>
   </head>
   <body class="text-light" style="background: transparent">
@@ -123,11 +221,11 @@
         <img
           src="https://meduseld.io/static/logo.png"
           style="max-height: 80px; margin-bottom: 15px"
+          alt="Meduseld"
         />
         <h1 style="color: #e6c65c; font-weight: 600">Trivia</h1>
         <p style="opacity: 0.8">How smart... or stupid are you really?</p>
       </div>
-      <!-- Podium -->
       <div class="row g-3 justify-content-center mb-5" id="podium-section">
         <div class="col-12">
           <h4 class="text-center mb-3" style="color: #e6c65c">
@@ -141,124 +239,7 @@
           </div>
         </div>
       </div>
-      <!-- Setup Panel -->
-      <div class="row justify-content-center mb-4" id="setup-panel">
-        <div class="col-12 col-lg-8">
-          <div class="card bg-dark border-warning">
-            <div
-              class="card-header text-center"
-              style="background-color: rgba(230, 198, 92, 0.1); border-bottom: 2px solid #e6c65c"
-            >
-              <h4 class="mb-0" style="color: #e6c65c">
-                <i class="bi bi-gear me-2"></i>
-                Game Setup
-              </h4>
-            </div>
-            <div class="card-body">
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <label class="form-label text-muted small">Number of Questions</label>
-                  <select
-                    id="num-questions"
-                    class="form-select form-select-sm bg-dark text-light border-secondary"
-                  >
-                    <option value="5">5 Questions</option>
-                    <option value="10" selected>10 Questions</option>
-                    <option value="15">15 Questions</option>
-                    <option value="20">20 Questions</option>
-                  </select>
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label text-muted small">Difficulty</label>
-                  <select
-                    id="difficulty"
-                    class="form-select form-select-sm bg-dark text-light border-secondary"
-                  >
-                    <option value="">Any Difficulty</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                  </select>
-                </div>
-                <div class="col-12">
-                  <label class="form-label text-muted small">Category</label>
-                  <select
-                    id="category-select"
-                    class="form-select form-select-sm bg-dark text-light border-secondary"
-                  >
-                    <option value="">Any Category</option>
-                  </select>
-                </div>
-              </div>
-              <div class="text-center mt-4">
-                <button id="start-btn" class="btn btn-warning btn-lg px-5" onclick="startGame()">
-                  <i class="bi bi-play-fill me-2"></i>
-                  Start Game
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Game Panel -->
-      <div class="row justify-content-center mb-4" id="game-panel" style="display: none">
-        <div class="col-12 col-lg-8">
-          <div class="card bg-dark border-warning">
-            <div
-              class="card-header d-flex justify-content-between align-items-center"
-              style="background-color: rgba(230, 198, 92, 0.1); border-bottom: 2px solid #e6c65c"
-            >
-              <span style="color: #e6c65c; font-weight: 600">
-                Question
-                <span id="q-current">1</span>
-                /
-                <span id="q-total">10</span>
-              </span>
-              <span class="badge bg-warning text-dark" id="score-badge">Score: 0</span>
-            </div>
-            <div class="card-body">
-              <div class="mb-2">
-                <span class="badge bg-secondary" id="q-category"></span>
-                <span class="badge bg-secondary ms-1" id="q-difficulty"></span>
-              </div>
-              <h5 class="mb-4" id="q-text" style="color: #e4d9b5; line-height: 1.6"></h5>
-              <div id="answers-container" class="d-flex flex-column gap-2"></div>
-              <div class="progress-dots mt-4" id="progress-dots"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Results Panel -->
-      <div class="row justify-content-center mb-4" id="results-panel" style="display: none">
-        <div class="col-12 col-lg-8">
-          <div class="card bg-dark border-warning">
-            <div
-              class="card-header text-center"
-              style="background-color: rgba(230, 198, 92, 0.1); border-bottom: 2px solid #e6c65c"
-            >
-              <h4 class="mb-0" style="color: #e6c65c">
-                <i class="bi bi-flag-fill me-2"></i>
-                Game Over
-              </h4>
-            </div>
-            <div class="card-body text-center">
-              <h2 id="final-score" style="color: #e6c65c" class="mb-2"></h2>
-              <p id="final-message" class="text-muted mb-3"></p>
-              <div id="final-dots" class="progress-dots mb-4"></div>
-              <div id="win-recorded" class="mb-3" style="display: none">
-                <span class="badge bg-success">
-                  <i class="bi bi-trophy me-1"></i>
-                  Win recorded to leaderboard
-                </span>
-              </div>
-              <button class="btn btn-warning btn-lg px-5" onclick="resetGame()">
-                <i class="bi bi-arrow-repeat me-2"></i>
-                Play Again
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div id="main-panel"></div>
     </div>
     <footer class="text-center py-3 mt-auto" style="border-top: 1px solid rgba(230, 198, 92, 0.2)">
       <p class="text-light mb-0" style="font-size: 0.85rem">
@@ -272,276 +253,503 @@
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://meduseld.io/static/auth.js"></script>
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+  </body>
+</html>
     <script>
-      var questions = [],
-        currentIndex = 0,
-        score = 0,
-        answers = [];
       var HEALTH_BASE = 'https://health.meduseld.io/check';
+      var WS_URL = 'https://panel.meduseld.io';
+      var socket = null;
+      var currentLobby = null;
+      var currentUser = null;
+      var myUserId = null; // DB user ID, set by server on connect
+      var categories = [];
+      var soloQuestions = [], soloIndex = 0, soloScore = 0, soloAnswers = [];
+      var questionTimerInterval = null;
+      var currentAnswers = []; // store raw answer strings for current question
 
+      document.getElementById('copyright-year').textContent = new Date().getFullYear();
       if (typeof MeduseldAuth !== 'undefined') {
         MeduseldAuth.renderProfile('profile-container');
-        MeduseldAuth.syncUser().then(function () {
-          MeduseldAuth.renderProfile('profile-container');
-        });
-      }
-      document.getElementById('copyright-year').textContent = new Date().getFullYear();
-
-      function loadCategories() {
-        fetch('https://opentdb.com/api_category.php')
-          .then(function (r) {
-            return r.json();
-          })
-          .then(function (data) {
-            var sel = document.getElementById('category-select');
-            (data.trivia_categories || []).forEach(function (cat) {
-              var opt = document.createElement('option');
-              opt.value = cat.id;
-              opt.textContent = cat.name.replace('Entertainment: ', '').replace('Science: ', '');
-              sel.appendChild(opt);
-            });
-          })
-          .catch(function (err) {
-            console.error('Failed to load trivia categories:', err);
-          });
+        MeduseldAuth.syncUser().then(function() { MeduseldAuth.renderProfile('profile-container'); });
+        currentUser = MeduseldAuth.getUser();
       }
       loadCategories();
+      loadLeaderboard();
+      showBrowser();
 
+      // ==================== CATEGORIES ====================
+      function loadCategories() {
+        fetch('https://opentdb.com/api_category.php')
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            categories = (data.trivia_categories || []).map(function(c) {
+              return { id: c.id, name: c.name.replace('Entertainment: ','').replace('Science: ','') };
+            });
+          })
+          .catch(function(err) { console.error('Failed to load trivia categories:', err); });
+      }
+
+      // ==================== LEADERBOARD ====================
       function loadLeaderboard() {
         fetch(HEALTH_BASE + '/trivia-leaderboard')
-          .then(function (r) {
-            return r.json();
-          })
-          .then(function (data) {
-            renderPodium(data.leaderboard || []);
-          })
-          .catch(function (err) {
+          .then(function(r) { return r.json(); })
+          .then(function(data) { renderPodium(data.leaderboard || []); })
+          .catch(function(err) {
             console.error('Failed to load trivia leaderboard:', err);
-            document.getElementById('podium-container').innerHTML =
-              '<p class="text-muted">Could not load leaderboard.</p>';
+            document.getElementById('podium-container').innerHTML = '<p class="text-muted">Could not load leaderboard.</p>';
           });
       }
       function renderPodium(lb) {
         var c = document.getElementById('podium-container');
-        if (!lb.length) {
-          c.innerHTML = '<p class="text-muted">No wins recorded yet. Be the first!</p>';
-          return;
-        }
-        var html = '',
-          medals = ['\u{1F947}', '\u{1F948}', '\u{1F949}'],
-          cls = ['podium-1', 'podium-2', 'podium-3'];
-        lb.slice(0, 3).forEach(function (e, i) {
-          var av = e.avatar_url
-            ? '<img src="' + e.avatar_url + '" class="podium-avatar" alt="" />'
+        if (!lb.length) { c.innerHTML = '<p class="text-muted">No wins recorded yet. Be the first!</p>'; return; }
+        var html = '', medals = ['\u{1F947}','\u{1F948}','\u{1F949}'], cls = ['podium-1','podium-2','podium-3'];
+        lb.slice(0,3).forEach(function(e,i) {
+          var av = e.avatar_url ? '<img src="'+e.avatar_url+'" class="podium-avatar" alt="" />'
             : '<div class="podium-avatar d-flex align-items-center justify-content-center mx-auto" style="background:rgba(108,117,125,0.3);border:1px solid rgba(108,117,125,0.5)"><i class="bi bi-person-fill" style="font-size:1.5rem;color:#6c757d"></i></div>';
-          html +=
-            '<div class="podium-card ' + cls[i] + '" style="min-width:160px;max-width:200px">';
-          html += '<div class="podium-rank">' + medals[i] + '</div>' + av;
-          html +=
-            '<div style="color:#e4d9b5;font-weight:600;font-size:0.95rem">' +
-            escapeHtml(e.display_name) +
-            '</div>';
-          html +=
-            '<div style="color:#e6c65c;font-size:1.2rem;font-weight:700">' +
-            e.wins +
-            ' win' +
-            (e.wins !== 1 ? 's' : '') +
-            '</div>';
-          html +=
-            '<div class="text-muted" style="font-size:0.75rem">' +
-            e.total_score +
-            '/' +
-            e.total_questions +
-            ' correct</div></div>';
+          html += '<div class="podium-card '+cls[i]+'" style="min-width:160px;max-width:200px"><div class="podium-rank">'+medals[i]+'</div>'+av;
+          html += '<div style="color:#e4d9b5;font-weight:600;font-size:0.95rem">'+esc(e.display_name)+'</div>';
+          html += '<div style="color:#e6c65c;font-size:1.2rem;font-weight:700">'+e.wins+' win'+(e.wins!==1?'s':'')+'</div>';
+          html += '<div class="text-muted" style="font-size:0.75rem">'+e.total_score+'/'+e.total_questions+' correct</div></div>';
         });
         if (lb.length > 3) {
-          html +=
-            '<div class="w-100 mt-3"><table class="table table-sm table-dark mb-0" style="max-width:500px;margin:0 auto"><tbody>';
-          for (var i = 3; i < lb.length; i++) {
-            var e = lb[i];
-            html +=
-              '<tr><td class="text-muted">#' +
-              (i + 1) +
-              '</td><td>' +
-              escapeHtml(e.display_name) +
-              '</td><td style="color:#e6c65c">' +
-              e.wins +
-              ' win' +
-              (e.wins !== 1 ? 's' : '') +
-              '</td><td class="text-muted">' +
-              e.total_score +
-              '/' +
-              e.total_questions +
-              '</td></tr>';
-          }
+          html += '<div class="w-100 mt-3"><table class="table table-sm table-dark mb-0" style="max-width:500px;margin:0 auto"><tbody>';
+          for (var i=3;i<lb.length;i++) { var e=lb[i]; html += '<tr><td class="text-muted">#'+(i+1)+'</td><td>'+esc(e.display_name)+'</td><td style="color:#e6c65c">'+e.wins+' win'+(e.wins!==1?'s':'')+'</td><td class="text-muted">'+e.total_score+'/'+e.total_questions+'</td></tr>'; }
           html += '</tbody></table></div>';
         }
         c.innerHTML = html;
       }
-      loadLeaderboard();
 
-      function startGame() {
-        var numQ = document.getElementById('num-questions').value,
-          diff = document.getElementById('difficulty').value;
+      // ==================== SOCKET ====================
+      function connectSocket(cb) {
+        if (socket && socket.connected) { if (cb) cb(); return; }
+        var cfToken = getCfToken();
+        if (!cfToken) { showToast('Not authenticated', 'warning'); return; }
+        socket = io(WS_URL + '/trivia', { query: { token: cfToken }, transports: ['websocket','polling'], withCredentials: true });
+        socket.on('connect', function() {
+          console.log('Trivia WS connected');
+          if (cb) cb();
+        });
+        socket.on('connect_error', function(err) { console.error('Trivia WS connect error:', err); });
+        socket.on('disconnect', function(reason) {
+          console.log('Trivia WS disconnected:', reason);
+          if (currentLobby && currentLobby.status === 'waiting') { currentLobby = null; showBrowser(); }
+        });
+        socket.on('error', function(d) { showToast(d.message || 'An error occurred', 'danger'); });
+        socket.on('welcome', function(d) { myUserId = d.user_id; });
+        socket.on('lobby_created', function(d) { currentLobby = d.lobby; showLobbyView(); });
+        socket.on('lobby_joined', function(d) { currentLobby = d.lobby; showLobbyView(); });
+        socket.on('player_joined', function(d) { currentLobby = d.lobby; if (document.getElementById('lobby-players')) renderLobbyPlayers(); });
+        socket.on('player_left', function(d) { currentLobby = d.lobby; if (document.getElementById('lobby-players')) renderLobbyPlayers(); });
+        socket.on('lobby_closed', function(d) { currentLobby = null; showToast(d.reason || 'Lobby closed', 'warning'); showBrowser(); });
+        socket.on('kicked', function(d) { currentLobby = null; showToast(d.reason || 'You were kicked', 'warning'); showBrowser(); });
+        socket.on('game_starting', function(d) { showCountdown(d.countdown, d.total_questions); });
+        socket.on('question', function(d) { showMpQuestion(d); });
+        socket.on('player_answered', function(d) { currentLobby = d.lobby; updatePlayerChips(); });
+        socket.on('answer_reveal', function(d) { revealAnswer(d); });
+        socket.on('game_over', function(d) { showMpResults(d.standings); });
+      }
+      function getCfToken() { return (document.cookie.match(/(?:^|; )CF_Authorization=([^;]*)/) || [])[1] || ''; }
+
+      // ==================== LOBBY BROWSER ====================
+      function showBrowser() {
+        clearTimers();
+        var p = document.getElementById('main-panel');
+        p.innerHTML = '<div class="row justify-content-center mb-4"><div class="col-12 col-lg-8">'
+          + '<div class="card bg-dark border-warning"><div class="card-header text-center" style="background-color:rgba(230,198,92,0.1);border-bottom:2px solid #e6c65c">'
+          + '<h4 class="mb-0" style="color:#e6c65c"><i class="bi bi-people me-2"></i>Trivia Lobbies</h4></div>'
+          + '<div class="card-body">'
+          + '<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">'
+          + '<div class="d-flex gap-2 flex-wrap">'
+          + '<button class="btn btn-warning btn-sm" onclick="showCreateLobby()"><i class="bi bi-plus-lg me-1"></i>Host Game</button>'
+          + '<button class="btn btn-outline-warning btn-sm" onclick="showJoinByCode()"><i class="bi bi-key me-1"></i>Join by Code</button>'
+          + '<button class="btn btn-outline-secondary btn-sm" onclick="showSoloSetup()"><i class="bi bi-person me-1"></i>Play Solo</button>'
+          + '</div>'
+          + '<button class="btn btn-outline-warning btn-sm" onclick="refreshLobbies()"><i class="bi bi-arrow-clockwise"></i></button>'
+          + '</div>'
+          + '<div id="lobby-list"><div class="text-center py-3"><div class="spinner-border spinner-border-sm text-warning" role="status"></div></div></div>'
+          + '</div></div></div></div>';
+        refreshLobbies();
+      }
+      function refreshLobbies() {
+        fetch(HEALTH_BASE + '/trivia-lobbies')
+          .then(function(r) { return r.json(); })
+          .then(function(d) { renderLobbyList(d.lobbies || []); })
+          .catch(function(err) {
+            console.error('Failed to load trivia lobbies:', err);
+            document.getElementById('lobby-list').innerHTML = '<p class="text-muted text-center">Could not load lobbies.</p>';
+          });
+      }
+      function renderLobbyList(lobbies) {
+        var el = document.getElementById('lobby-list');
+        if (!lobbies.length) { el.innerHTML = '<p class="text-muted text-center py-3">No active lobbies. Host one or play solo!</p>'; return; }
+        var html = '';
+        lobbies.forEach(function(l) {
+          var diff = l.settings.difficulty ? l.settings.difficulty.charAt(0).toUpperCase()+l.settings.difficulty.slice(1) : 'Any';
+          html += '<div class="lobby-card mb-2" onclick="joinLobby(\''+l.code+'\')">'
+            + '<div class="d-flex justify-content-between align-items-center"><div>'
+            + '<span style="color:#e6c65c;font-weight:600">'+esc(l.host_name||'Unknown')+'\'s Game</span>'
+            + ' <span class="badge bg-secondary ms-1" style="font-size:0.7rem">'+l.code+'</span></div>'
+            + '<div class="d-flex align-items-center gap-2">'
+            + '<span class="text-muted" style="font-size:0.8rem"><i class="bi bi-people me-1"></i>'+l.player_count+'/'+l.settings.max_players+'</span>'
+            + '<span class="badge bg-warning text-dark" style="font-size:0.7rem">Join</span></div></div>'
+            + '<div class="mt-1" style="font-size:0.8rem;color:#adb5bd">'+l.settings.num_questions+' Qs · '+diff+' · '+esc(l.settings.category_name||'Any Category')+'</div></div>';
+        });
+        el.innerHTML = html;
+      }
+      function showJoinByCode() { var c = prompt('Enter lobby code:'); if (c) joinLobby(c); }
+      function joinLobby(code) {
+        if (!currentUser) { showToast('You must be logged in to join', 'warning'); return; }
+        connectSocket(function() { socket.emit('join_lobby', { code: code }); });
+      }
+
+      // ==================== CREATE LOBBY ====================
+      function showCreateLobby() {
+        if (!currentUser) { showToast('You must be logged in to host', 'warning'); return; }
+        var p = document.getElementById('main-panel');
+        var catOpts = '<option value="">Any Category</option>';
+        categories.forEach(function(c) { catOpts += '<option value="'+c.id+'">'+esc(c.name)+'</option>'; });
+        var maxOpts = ''; for (var i=2;i<=12;i++) maxOpts += '<option value="'+i+'"'+(i===8?' selected':'')+'>'+i+'</option>';
+        p.innerHTML = '<div class="row justify-content-center mb-4"><div class="col-12 col-lg-8">'
+          + '<div class="card bg-dark border-warning"><div class="card-header text-center" style="background-color:rgba(230,198,92,0.1);border-bottom:2px solid #e6c65c">'
+          + '<h4 class="mb-0" style="color:#e6c65c"><i class="bi bi-plus-circle me-2"></i>Host a Game</h4></div>'
+          + '<div class="card-body"><div class="row g-3">'
+          + '<div class="col-md-4"><label class="form-label text-muted small">Questions</label><select id="c-num" class="form-select form-select-sm bg-dark text-light border-secondary"><option value="5">5</option><option value="10" selected>10</option><option value="15">15</option><option value="20">20</option></select></div>'
+          + '<div class="col-md-4"><label class="form-label text-muted small">Difficulty</label><select id="c-diff" class="form-select form-select-sm bg-dark text-light border-secondary"><option value="">Any</option><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select></div>'
+          + '<div class="col-md-4"><label class="form-label text-muted small">Max Players</label><select id="c-max" class="form-select form-select-sm bg-dark text-light border-secondary">'+maxOpts+'</select></div>'
+          + '<div class="col-12"><label class="form-label text-muted small">Category</label><select id="c-cat" class="form-select form-select-sm bg-dark text-light border-secondary">'+catOpts+'</select></div>'
+          + '</div><div class="d-flex justify-content-center gap-2 mt-4">'
+          + '<button class="btn btn-outline-secondary" onclick="showBrowser()">Cancel</button>'
+          + '<button class="btn btn-warning px-4" onclick="createLobby()"><i class="bi bi-play-fill me-1"></i>Create Lobby</button>'
+          + '</div></div></div></div></div>';
+      }
+      function createLobby() {
+        var catSel = document.getElementById('c-cat');
+        var catName = catSel.options[catSel.selectedIndex].text;
+        connectSocket(function() {
+          socket.emit('create_lobby', {
+            num_questions: parseInt(document.getElementById('c-num').value),
+            difficulty: document.getElementById('c-diff').value,
+            category: document.getElementById('c-cat').value,
+            category_name: catName,
+            max_players: parseInt(document.getElementById('c-max').value),
+          });
+        });
+      }
+
+      // ==================== LOBBY VIEW ====================
+      function showLobbyView() {
+        clearTimers();
+        var L = currentLobby; if (!L) return;
+        var isHost = myUserId === L.host_user_id;
+        var diff = L.settings.difficulty ? L.settings.difficulty.charAt(0).toUpperCase()+L.settings.difficulty.slice(1) : 'Any';
+        var p = document.getElementById('main-panel');
+        p.innerHTML = '<div class="row justify-content-center mb-4"><div class="col-12 col-lg-8">'
+          + '<div class="card bg-dark border-warning"><div class="card-header d-flex justify-content-between align-items-center" style="background-color:rgba(230,198,92,0.1);border-bottom:2px solid #e6c65c">'
+          + '<span style="color:#e6c65c;font-weight:600"><i class="bi bi-people me-2"></i>Lobby</span>'
+          + '<span class="badge bg-warning text-dark" style="font-size:0.85rem;letter-spacing:2px" data-bs-toggle="tooltip" data-bs-title="Share this code with friends">'+L.code+'</span>'
+          + '</div><div class="card-body">'
+          + '<div class="text-center mb-3" style="font-size:0.85rem;color:#adb5bd">'+L.settings.num_questions+' Questions · '+diff+' Difficulty · '+esc(L.settings.category_name||'Any Category')+'</div>'
+          + '<div id="lobby-players" class="d-flex flex-wrap gap-2 justify-content-center mb-4"></div>'
+          + '<div class="d-flex justify-content-center gap-2">'
+          + '<button class="btn btn-outline-secondary btn-sm" onclick="leaveLobby()"><i class="bi bi-box-arrow-left me-1"></i>Leave</button>'
+          + (isHost ? '<button id="start-btn" class="btn btn-warning px-4" onclick="startMpGame()"><i class="bi bi-play-fill me-1"></i>Start Game</button>' : '<span class="text-muted" style="font-size:0.85rem;align-self:center">Waiting for host to start...</span>')
+          + '</div></div></div></div></div>';
+        renderLobbyPlayers();
+        initTooltips();
+      }
+      function renderLobbyPlayers() {
+        var el = document.getElementById('lobby-players');
+        if (!el || !currentLobby) return;
+        // Dispose existing tooltips
+        el.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(t) {
+          var tip = bootstrap.Tooltip.getInstance(t);
+          if (tip) tip.dispose();
+        });
+        var isHost = myUserId === currentLobby.host_user_id;
+        var html = '';
+        currentLobby.players.forEach(function(p) {
+          var av = p.avatar_url ? '<img src="'+p.avatar_url+'" alt="" />'
+            : '<div style="width:28px;height:28px;border-radius:50%;background:rgba(108,117,125,0.3);display:flex;align-items:center;justify-content:center"><i class="bi bi-person-fill" style="font-size:0.8rem;color:#6c757d"></i></div>';
+          html += '<div class="player-chip'+(p.answered?' answered':'')+'">' + av
+            + '<span style="color:#e4d9b5">'+esc(p.display_name)+'</span>'
+            + (p.user_id === currentLobby.host_user_id ? ' <span class="host-badge">HOST</span>' : '');
+          if (isHost && p.user_id !== currentLobby.host_user_id && currentLobby.status === 'waiting') {
+            html += ' <span style="cursor:pointer;color:#dc3545;font-size:0.75rem" onclick="event.stopPropagation();kickPlayer('+p.user_id+')" data-bs-toggle="tooltip" data-bs-title="Kick player"><i class="bi bi-x-circle"></i></span>';
+          }
+          html += '</div>';
+        });
+        el.innerHTML = html;
+        el.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(t) { new bootstrap.Tooltip(t); });
+      }
+      function updatePlayerChips() { renderLobbyPlayers(); }
+      function leaveLobby() {
+        if (socket && currentLobby) socket.emit('leave_lobby', { code: currentLobby.code });
+        currentLobby = null; showBrowser();
+      }
+      function kickPlayer(uid) { if (socket && currentLobby) socket.emit('kick_player', { code: currentLobby.code, user_id: uid }); }
+      function startMpGame() {
+        if (!socket || !currentLobby) return;
         var btn = document.getElementById('start-btn');
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Loading...';
-        var url = 'https://opentdb.com/api.php?amount=' + numQ + '&type=multiple';
-        var cat = document.getElementById('category-select').value;
-        if (cat) url += '&category=' + cat;
-        if (diff) url += '&difficulty=' + diff;
-        fetch(url)
-          .then(function (r) {
-            return r.json();
-          })
-          .then(function (data) {
-            if (data.response_code !== 0 || !data.results || !data.results.length)
-              throw new Error('No questions available (code: ' + data.response_code + ')');
-            questions = data.results;
-            currentIndex = 0;
-            score = 0;
-            answers = [];
-            document.getElementById('q-total').textContent = questions.length;
-            document.getElementById('score-badge').textContent = 'Score: 0';
-            buildProgressDots();
-            showQuestion();
-            document.getElementById('setup-panel').style.display = 'none';
-            document.getElementById('results-panel').style.display = 'none';
-            document.getElementById('game-panel').style.display = '';
-          })
-          .catch(function (err) {
-            console.error('Failed to fetch trivia questions:', err);
-            alert('Could not load questions: ' + err.message);
-          })
-          .finally(function () {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="bi bi-play-fill me-2"></i>Start Game';
-          });
-      }
-      function buildProgressDots() {
-        var h = '';
-        for (var i = 0; i < questions.length; i++)
-          h +=
-            '<div class="progress-dot' +
-            (i === 0 ? ' current' : '') +
-            '" id="dot-' +
-            i +
-            '"></div>';
-        document.getElementById('progress-dots').innerHTML = h;
-      }
-      function showQuestion() {
-        var q = questions[currentIndex];
-        document.getElementById('q-current').textContent = currentIndex + 1;
-        document.getElementById('q-text').innerHTML = q.question;
-        document.getElementById('q-category').textContent = q.category;
-        document.getElementById('q-difficulty').textContent =
-          q.difficulty.charAt(0).toUpperCase() + q.difficulty.slice(1);
-        var all = q.incorrect_answers.slice();
-        all.splice(Math.floor(Math.random() * (all.length + 1)), 0, q.correct_answer);
-        var cont = document.getElementById('answers-container');
-        cont.innerHTML = '';
-        all.forEach(function (ans) {
-          var b = document.createElement('button');
-          b.className = 'answer-btn';
-          b.innerHTML = ans;
-          b.onclick = function () {
-            selectAnswer(b, ans, q.correct_answer);
-          };
-          cont.appendChild(b);
-        });
-        for (var i = 0; i < questions.length; i++) {
-          var d = document.getElementById('dot-' + i);
-          d.classList.remove('current');
-          if (i === currentIndex) d.classList.add('current');
-        }
-      }
-      function selectAnswer(clicked, selected, correct) {
-        document.querySelectorAll('.answer-btn').forEach(function (b) {
-          b.disabled = true;
-        });
-        var ok = selected === correct;
-        if (ok) {
-          score++;
-          clicked.classList.add('correct');
-          answers.push('correct');
-        } else {
-          clicked.classList.add('wrong');
-          answers.push('wrong');
-          document.querySelectorAll('.answer-btn').forEach(function (b) {
-            if (b.innerHTML === correct) b.classList.add('correct');
-          });
-        }
-        document.getElementById('score-badge').textContent = 'Score: ' + score;
-        var dot = document.getElementById('dot-' + currentIndex);
-        dot.classList.remove('current');
-        dot.classList.add(ok ? 'correct' : 'wrong');
-        setTimeout(function () {
-          currentIndex++;
-          if (currentIndex < questions.length) showQuestion();
-          else endGame();
-        }, 1200);
+        if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Loading...'; }
+        socket.emit('start_game', { code: currentLobby.code });
       }
 
-      function endGame() {
-        document.getElementById('game-panel').style.display = 'none';
-        document.getElementById('results-panel').style.display = '';
-        var pct = Math.round((score / questions.length) * 100);
-        document.getElementById('final-score').textContent =
-          score + ' / ' + questions.length + ' (' + pct + '%)';
-        var msg =
-          pct === 100
-            ? 'Perfect score! Incredible!'
-            : pct >= 80
-              ? 'Great job! You really know your stuff.'
-              : pct >= 60
-                ? 'Not bad! Room for improvement though.'
-                : pct >= 40
-                  ? 'Could be worse... could be better.'
-                  : 'Better luck next time!';
-        document.getElementById('final-message').textContent = msg;
-        var dh = '';
-        answers.forEach(function (a) {
-          dh += '<div class="progress-dot ' + a + '"></div>';
+      // ==================== COUNTDOWN ====================
+      function showCountdown(secs, totalQ) {
+        clearTimers();
+        document.getElementById('main-panel').innerHTML = '<div class="text-center py-5"><p class="text-muted mb-2">Game starting in</p><div id="cd-num" class="countdown-number">'+secs+'</div><p class="text-muted mt-2">'+totalQ+' questions</p></div>';
+        var rem = secs;
+        questionTimerInterval = setInterval(function() {
+          rem--;
+          var el = document.getElementById('cd-num');
+          if (el) el.textContent = rem > 0 ? rem : 'GO!';
+          if (rem <= 0) clearInterval(questionTimerInterval);
+        }, 1000);
+      }
+
+      // ==================== MULTIPLAYER QUESTION ====================
+      function showMpQuestion(data) {
+        clearTimers();
+        if (currentLobby) currentLobby.current_question = data.index;
+        currentAnswers = data.answers; // store raw answer strings
+        var total = currentLobby ? currentLobby.total_questions : '?';
+        var p = document.getElementById('main-panel');
+        var ansHtml = '';
+        data.answers.forEach(function(ans, idx) {
+          ansHtml += '<button class="answer-btn" data-idx="'+idx+'">'+ans+'</button>';
         });
-        document.getElementById('final-dots').innerHTML = dh;
-        recordWin();
+        p.innerHTML = '<div class="row justify-content-center mb-4"><div class="col-12 col-lg-8">'
+          + '<div class="card bg-dark border-warning">'
+          + '<div class="card-header d-flex justify-content-between align-items-center" style="background-color:rgba(230,198,92,0.1);border-bottom:2px solid #e6c65c">'
+          + '<span style="color:#e6c65c;font-weight:600">Question '+(data.index+1)+' / '+total+'</span>'
+          + '<span class="badge bg-warning text-dark" id="mp-score">Score: '+getMyScore()+'</span>'
+          + '</div><div class="card-body">'
+          + '<div class="timer-bar-track"><div class="timer-bar" id="timer-bar" style="width:100%"></div></div>'
+          + '<div class="mb-2"><span class="badge bg-secondary">'+esc(data.category)+'</span> <span class="badge bg-secondary ms-1">'+data.difficulty.charAt(0).toUpperCase()+data.difficulty.slice(1)+'</span></div>'
+          + '<h5 class="mb-4" style="color:#e4d9b5;line-height:1.6">'+data.question+'</h5>'
+          + '<div id="mp-answers" class="d-flex flex-column gap-2">'+ansHtml+'</div>'
+          + '<div class="mt-3 d-flex flex-wrap gap-2 justify-content-center" id="lobby-players"></div>'
+          + '<div class="progress-dots mt-3" id="mp-dots"></div>'
+          + '</div></div></div></div>';
+
+        // Bind click handlers using data attributes (avoids escaping issues)
+        document.querySelectorAll('#mp-answers .answer-btn').forEach(function(btn) {
+          btn.addEventListener('click', function() { submitMpAnswer(btn, currentAnswers[parseInt(btn.getAttribute('data-idx'))]); });
+        });
+        renderLobbyPlayers();
+        buildDots('mp-dots', data.index, total);
+        startTimerBar(data.time_limit);
       }
-      function recordWin() {
-        if (typeof MeduseldAuth === 'undefined' || !MeduseldAuth.isAuthenticated()) return;
-        var catName = questions.length > 0 ? questions[0].category : '';
-        var cfCookie = (document.cookie.match(/(?:^|; )CF_Authorization=([^;]*)/) || [])[1] || '';
-        fetch(HEALTH_BASE + '/trivia-record-win', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            score: score,
-            total_questions: questions.length,
-            category: catName,
-            _cf_token: cfCookie,
-          }),
-        })
-          .then(function (r) {
-            if (!r.ok) throw new Error('HTTP ' + r.status);
-            document.getElementById('win-recorded').style.display = '';
-            loadLeaderboard();
-          })
-          .catch(function (err) {
-            console.error('Failed to record trivia win:', err);
+      function getMyScore() {
+        if (!currentLobby || !myUserId) return 0;
+        for (var i=0;i<currentLobby.players.length;i++) { if (currentLobby.players[i].user_id === myUserId) return currentLobby.players[i].score; }
+        return 0;
+      }
+      function submitMpAnswer(btn, answer) {
+        if (!socket || !currentLobby) return;
+        document.querySelectorAll('#mp-answers .answer-btn').forEach(function(b) { b.disabled = true; });
+        btn.classList.add('selected');
+        socket.emit('submit_answer', { code: currentLobby.code, answer: answer });
+      }
+      function revealAnswer(data) {
+        clearTimers();
+        var correct = data.correct_answer;
+        // Match buttons by comparing raw answer text to currentAnswers
+        document.querySelectorAll('#mp-answers .answer-btn').forEach(function(b) {
+          var idx = parseInt(b.getAttribute('data-idx'));
+          if (currentAnswers[idx] === correct) b.classList.add('correct');
+        });
+        // Update scores + highlight my wrong answer
+        if (currentLobby && data.player_results) {
+          data.player_results.forEach(function(pr) {
+            for (var i=0;i<currentLobby.players.length;i++) {
+              if (currentLobby.players[i].user_id === pr.user_id) { currentLobby.players[i].score = pr.score; currentLobby.players[i].answered = false; }
+            }
+            if (pr.user_id === myUserId && pr.answer && pr.answer !== correct) {
+              document.querySelectorAll('#mp-answers .answer-btn').forEach(function(b) {
+                var idx = parseInt(b.getAttribute('data-idx'));
+                if (currentAnswers[idx] === pr.answer) b.classList.add('wrong');
+              });
+            }
           });
+        }
+        var badge = document.getElementById('mp-score');
+        if (badge) badge.textContent = 'Score: ' + getMyScore();
+        // Update dot
+        var myR = null;
+        if (data.player_results) { for (var i=0;i<data.player_results.length;i++) { if (data.player_results[i].user_id === myUserId) { myR = data.player_results[i]; break; } } }
+        var dot = document.getElementById('dot-'+data.question_index);
+        if (dot) { dot.classList.remove('current'); dot.classList.add(myR && myR.correct ? 'correct' : 'wrong'); }
       }
-      function resetGame() {
-        document.getElementById('results-panel').style.display = 'none';
-        document.getElementById('win-recorded').style.display = 'none';
-        document.getElementById('setup-panel').style.display = '';
-        questions = [];
-        currentIndex = 0;
-        score = 0;
-        answers = [];
+
+      // ==================== MULTIPLAYER RESULTS ====================
+      function showMpResults(standings) {
+        clearTimers();
+        var medals = ['\u{1F947}','\u{1F948}','\u{1F949}'];
+        var html = '<div class="row justify-content-center mb-4"><div class="col-12 col-lg-8">'
+          + '<div class="card bg-dark border-warning"><div class="card-header text-center" style="background-color:rgba(230,198,92,0.1);border-bottom:2px solid #e6c65c">'
+          + '<h4 class="mb-0" style="color:#e6c65c"><i class="bi bi-flag-fill me-2"></i>Game Over</h4></div><div class="card-body">';
+        standings.forEach(function(s,i) {
+          var av = s.avatar_url ? '<img src="'+s.avatar_url+'" alt="" />'
+            : '<div style="width:32px;height:32px;border-radius:50%;background:rgba(108,117,125,0.3);display:flex;align-items:center;justify-content:center"><i class="bi bi-person-fill" style="color:#6c757d"></i></div>';
+          html += '<div class="scoreboard-row'+(i===0?' winner':'')+'">'
+            + '<span style="font-size:1.2rem;min-width:30px">'+(medals[i]||'#'+(i+1))+'</span>' + av
+            + '<span style="color:#e4d9b5;flex:1">'+esc(s.display_name)+(s.user_id===myUserId?' <span class="badge bg-secondary" style="font-size:0.65rem">You</span>':'')+'</span>'
+            + '<span style="color:#e6c65c;font-weight:700;font-size:1.1rem">'+s.score+'/'+s.total+'</span></div>';
+        });
+        html += '<div class="text-center mt-3"><span class="badge bg-success"><i class="bi bi-trophy me-1"></i>Results recorded to leaderboard</span></div>'
+          + '<div class="d-flex justify-content-center gap-2 mt-4">'
+          + '<button class="btn btn-outline-secondary" onclick="showBrowser()"><i class="bi bi-arrow-left me-1"></i>Back to Lobbies</button>'
+          + '<button class="btn btn-warning px-4" onclick="showBrowser()"><i class="bi bi-arrow-repeat me-1"></i>Play Again</button>'
+          + '</div></div></div></div></div>';
+        document.getElementById('main-panel').innerHTML = html;
+        currentLobby = null;
+        loadLeaderboard();
       }
-      function escapeHtml(s) {
-        var d = document.createElement('div');
-        d.appendChild(document.createTextNode(s));
-        return d.innerHTML;
+
+      // ==================== SOLO MODE ====================
+      function showSoloSetup() {
+        clearTimers();
+        var catOpts = '<option value="">Any Category</option>';
+        categories.forEach(function(c) { catOpts += '<option value="'+c.id+'">'+esc(c.name)+'</option>'; });
+        document.getElementById('main-panel').innerHTML = '<div class="row justify-content-center mb-4"><div class="col-12 col-lg-8">'
+          + '<div class="card bg-dark border-warning"><div class="card-header text-center" style="background-color:rgba(230,198,92,0.1);border-bottom:2px solid #e6c65c">'
+          + '<h4 class="mb-0" style="color:#e6c65c"><i class="bi bi-person me-2"></i>Solo Game <span class="solo-badge">No lobby needed</span></h4></div>'
+          + '<div class="card-body"><div class="row g-3">'
+          + '<div class="col-md-6"><label class="form-label text-muted small">Questions</label><select id="s-num" class="form-select form-select-sm bg-dark text-light border-secondary"><option value="5">5</option><option value="10" selected>10</option><option value="15">15</option><option value="20">20</option></select></div>'
+          + '<div class="col-md-6"><label class="form-label text-muted small">Difficulty</label><select id="s-diff" class="form-select form-select-sm bg-dark text-light border-secondary"><option value="">Any</option><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select></div>'
+          + '<div class="col-12"><label class="form-label text-muted small">Category</label><select id="s-cat" class="form-select form-select-sm bg-dark text-light border-secondary">'+catOpts+'</select></div>'
+          + '</div><div class="d-flex justify-content-center gap-2 mt-4">'
+          + '<button class="btn btn-outline-secondary" onclick="showBrowser()">Cancel</button>'
+          + '<button id="s-start" class="btn btn-warning btn-lg px-5" onclick="startSolo()"><i class="bi bi-play-fill me-2"></i>Start Game</button>'
+          + '</div></div></div></div></div>';
+      }
+      function startSolo() {
+        var btn = document.getElementById('s-start');
+        btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Loading...';
+        var url = 'https://opentdb.com/api.php?amount='+document.getElementById('s-num').value+'&type=multiple';
+        var cat = document.getElementById('s-cat').value, diff = document.getElementById('s-diff').value;
+        if (cat) url += '&category='+cat;
+        if (diff) url += '&difficulty='+diff;
+        fetch(url).then(function(r) { return r.json(); }).then(function(d) {
+          if (d.response_code !== 0 || !d.results || !d.results.length) throw new Error('No questions (code: '+d.response_code+')');
+          soloQuestions = d.results; soloIndex = 0; soloScore = 0; soloAnswers = [];
+          showSoloQ();
+        }).catch(function(err) {
+          console.error('Failed to fetch solo trivia questions:', err);
+          showToast('Could not load questions: '+err.message, 'danger');
+          btn.disabled = false; btn.innerHTML = '<i class="bi bi-play-fill me-2"></i>Start Game';
+        });
+      }
+      function showSoloQ() {
+        clearTimers();
+        var q = soloQuestions[soloIndex], total = soloQuestions.length;
+        var all = q.incorrect_answers.slice();
+        all.splice(Math.floor(Math.random()*(all.length+1)), 0, q.correct_answer);
+        var ansHtml = '';
+        all.forEach(function(a,i) { ansHtml += '<button class="answer-btn" data-idx="'+i+'">'+a+'</button>'; });
+        document.getElementById('main-panel').innerHTML = '<div class="row justify-content-center mb-4"><div class="col-12 col-lg-8">'
+          + '<div class="card bg-dark border-warning">'
+          + '<div class="card-header d-flex justify-content-between align-items-center" style="background-color:rgba(230,198,92,0.1);border-bottom:2px solid #e6c65c">'
+          + '<span style="color:#e6c65c;font-weight:600">Question '+(soloIndex+1)+' / '+total+' <span class="solo-badge ms-2">Solo</span></span>'
+          + '<span class="badge bg-warning text-dark" id="s-score">Score: '+soloScore+'</span>'
+          + '</div><div class="card-body">'
+          + '<div class="mb-2"><span class="badge bg-secondary">'+q.category+'</span> <span class="badge bg-secondary ms-1">'+q.difficulty.charAt(0).toUpperCase()+q.difficulty.slice(1)+'</span></div>'
+          + '<h5 class="mb-4" style="color:#e4d9b5;line-height:1.6">'+q.question+'</h5>'
+          + '<div id="s-answers" class="d-flex flex-column gap-2">'+ansHtml+'</div>'
+          + '<div class="progress-dots mt-4" id="s-dots"></div>'
+          + '</div></div></div></div>';
+        // Store answers and bind clicks
+        currentAnswers = all;
+        document.querySelectorAll('#s-answers .answer-btn').forEach(function(btn) {
+          btn.addEventListener('click', function() { soloAnswer(btn, all[parseInt(btn.getAttribute('data-idx'))]); });
+        });
+        buildDots('s-dots', soloIndex, total, soloAnswers);
+      }
+      function soloAnswer(btn, selected) {
+        var q = soloQuestions[soloIndex], correct = q.correct_answer;
+        document.querySelectorAll('#s-answers .answer-btn').forEach(function(b) { b.disabled = true; });
+        var ok = selected === correct;
+        if (ok) { soloScore++; btn.classList.add('correct'); soloAnswers.push('correct'); }
+        else {
+          btn.classList.add('wrong'); soloAnswers.push('wrong');
+          document.querySelectorAll('#s-answers .answer-btn').forEach(function(b) {
+            var idx = parseInt(b.getAttribute('data-idx'));
+            if (currentAnswers[idx] === correct) b.classList.add('correct');
+          });
+        }
+        document.getElementById('s-score').textContent = 'Score: '+soloScore;
+        var dot = document.getElementById('dot-'+soloIndex);
+        if (dot) { dot.classList.remove('current'); dot.classList.add(ok?'correct':'wrong'); }
+        setTimeout(function() { soloIndex++; if (soloIndex < soloQuestions.length) showSoloQ(); else showSoloResults(); }, 1200);
+      }
+      function showSoloResults() {
+        clearTimers();
+        var total = soloQuestions.length, pct = Math.round((soloScore/total)*100);
+        var msg = pct===100?'Perfect score! Incredible!':pct>=80?'Great job!':pct>=60?'Not bad!':pct>=40?'Could be worse...':'Better luck next time!';
+        var dots = ''; soloAnswers.forEach(function(a) { dots += '<div class="progress-dot '+a+'"></div>'; });
+        document.getElementById('main-panel').innerHTML = '<div class="row justify-content-center mb-4"><div class="col-12 col-lg-8">'
+          + '<div class="card bg-dark border-warning"><div class="card-header text-center" style="background-color:rgba(230,198,92,0.1);border-bottom:2px solid #e6c65c">'
+          + '<h4 class="mb-0" style="color:#e6c65c"><i class="bi bi-flag-fill me-2"></i>Game Over <span class="solo-badge ms-2">Solo</span></h4></div>'
+          + '<div class="card-body text-center">'
+          + '<h2 style="color:#e6c65c" class="mb-2">'+soloScore+' / '+total+' ('+pct+'%)</h2>'
+          + '<p class="text-muted mb-3">'+msg+'</p>'
+          + '<div class="progress-dots mb-4">'+dots+'</div>'
+          + '<div id="s-recorded" class="mb-3" style="display:none"><span class="badge bg-success"><i class="bi bi-trophy me-1"></i>Win recorded to leaderboard</span></div>'
+          + '<div class="d-flex justify-content-center gap-2">'
+          + '<button class="btn btn-outline-secondary" onclick="showBrowser()"><i class="bi bi-arrow-left me-1"></i>Back</button>'
+          + '<button class="btn btn-warning px-4" onclick="showSoloSetup()"><i class="bi bi-arrow-repeat me-1"></i>Play Again</button>'
+          + '</div></div></div></div></div>';
+        recordSoloWin();
+      }
+      function recordSoloWin() {
+        if (typeof MeduseldAuth === 'undefined' || !MeduseldAuth.isAuthenticated()) return;
+        var catName = soloQuestions.length > 0 ? soloQuestions[0].category : '';
+        fetch(HEALTH_BASE + '/trivia-record-win', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ score: soloScore, total_questions: soloQuestions.length, category: catName, _cf_token: getCfToken() }),
+        }).then(function(r) {
+          if (!r.ok) throw new Error('HTTP '+r.status);
+          var el = document.getElementById('s-recorded'); if (el) el.style.display = '';
+          loadLeaderboard();
+        }).catch(function(err) { console.error('Failed to record solo trivia win:', err); });
+      }
+
+      // ==================== HELPERS ====================
+      function esc(s) { var d = document.createElement('div'); d.appendChild(document.createTextNode(s||'')); return d.innerHTML; }
+      function buildDots(containerId, currentIdx, total, pastAnswers) {
+        var el = document.getElementById(containerId); if (!el) return;
+        var h = '';
+        for (var i=0;i<total;i++) {
+          var c = 'progress-dot';
+          if (i === currentIdx) c += ' current';
+          else if (pastAnswers && i < pastAnswers.length) c += ' '+pastAnswers[i];
+          h += '<div class="'+c+'" id="dot-'+i+'"></div>';
+        }
+        el.innerHTML = h;
+      }
+      function startTimerBar(secs) {
+        var bar = document.getElementById('timer-bar'); if (!bar) return;
+        var start = Date.now(), dur = secs * 1000;
+        questionTimerInterval = setInterval(function() {
+          var pct = Math.max(0, 100 - ((Date.now()-start)/dur*100));
+          bar.style.width = pct+'%';
+          if (pct <= 25) bar.style.background = '#dc3545';
+          else if (pct <= 50) bar.style.background = '#ffc107';
+          if (pct <= 0) clearInterval(questionTimerInterval);
+        }, 100);
+      }
+      function clearTimers() { if (questionTimerInterval) { clearInterval(questionTimerInterval); questionTimerInterval = null; } }
+      function initTooltips() { document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(el) { new bootstrap.Tooltip(el); }); }
+      function showToast(msg, type) {
+        var old = document.getElementById('trivia-toast'); if (old) old.remove();
+        var t = document.createElement('div'); t.id = 'trivia-toast';
+        t.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:9999;padding:10px 20px;border-radius:8px;font-size:0.9rem;color:#fff;max-width:400px;text-align:center;';
+        t.style.background = type==='danger'?'rgba(220,53,69,0.9)':type==='warning'?'rgba(255,193,7,0.9)':'rgba(40,167,69,0.9)';
+        if (type==='warning') t.style.color = '#0f1a14';
+        t.textContent = msg; document.body.appendChild(t);
+        setTimeout(function() { if (t.parentNode) t.remove(); }, 5000);
       }
     </script>
   </body>
