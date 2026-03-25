@@ -2021,16 +2021,26 @@
           alert('You need to be logged in to add a game.');
           return;
         }
-        // Hide the tooltip before opening the modal
+        // Dispose the tooltip so it can't flicker back while the modal is open
         var addBtn = document.getElementById('add-game-btn');
         var tip = bootstrap.Tooltip.getInstance(addBtn);
-        if (tip) tip.hide();
+        if (tip) tip.dispose();
         document.getElementById('add-game-appid').value = '';
         document.getElementById('add-game-name').value = '';
         document.getElementById('add-game-url').value = '';
         document.getElementById('add-game-tooltip').value = '';
         document.getElementById('add-game-error').style.display = 'none';
-        new bootstrap.Modal(document.getElementById('addGameModal')).show();
+        var modal = new bootstrap.Modal(document.getElementById('addGameModal'));
+        // Re-init tooltip after modal closes
+        document
+          .getElementById('addGameModal')
+          .addEventListener('hidden.bs.modal', function reinitTip() {
+            document
+              .getElementById('addGameModal')
+              .removeEventListener('hidden.bs.modal', reinitTip);
+            new bootstrap.Tooltip(addBtn);
+          });
+        modal.show();
       }
 
       function submitAddGame() {
