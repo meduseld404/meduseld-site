@@ -106,115 +106,117 @@
         background: #e6c65c;
         box-shadow: 0 0 6px rgba(230, 198, 92, 0.5);
       }
-      .category-btn {
-        background: rgba(20, 36, 26, 0.85);
-        border: 1px solid rgba(108, 117, 125, 0.4);
-        color: #e4d9b5;
-        border-radius: 8px;
-        padding: 0.5rem 1rem;
-        font-size: 0.85rem;
-        transition: all 0.2s;
-      }
-      .category-btn:hover {
-        border-color: #e6c65c;
-        color: #e6c65c;
-      }
-      .category-btn.active {
-        border-color: #e6c65c;
-        background: rgba(230, 198, 92, 0.15);
-        color: #e6c65c;
-      }
     </style>
   </head>
   <body class="text-light" style="background: transparent">
     <div class="container-fluid pt-3">
       <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <a href="https://services.meduseld.io" class="btn btn-warning btn-sm"><i class="bi bi-arrow-left"></i> Back to Services</a>
+        <a href="https://services.meduseld.io" class="btn btn-warning btn-sm">
+          <i class="bi bi-arrow-left"></i>
+          Back to Services
+        </a>
         <div id="profile-container" style="display: none; position: relative"></div>
       </div>
     </div>
     <div class="container py-4">
       <div class="text-center mb-4">
-        <img src="https://meduseld.io/static/logo.png" style="max-height: 80px; margin-bottom: 15px" />
-        <h1 style="color: #e6c65c; font-weight: 600"><i class="bi bi-question-circle me-2"></i>Trivia Game</h1>
+        <img
+          src="https://meduseld.io/static/logo.png"
+          style="max-height: 80px; margin-bottom: 15px"
+        />
+        <h1 style="color: #e6c65c; font-weight: 600">
+          <i class="bi bi-question-circle me-2"></i>
+          Trivia Game
+        </h1>
         <p style="opacity: 0.8">Test your knowledge and climb the leaderboard</p>
       </div>
-<!-- Podium -->
-<div class="row g-3 justify-content-center mb-5" id="podium-section">
-  <div class="col-12">
-    <h4 class="text-center mb-3" style="color: #e6c65c">
-      <i class="bi bi-trophy me-2"></i>
-      Leaderboard
-    </h4>
-  </div>
-  <div id="podium-container" class="d-flex justify-content-center gap-3 flex-wrap">
-    <div class="text-center py-3">
-      <div class="spinner-border spinner-border-sm text-warning" role="status"></div>
-    </div>
-  </div>
-</div>
-<!-- Setup Panel -->
-<div class="row justify-content-center mb-4" id="setup-panel">
-  <div class="col-12 col-lg-8">
-    <div class="card bg-dark border-warning">
-      <div
-        class="card-header text-center"
-        style="background-color: rgba(230, 198, 92, 0.1); border-bottom: 2px solid #e6c65c"
-      >
-        <h4 class="mb-0" style="color: #e6c65c">
-          <i class="bi bi-gear me-2"></i>
-          Game Setup
-        </h4>
+      <!-- Podium -->
+      <div class="row g-3 justify-content-center mb-5" id="podium-section">
+        <div class="col-12">
+          <h4 class="text-center mb-3" style="color: #e6c65c">
+            <i class="bi bi-trophy me-2"></i>
+            Leaderboard
+          </h4>
+        </div>
+        <div id="podium-container" class="d-flex justify-content-center gap-3 flex-wrap">
+          <div class="text-center py-3">
+            <div class="spinner-border spinner-border-sm text-warning" role="status"></div>
+          </div>
+        </div>
       </div>
-      <div class="card-body">
-        <div class="row g-3">
-          <div class="col-md-6">
-            <label class="form-label text-muted small">Number of Questions</label>
-            <select
-              id="num-questions"
-              class="form-select form-select-sm bg-dark text-light border-secondary"
+      <!-- Setup Panel -->
+      <div class="row justify-content-center mb-4" id="setup-panel">
+        <div class="col-12 col-lg-8">
+          <div class="card bg-dark border-warning">
+            <div
+              class="card-header text-center"
+              style="background-color: rgba(230, 198, 92, 0.1); border-bottom: 2px solid #e6c65c"
             >
-              <option value="5">5 Questions</option>
-              <option value="10" selected>10 Questions</option>
-              <option value="15">15 Questions</option>
-              <option value="20">20 Questions</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label text-muted small">Difficulty</label>
-            <select
-              id="difficulty"
-              class="form-select form-select-sm bg-dark text-light border-secondary"
-            >
-              <option value="">Any Difficulty</option>
-              <option value="easy">Easy</option>
-              <option value="medium">Medium</option>
-              <option value="hard">Hard</option>
-            </select>
-          </div>
-          <div class="col-12">
-            <label class="form-label text-muted small">Category</label>
-            <div id="category-grid" class="d-flex flex-wrap gap-2">
-              <button class="category-btn active" data-cat="">Any Category</button>
+              <h4 class="mb-0" style="color: #e6c65c">
+                <i class="bi bi-gear me-2"></i>
+                Game Setup
+              </h4>
+            </div>
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label text-muted small">Number of Questions</label>
+                  <select
+                    id="num-questions"
+                    class="form-select form-select-sm bg-dark text-light border-secondary"
+                  >
+                    <option value="5">5 Questions</option>
+                    <option value="10" selected>10 Questions</option>
+                    <option value="15">15 Questions</option>
+                    <option value="20">20 Questions</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label text-muted small">Difficulty</label>
+                  <select
+                    id="difficulty"
+                    class="form-select form-select-sm bg-dark text-light border-secondary"
+                  >
+                    <option value="">Any Difficulty</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                  </select>
+                </div>
+                <div class="col-12">
+                  <label class="form-label text-muted small">Category</label>
+                  <select
+                    id="category-select"
+                    class="form-select form-select-sm bg-dark text-light border-secondary"
+                  >
+                    <option value="">Any Category</option>
+                  </select>
+                </div>
+              </div>
+              <div class="text-center mt-4">
+                <button id="start-btn" class="btn btn-warning btn-lg px-5" onclick="startGame()">
+                  <i class="bi bi-play-fill me-2"></i>
+                  Start Game
+                </button>
+              </div>
             </div>
           </div>
         </div>
-        <div class="text-center mt-4">
-          <button id="start-btn" class="btn btn-warning btn-lg px-5" onclick="startGame()">
-            <i class="bi bi-play-fill me-2"></i>
-            Start Game
-          </button>
-        </div>
       </div>
-    </div>
-  </div>
-</div>
       <!-- Game Panel -->
       <div class="row justify-content-center mb-4" id="game-panel" style="display: none">
         <div class="col-12 col-lg-8">
           <div class="card bg-dark border-warning">
-            <div class="card-header d-flex justify-content-between align-items-center" style="background-color: rgba(230,198,92,0.1); border-bottom: 2px solid #e6c65c">
-              <span style="color: #e6c65c; font-weight: 600">Question <span id="q-current">1</span> / <span id="q-total">10</span></span>
+            <div
+              class="card-header d-flex justify-content-between align-items-center"
+              style="background-color: rgba(230, 198, 92, 0.1); border-bottom: 2px solid #e6c65c"
+            >
+              <span style="color: #e6c65c; font-weight: 600">
+                Question
+                <span id="q-current">1</span>
+                /
+                <span id="q-total">10</span>
+              </span>
               <span class="badge bg-warning text-dark" id="score-badge">Score: 0</span>
             </div>
             <div class="card-body">
@@ -233,87 +235,148 @@
       <div class="row justify-content-center mb-4" id="results-panel" style="display: none">
         <div class="col-12 col-lg-8">
           <div class="card bg-dark border-warning">
-            <div class="card-header text-center" style="background-color: rgba(230,198,92,0.1); border-bottom: 2px solid #e6c65c">
-              <h4 class="mb-0" style="color: #e6c65c"><i class="bi bi-flag-fill me-2"></i>Game Over</h4>
+            <div
+              class="card-header text-center"
+              style="background-color: rgba(230, 198, 92, 0.1); border-bottom: 2px solid #e6c65c"
+            >
+              <h4 class="mb-0" style="color: #e6c65c">
+                <i class="bi bi-flag-fill me-2"></i>
+                Game Over
+              </h4>
             </div>
             <div class="card-body text-center">
               <h2 id="final-score" style="color: #e6c65c" class="mb-2"></h2>
               <p id="final-message" class="text-muted mb-3"></p>
               <div id="final-dots" class="progress-dots mb-4"></div>
               <div id="win-recorded" class="mb-3" style="display: none">
-                <span class="badge bg-success"><i class="bi bi-trophy me-1"></i>Win recorded to leaderboard</span>
+                <span class="badge bg-success">
+                  <i class="bi bi-trophy me-1"></i>
+                  Win recorded to leaderboard
+                </span>
               </div>
-              <button class="btn btn-warning btn-lg px-5" onclick="resetGame()"><i class="bi bi-arrow-repeat me-2"></i>Play Again</button>
+              <button class="btn btn-warning btn-lg px-5" onclick="resetGame()">
+                <i class="bi bi-arrow-repeat me-2"></i>
+                Play Again
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <footer class="text-center py-3 mt-auto" style="border-top: 1px solid rgba(230,198,92,0.2)">
-      <p class="text-light mb-0" style="font-size: 0.85rem">&copy; <span id="copyright-year"></span> <a href="https://quietarca.de" target="_blank" class="text-warning text-decoration-none">quietarcade</a> ~ All rights reserved.</p>
+    <footer class="text-center py-3 mt-auto" style="border-top: 1px solid rgba(230, 198, 92, 0.2)">
+      <p class="text-light mb-0" style="font-size: 0.85rem">
+        &copy;
+        <span id="copyright-year"></span>
+        <a href="https://quietarca.de" target="_blank" class="text-warning text-decoration-none">
+          quietarcade
+        </a>
+        ~ All rights reserved.
+      </p>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://meduseld.io/static/auth.js"></script>
     <script>
-      var questions = [], currentIndex = 0, score = 0, answers = [], selectedCategory = '';
+      var questions = [],
+        currentIndex = 0,
+        score = 0,
+        answers = [];
       var HEALTH_BASE = 'https://health.meduseld.io/check';
 
       if (typeof MeduseldAuth !== 'undefined') {
         MeduseldAuth.renderProfile('profile-container');
-        MeduseldAuth.syncUser().then(function () { MeduseldAuth.renderProfile('profile-container'); });
+        MeduseldAuth.syncUser().then(function () {
+          MeduseldAuth.renderProfile('profile-container');
+        });
       }
       document.getElementById('copyright-year').textContent = new Date().getFullYear();
 
       function loadCategories() {
         fetch('https://opentdb.com/api_category.php')
-          .then(function (r) { return r.json(); })
+          .then(function (r) {
+            return r.json();
+          })
           .then(function (data) {
-            var grid = document.getElementById('category-grid');
+            var sel = document.getElementById('category-select');
             (data.trivia_categories || []).forEach(function (cat) {
-              var btn = document.createElement('button');
-              btn.className = 'category-btn';
-              btn.setAttribute('data-cat', cat.id);
-              btn.textContent = cat.name.replace('Entertainment: ', '').replace('Science: ', '');
-              btn.onclick = function () { selectCategory(cat.id, btn); };
-              grid.appendChild(btn);
+              var opt = document.createElement('option');
+              opt.value = cat.id;
+              opt.textContent = cat.name.replace('Entertainment: ', '').replace('Science: ', '');
+              sel.appendChild(opt);
             });
           })
-          .catch(function (err) { console.error('Failed to load trivia categories:', err); });
+          .catch(function (err) {
+            console.error('Failed to load trivia categories:', err);
+          });
       }
-      function selectCategory(catId, btn) {
-        selectedCategory = catId;
-        document.querySelectorAll('.category-btn').forEach(function (b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-      }
-      document.querySelector('.category-btn[data-cat=""]').onclick = function () { selectCategory('', this); };
       loadCategories();
 
       function loadLeaderboard() {
         fetch(HEALTH_BASE + '/trivia-leaderboard')
-          .then(function (r) { return r.json(); })
-          .then(function (data) { renderPodium(data.leaderboard || []); })
+          .then(function (r) {
+            return r.json();
+          })
+          .then(function (data) {
+            renderPodium(data.leaderboard || []);
+          })
           .catch(function (err) {
             console.error('Failed to load trivia leaderboard:', err);
-            document.getElementById('podium-container').innerHTML = '<p class="text-muted">Could not load leaderboard.</p>';
+            document.getElementById('podium-container').innerHTML =
+              '<p class="text-muted">Could not load leaderboard.</p>';
           });
       }
       function renderPodium(lb) {
         var c = document.getElementById('podium-container');
-        if (!lb.length) { c.innerHTML = '<p class="text-muted">No wins recorded yet. Be the first!</p>'; return; }
-        var html = '', medals = ['\u{1F947}','\u{1F948}','\u{1F949}'], cls = ['podium-1','podium-2','podium-3'];
+        if (!lb.length) {
+          c.innerHTML = '<p class="text-muted">No wins recorded yet. Be the first!</p>';
+          return;
+        }
+        var html = '',
+          medals = ['\u{1F947}', '\u{1F948}', '\u{1F949}'],
+          cls = ['podium-1', 'podium-2', 'podium-3'];
         lb.slice(0, 3).forEach(function (e, i) {
           var av = e.avatar_url
-            ? '<img src="'+e.avatar_url+'" class="podium-avatar" alt="" />'
+            ? '<img src="' + e.avatar_url + '" class="podium-avatar" alt="" />'
             : '<div class="podium-avatar d-flex align-items-center justify-content-center mx-auto" style="background:rgba(108,117,125,0.3);border:1px solid rgba(108,117,125,0.5)"><i class="bi bi-person-fill" style="font-size:1.5rem;color:#6c757d"></i></div>';
-          html += '<div class="podium-card '+cls[i]+'" style="min-width:160px;max-width:200px">';
-          html += '<div class="podium-rank">'+medals[i]+'</div>'+av;
-          html += '<div style="color:#e4d9b5;font-weight:600;font-size:0.95rem">'+escapeHtml(e.display_name)+'</div>';
-          html += '<div style="color:#e6c65c;font-size:1.2rem;font-weight:700">'+e.wins+' win'+(e.wins!==1?'s':'')+'</div>';
-          html += '<div class="text-muted" style="font-size:0.75rem">'+e.total_score+'/'+e.total_questions+' correct</div></div>';
+          html +=
+            '<div class="podium-card ' + cls[i] + '" style="min-width:160px;max-width:200px">';
+          html += '<div class="podium-rank">' + medals[i] + '</div>' + av;
+          html +=
+            '<div style="color:#e4d9b5;font-weight:600;font-size:0.95rem">' +
+            escapeHtml(e.display_name) +
+            '</div>';
+          html +=
+            '<div style="color:#e6c65c;font-size:1.2rem;font-weight:700">' +
+            e.wins +
+            ' win' +
+            (e.wins !== 1 ? 's' : '') +
+            '</div>';
+          html +=
+            '<div class="text-muted" style="font-size:0.75rem">' +
+            e.total_score +
+            '/' +
+            e.total_questions +
+            ' correct</div></div>';
         });
         if (lb.length > 3) {
-          html += '<div class="w-100 mt-3"><table class="table table-sm table-dark mb-0" style="max-width:500px;margin:0 auto"><tbody>';
-          for (var i=3;i<lb.length;i++) { var e=lb[i]; html+='<tr><td class="text-muted">#'+(i+1)+'</td><td>'+escapeHtml(e.display_name)+'</td><td style="color:#e6c65c">'+e.wins+' win'+(e.wins!==1?'s':'')+'</td><td class="text-muted">'+e.total_score+'/'+e.total_questions+'</td></tr>'; }
+          html +=
+            '<div class="w-100 mt-3"><table class="table table-sm table-dark mb-0" style="max-width:500px;margin:0 auto"><tbody>';
+          for (var i = 3; i < lb.length; i++) {
+            var e = lb[i];
+            html +=
+              '<tr><td class="text-muted">#' +
+              (i + 1) +
+              '</td><td>' +
+              escapeHtml(e.display_name) +
+              '</td><td style="color:#e6c65c">' +
+              e.wins +
+              ' win' +
+              (e.wins !== 1 ? 's' : '') +
+              '</td><td class="text-muted">' +
+              e.total_score +
+              '/' +
+              e.total_questions +
+              '</td></tr>';
+          }
           html += '</tbody></table></div>';
         }
         c.innerHTML = html;
@@ -321,67 +384,128 @@
       loadLeaderboard();
 
       function startGame() {
-        var numQ = document.getElementById('num-questions').value, diff = document.getElementById('difficulty').value;
+        var numQ = document.getElementById('num-questions').value,
+          diff = document.getElementById('difficulty').value;
         var btn = document.getElementById('start-btn');
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Loading...';
-        var url = 'https://opentdb.com/api.php?amount='+numQ+'&type=multiple';
-        if (selectedCategory) url += '&category='+selectedCategory;
-        if (diff) url += '&difficulty='+diff;
+        var url = 'https://opentdb.com/api.php?amount=' + numQ + '&type=multiple';
+        var cat = document.getElementById('category-select').value;
+        if (cat) url += '&category=' + cat;
+        if (diff) url += '&difficulty=' + diff;
         fetch(url)
-          .then(function (r) { return r.json(); })
+          .then(function (r) {
+            return r.json();
+          })
           .then(function (data) {
-            if (data.response_code !== 0 || !data.results || !data.results.length) throw new Error('No questions available (code: '+data.response_code+')');
-            questions = data.results; currentIndex = 0; score = 0; answers = [];
+            if (data.response_code !== 0 || !data.results || !data.results.length)
+              throw new Error('No questions available (code: ' + data.response_code + ')');
+            questions = data.results;
+            currentIndex = 0;
+            score = 0;
+            answers = [];
             document.getElementById('q-total').textContent = questions.length;
             document.getElementById('score-badge').textContent = 'Score: 0';
-            buildProgressDots(); showQuestion();
+            buildProgressDots();
+            showQuestion();
             document.getElementById('setup-panel').style.display = 'none';
             document.getElementById('results-panel').style.display = 'none';
             document.getElementById('game-panel').style.display = '';
           })
-          .catch(function (err) { console.error('Failed to fetch trivia questions:', err); alert('Could not load questions: '+err.message); })
-          .finally(function () { btn.disabled = false; btn.innerHTML = '<i class="bi bi-play-fill me-2"></i>Start Game'; });
+          .catch(function (err) {
+            console.error('Failed to fetch trivia questions:', err);
+            alert('Could not load questions: ' + err.message);
+          })
+          .finally(function () {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-play-fill me-2"></i>Start Game';
+          });
       }
       function buildProgressDots() {
         var h = '';
-        for (var i=0;i<questions.length;i++) h += '<div class="progress-dot'+(i===0?' current':'')+'" id="dot-'+i+'"></div>';
+        for (var i = 0; i < questions.length; i++)
+          h +=
+            '<div class="progress-dot' +
+            (i === 0 ? ' current' : '') +
+            '" id="dot-' +
+            i +
+            '"></div>';
         document.getElementById('progress-dots').innerHTML = h;
       }
       function showQuestion() {
         var q = questions[currentIndex];
-        document.getElementById('q-current').textContent = currentIndex+1;
+        document.getElementById('q-current').textContent = currentIndex + 1;
         document.getElementById('q-text').innerHTML = q.question;
         document.getElementById('q-category').textContent = q.category;
-        document.getElementById('q-difficulty').textContent = q.difficulty.charAt(0).toUpperCase()+q.difficulty.slice(1);
+        document.getElementById('q-difficulty').textContent =
+          q.difficulty.charAt(0).toUpperCase() + q.difficulty.slice(1);
         var all = q.incorrect_answers.slice();
-        all.splice(Math.floor(Math.random()*(all.length+1)), 0, q.correct_answer);
-        var cont = document.getElementById('answers-container'); cont.innerHTML = '';
+        all.splice(Math.floor(Math.random() * (all.length + 1)), 0, q.correct_answer);
+        var cont = document.getElementById('answers-container');
+        cont.innerHTML = '';
         all.forEach(function (ans) {
-          var b = document.createElement('button'); b.className = 'answer-btn'; b.innerHTML = ans;
-          b.onclick = function () { selectAnswer(b, ans, q.correct_answer); };
+          var b = document.createElement('button');
+          b.className = 'answer-btn';
+          b.innerHTML = ans;
+          b.onclick = function () {
+            selectAnswer(b, ans, q.correct_answer);
+          };
           cont.appendChild(b);
         });
-        for (var i=0;i<questions.length;i++) { var d=document.getElementById('dot-'+i); d.classList.remove('current'); if(i===currentIndex) d.classList.add('current'); }
+        for (var i = 0; i < questions.length; i++) {
+          var d = document.getElementById('dot-' + i);
+          d.classList.remove('current');
+          if (i === currentIndex) d.classList.add('current');
+        }
       }
       function selectAnswer(clicked, selected, correct) {
-        document.querySelectorAll('.answer-btn').forEach(function (b) { b.disabled = true; });
+        document.querySelectorAll('.answer-btn').forEach(function (b) {
+          b.disabled = true;
+        });
         var ok = selected === correct;
-        if (ok) { score++; clicked.classList.add('correct'); answers.push('correct'); }
-        else { clicked.classList.add('wrong'); answers.push('wrong'); document.querySelectorAll('.answer-btn').forEach(function (b) { if(b.innerHTML===correct) b.classList.add('correct'); }); }
-        document.getElementById('score-badge').textContent = 'Score: '+score;
-        var dot = document.getElementById('dot-'+currentIndex); dot.classList.remove('current'); dot.classList.add(ok?'correct':'wrong');
-        setTimeout(function () { currentIndex++; if(currentIndex<questions.length) showQuestion(); else endGame(); }, 1200);
+        if (ok) {
+          score++;
+          clicked.classList.add('correct');
+          answers.push('correct');
+        } else {
+          clicked.classList.add('wrong');
+          answers.push('wrong');
+          document.querySelectorAll('.answer-btn').forEach(function (b) {
+            if (b.innerHTML === correct) b.classList.add('correct');
+          });
+        }
+        document.getElementById('score-badge').textContent = 'Score: ' + score;
+        var dot = document.getElementById('dot-' + currentIndex);
+        dot.classList.remove('current');
+        dot.classList.add(ok ? 'correct' : 'wrong');
+        setTimeout(function () {
+          currentIndex++;
+          if (currentIndex < questions.length) showQuestion();
+          else endGame();
+        }, 1200);
       }
 
       function endGame() {
         document.getElementById('game-panel').style.display = 'none';
         document.getElementById('results-panel').style.display = '';
-        var pct = Math.round((score/questions.length)*100);
-        document.getElementById('final-score').textContent = score+' / '+questions.length+' ('+pct+'%)';
-        var msg = pct===100?'Perfect score! Incredible!':pct>=80?'Great job! You really know your stuff.':pct>=60?'Not bad! Room for improvement though.':pct>=40?'Could be worse... could be better.':'Better luck next time!';
+        var pct = Math.round((score / questions.length) * 100);
+        document.getElementById('final-score').textContent =
+          score + ' / ' + questions.length + ' (' + pct + '%)';
+        var msg =
+          pct === 100
+            ? 'Perfect score! Incredible!'
+            : pct >= 80
+              ? 'Great job! You really know your stuff.'
+              : pct >= 60
+                ? 'Not bad! Room for improvement though.'
+                : pct >= 40
+                  ? 'Could be worse... could be better.'
+                  : 'Better luck next time!';
         document.getElementById('final-message').textContent = msg;
-        var dh = ''; answers.forEach(function (a) { dh += '<div class="progress-dot '+a+'"></div>'; });
+        var dh = '';
+        answers.forEach(function (a) {
+          dh += '<div class="progress-dot ' + a + '"></div>';
+        });
         document.getElementById('final-dots').innerHTML = dh;
         recordWin();
       }
@@ -389,20 +513,39 @@
         if (typeof MeduseldAuth === 'undefined' || !MeduseldAuth.isAuthenticated()) return;
         var catName = questions.length > 0 ? questions[0].category : '';
         var cfCookie = (document.cookie.match(/(?:^|; )CF_Authorization=([^;]*)/) || [])[1] || '';
-        fetch(HEALTH_BASE+'/trivia-record-win', {
-          method: 'POST', headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({ score: score, total_questions: questions.length, category: catName, _cf_token: cfCookie })
+        fetch(HEALTH_BASE + '/trivia-record-win', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            score: score,
+            total_questions: questions.length,
+            category: catName,
+            _cf_token: cfCookie,
+          }),
         })
-          .then(function (r) { if(!r.ok) throw new Error('HTTP '+r.status); document.getElementById('win-recorded').style.display=''; loadLeaderboard(); })
-          .catch(function (err) { console.error('Failed to record trivia win:', err); });
+          .then(function (r) {
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            document.getElementById('win-recorded').style.display = '';
+            loadLeaderboard();
+          })
+          .catch(function (err) {
+            console.error('Failed to record trivia win:', err);
+          });
       }
       function resetGame() {
         document.getElementById('results-panel').style.display = 'none';
         document.getElementById('win-recorded').style.display = 'none';
         document.getElementById('setup-panel').style.display = '';
-        questions=[]; currentIndex=0; score=0; answers=[];
+        questions = [];
+        currentIndex = 0;
+        score = 0;
+        answers = [];
       }
-      function escapeHtml(s) { var d=document.createElement('div'); d.appendChild(document.createTextNode(s)); return d.innerHTML; }
+      function escapeHtml(s) {
+        var d = document.createElement('div');
+        d.appendChild(document.createTextNode(s));
+        return d.innerHTML;
+      }
     </script>
   </body>
 </html>
