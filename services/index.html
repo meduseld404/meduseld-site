@@ -2021,6 +2021,10 @@
           alert('You need to be logged in to add a game.');
           return;
         }
+        // Hide the tooltip before opening the modal
+        var addBtn = document.getElementById('add-game-btn');
+        var tip = bootstrap.Tooltip.getInstance(addBtn);
+        if (tip) tip.hide();
         document.getElementById('add-game-appid').value = '';
         document.getElementById('add-game-name').value = '';
         document.getElementById('add-game-url').value = '';
