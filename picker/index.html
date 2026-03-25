@@ -168,10 +168,15 @@
     <div class="col-lg-6">
       <div class="card bg-dark border-warning">
         <div class="card-body">
-          <h5 style="color: #e6c65c">
-            <i class="bi bi-clock-history me-2"></i>
-            Past Picks
-          </h5>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0" style="color: #e6c65c">
+              <i class="bi bi-clock-history me-2"></i>
+              Past Picks
+            </h5>
+            <button class="btn btn-sm btn-outline-danger" id="clear-history-btn" style="display:none" data-bs-toggle="tooltip" data-bs-title="Delete all past picks">
+              <i class="bi bi-trash"></i> Clear
+            </button>
+          </div>
           <div id="history-list">
             <div class="text-center text-muted py-3">
               <div class="spinner-border spinner-border-sm text-warning" role="status"></div>
@@ -304,6 +309,10 @@
 
       function updateAdminUI() {
         document.getElementById('add-game-btn').style.display = isAdmin ? '' : 'none';
+        document.getElementById('clear-history-btn').style.display = isAdmin ? '' : 'none';
+        if (isAdmin) {
+          new bootstrap.Tooltip(document.getElementById('clear-history-btn'));
+        }
         renderGamePool();
         updateSpinButton();
       }
@@ -706,6 +715,29 @@
             console.error('Failed to load current pick:', err);
           });
       }
+
+      // ========== CLEAR HISTORY ==========
+      document.getElementById('clear-history-btn').addEventListener('click', function () {
+        if (!confirm('Delete all past picks? This cannot be undone.')) return;
+        var cfToken = getCfToken();
+        fetch(HEALTH_BASE + '/picker-history?cf_token=' + encodeURIComponent(cfToken), {
+          method: 'DELETE'
+        })
+          .then(function (r) {
+            if (!r.ok) return r.json().then(function (d) { throw new Error(d.error || 'Clear failed'); });
+            return r.json();
+          })
+          .then(function () {
+            currentPick = null;
+            renderGOTW();
+            updateSpinButton();
+            loadHistory();
+          })
+          .catch(function (err) {
+            console.error('Failed to clear picker history:', err);
+            alert('Failed to clear history: ' + err.message);
+          });
+      });
 
       // ========== COVER SEARCH ==========
       var searchCoverBtn = document.getElementById('search-cover-btn');
