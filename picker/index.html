@@ -830,7 +830,8 @@
           transports: ['websocket', 'polling'],
           withCredentials: true,
           reconnection: true,
-          reconnectionDelay: 2000
+          reconnectionAttempts: 3,
+          reconnectionDelay: 3000
         });
 
         pickerSocket.on('connect', function () {
@@ -842,7 +843,10 @@
         });
 
         pickerSocket.on('connect_error', function (err) {
-          console.error('Picker WebSocket connection error:', err);
+          // Live updates are optional — page works fine via HTTP polling
+          if (pickerSocket.io._reconnecting === false) {
+            console.warn('Picker live updates unavailable (WebSocket failed to connect)');
+          }
         });
 
         // Another user spun the wheel — animate it for everyone
