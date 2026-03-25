@@ -81,13 +81,14 @@
                       <th style="color: #e6c65c">Discord ID</th>
                       <th style="color: #e6c65c">Role</th>
                       <th style="color: #e6c65c">Services</th>
+                      <th style="color: #e6c65c">Trivia</th>
                       <th style="color: #e6c65c">Last Login</th>
                       <th style="color: #e6c65c">Actions</th>
                     </tr>
                   </thead>
                   <tbody id="users-table-body">
                     <tr>
-                      <td colspan="6" class="text-center py-4">
+                      <td colspan="7" class="text-center py-4">
                         <div class="spinner-border text-warning" role="status"></div>
                         <p class="mt-2 mb-0 text-muted">Loading users...</p>
                       </td>
@@ -303,7 +304,7 @@
 
         if (users.length === 0) {
           tbody.innerHTML =
-            '<tr><td colspan="6" class="text-center py-4 text-muted">No users found</td></tr>';
+            '<tr><td colspan="7" class="text-center py-4 text-muted">No users found</td></tr>';
           return;
         }
 
@@ -366,8 +367,37 @@
             var selfBadge = isSelf ? ' <span class="badge bg-info role-badge">You</span>' : '';
 
             var servicesHtml = u.has_jellyfin
-              ? '<i class="bi bi-film" style="color:#a78bfa;font-size:1.1rem;" title="Jellyfin (Edoras)"></i>'
+              ? '<i class="bi bi-film" style="color:#a78bfa;font-size:1.1rem;" data-bs-toggle="tooltip" data-bs-title="Jellyfin (Edoras)"></i>'
               : '<span class="text-muted" style="font-size:0.8rem;">—</span>';
+
+            var t = u.trivia || {};
+            var triviaHtml = '';
+            if (t.games_played > 0) {
+              triviaHtml =
+                '<span class="badge bg-warning text-dark" style="font-size:0.7rem;" ' +
+                'data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="' +
+                'Games: ' +
+                t.games_played +
+                '&lt;br&gt;Correct: ' +
+                t.total_correct +
+                '&lt;br&gt;Wrong: ' +
+                t.total_wrong +
+                '&lt;br&gt;Best: ' +
+                t.best_score +
+                '&lt;br&gt;Accuracy: ' +
+                t.accuracy +
+                '%' +
+                '">' +
+                '<i class="bi bi-question-circle me-1"></i>' +
+                t.games_played +
+                ' game' +
+                (t.games_played !== 1 ? 's' : '') +
+                ' · ' +
+                t.accuracy +
+                '%</span>';
+            } else {
+              triviaHtml = '<span class="text-muted" style="font-size:0.8rem;">—</span>';
+            }
 
             return (
               '<tr' +
@@ -389,6 +419,9 @@
               '<td>' +
               servicesHtml +
               '</td>' +
+              '<td>' +
+              triviaHtml +
+              '</td>' +
               '<td style="font-size:0.85rem;">' +
               formatDate(u.last_login) +
               '</td>' +
@@ -402,7 +435,11 @@
           .join('');
 
         // Re-init tooltips on dynamically rendered content
-        if (typeof MeduseldTooltips !== 'undefined') MeduseldTooltips.refresh(tbody);
+        tbody.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
+          var existing = bootstrap.Tooltip.getInstance(el);
+          if (existing) existing.dispose();
+          new bootstrap.Tooltip(el);
+        });
       }
 
       function fetchUsers() {
@@ -438,7 +475,7 @@
 
             if (err.message === 'HTTP_401' || err.message === 'HTTP_403') {
               tbody.innerHTML =
-                '<tr><td colspan="6" class="text-center py-4">' +
+                '<tr><td colspan="7" class="text-center py-4">' +
                 '<i class="bi bi-shield-lock text-warning" style="font-size:2rem;"></i>' +
                 '<p class="mt-2 mb-0">Authentication failed.</p>' +
                 '<p class="small" style="opacity:0.7;">Try logging out and back in.</p>' +
@@ -448,7 +485,7 @@
               countBadge.classList.add('bg-warning');
             } else {
               tbody.innerHTML =
-                '<tr><td colspan="6" class="text-center py-4">' +
+                '<tr><td colspan="7" class="text-center py-4">' +
                 '<i class="bi bi-exclamation-triangle-fill text-danger" style="font-size:2rem;"></i>' +
                 '<p class="mt-2 mb-0">Backend is offline. Unable to load users.</p>' +
                 '</td></tr>';
