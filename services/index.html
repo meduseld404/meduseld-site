@@ -2224,7 +2224,11 @@
             var html = '';
             data.events.forEach(function (ev) {
               var d = new Date(ev.event_date);
-              var dateStr = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+              var dateStr = d.toLocaleDateString(undefined, {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+              });
               var timeStr = d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
               var editBtn = calendarIsAdmin
                 ? ' <button class="btn btn-link btn-sm p-0 ms-1 calendar-edit-btn" data-id="' +
