@@ -22,7 +22,8 @@
         "release",
         "status",
         "trivia",
-        "edoras"
+        "edoras",
+        "picker"
       ]
     ],
     "scope-empty": [1, "never"],

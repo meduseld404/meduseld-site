@@ -221,17 +221,23 @@
       <div class="modal-body">
         <div class="mb-3">
           <label class="form-label">Game Name</label>
-          <input
-            type="text"
-            class="form-control bg-dark text-light border-secondary"
-            id="game-name-input"
-            placeholder="e.g. Jackbox Party Pack 9"
-          />
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control bg-dark text-light border-secondary"
+              id="game-name-input"
+              placeholder="e.g. Jackbox Party Pack 9"
+            />
+            <button class="btn btn-outline-warning" type="button" id="search-cover-btn" data-bs-toggle="tooltip" data-bs-title="Search Steam for cover art">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
         </div>
+        <div id="cover-search-results" class="mb-3" style="display:none"></div>
         <div class="mb-3">
           <label class="form-label">
             Cover Image URL
-            <span class="text-muted">(optional)</span>
+            <span class="text-muted">(optional — auto-filled from search)</span>
           </label>
           <input
             type="text"
@@ -239,6 +245,9 @@
             id="game-image-input"
             placeholder="https://..."
           />
+        </div>
+        <div id="cover-preview" class="text-center mb-2" style="display:none">
+          <img id="cover-preview-img" src="" alt="Cover preview" style="max-height:120px;border-radius:8px;border:1px solid rgba(230,198,92,0.3);" />
         </div>
       </div>
       <div class="modal-footer border-warning">
@@ -654,6 +663,8 @@
       document.getElementById('add-game-btn').addEventListener('click', function () {
         document.getElementById('game-name-input').value = '';
         document.getElementById('game-image-input').value = '';
+        document.getElementById('cover-search-results').style.display = 'none';
+        document.getElementById('cover-preview').style.display = 'none';
         new bootstrap.Modal(document.getElementById('addGameModal')).show();
       });
 
@@ -695,6 +706,89 @@
             console.error('Failed to load current pick:', err);
           });
       }
+
+      // ========== COVER SEARCH ==========
+      var searchCoverBtn = document.getElementById('search-cover-btn');
+      new bootstrap.Tooltip(searchCoverBtn);
+
+      function searchSteamCover() {
+        var query = document.getElementById('game-name-input').value.trim();
+        if (!query) return;
+        var resultsDiv = document.getElementById('cover-search-results');
+        resultsDiv.style.display = '';
+        resultsDiv.innerHTML = '<div class="text-center py-2"><div class="spinner-border spinner-border-sm text-warning" role="status"></div> <span class="text-muted">Searching Steam...</span></div>';
+
+        fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://store.steampowered.com/api/storesearch/?term=' + encodeURIComponent(query) + '&l=english&cc=US'))
+          .then(function (r) {
+            if (!r.ok) throw new Error('Search failed');
+            return r.json();
+          })
+          .then(function (data) {
+            var items = (data.items || []).slice(0, 5);
+            if (items.length === 0) {
+              resultsDiv.innerHTML = '<p class="text-muted small mb-0">No results found on Steam.</p>';
+              return;
+            }
+            // Dispose old tooltips
+            resultsDiv.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
+              var tip = bootstrap.Tooltip.getInstance(el);
+              if (tip) tip.dispose();
+            });
+            var html = '<div class="list-group list-group-flush">';
+            items.forEach(function (item) {
+              var headerImg = 'https://cdn.akamai.steamstatic.com/steam/apps/' + item.id + '/header.jpg';
+              html +=
+                '<button type="button" class="list-group-item list-group-item-action bg-dark text-light border-secondary d-flex align-items-center gap-2 steam-result-btn" ' +
+                'data-name="' + escapeHtml(item.name) + '" data-img="' + escapeHtml(headerImg) + '" ' +
+                'data-bs-toggle="tooltip" data-bs-title="Use this cover">' +
+                '<img src="' + escapeHtml(item.tiny_image || headerImg) + '" alt="" style="width:40px;height:20px;border-radius:3px;object-fit:cover;" />' +
+                '<span class="small">' + escapeHtml(item.name) + '</span>' +
+                '</button>';
+            });
+            html += '</div>';
+            resultsDiv.innerHTML = html;
+
+            // Init tooltips
+            resultsDiv.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
+              new bootstrap.Tooltip(el);
+            });
+
+            resultsDiv.querySelectorAll('.steam-result-btn').forEach(function (btn) {
+              btn.addEventListener('click', function () {
+                var imgUrl = this.getAttribute('data-img');
+                var name = this.getAttribute('data-name');
+                document.getElementById('game-name-input').value = name;
+                document.getElementById('game-image-input').value = imgUrl;
+                showCoverPreview(imgUrl);
+                resultsDiv.style.display = 'none';
+              });
+            });
+          })
+          .catch(function (err) {
+            console.error('Steam cover search failed:', err);
+            resultsDiv.innerHTML = '<p class="text-danger small mb-0">Search failed. You can paste a URL manually.</p>';
+          });
+      }
+
+      searchCoverBtn.addEventListener('click', searchSteamCover);
+      document.getElementById('game-name-input').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); searchSteamCover(); }
+      });
+
+      function showCoverPreview(url) {
+        var preview = document.getElementById('cover-preview');
+        var img = document.getElementById('cover-preview-img');
+        if (url) {
+          img.src = url;
+          preview.style.display = '';
+        } else {
+          preview.style.display = 'none';
+        }
+      }
+
+      document.getElementById('game-image-input').addEventListener('input', function () {
+        showCoverPreview(this.value.trim());
+      });
 
       // ========== INIT ==========
       loadCurrentPick();
