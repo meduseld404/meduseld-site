@@ -232,7 +232,7 @@ window.MeduseldAuth = (function () {
           '<i class="bi bi-people-fill me-1"></i>Admin Panel</a>'
         : '') +
       '<div class="px-3 py-2 border-top" style="border-color:rgba(230,198,92,0.2)!important;">' +
-      '<a href="/cdn-cgi/access/logout" class="text-danger text-decoration-none" style="font-size:0.85rem;">' +
+      '<a href="/cdn-cgi/access/logout?redirect_url=https://meduseld.io" class="text-danger text-decoration-none" style="font-size:0.85rem;">' +
       '<i class="bi bi-box-arrow-right me-1"></i>Logout</a>' +
       '</div>' +
       '</div>';
