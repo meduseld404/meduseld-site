@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="apple-touch-icon" sizes="180x180" href="https://meduseld.io/apple-touch-icon.png" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b1f14" />
+    <link rel="icon" type="image/x-icon" href="https://meduseld.io/static/favicon.ico" />
+    <meta charset="UTF-8" />
+    <title>Meduseld - Game Picker</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://meduseld.io/static/style.css" />
+    <style>
+      .wheel-container {
+        position: relative;
+        width: 340px;
+        height: 340px;
+        margin: 0 auto;
+      }
+      .wheel-canvas {
+        width: 340px;
+        height: 340px;
+      }
+      .wheel-pointer {
+        position: absolute;
+        top: -18px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 2.2rem;
+        color: #e6c65c;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+        z-index: 2;
+      }
+      .gotw-banner {
+        background: rgba(230, 198, 92, 0.1);
+        border: 2px solid #e6c65c;
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+      }
+      .gotw-banner h3 {
+        color: #e6c65c;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+      }
+      .gotw-banner .gotw-game {
+        font-size: 1.6rem;
+        color: #e4d9b5;
+        font-weight: 600;
+      }
+      .gotw-banner .gotw-meta {
+        font-size: 0.8rem;
+        color: #a0a0b8;
+      }
+      .gotw-banner img {
+        max-height: 120px;
+        border-radius: 8px;
+        margin-bottom: 0.75rem;
+      }
+      .history-row {
+        background: rgba(20, 36, 26, 0.85);
+        border: 1px solid rgba(108, 117, 125, 0.2);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      .history-row img {
+        width: 40px;
+        height: 40px;
+        border-radius: 6px;
+        object-fit: cover;
+      }
+      .history-row .h-name {
+        color: #e4d9b5;
+        font-weight: 600;
+      }
+      .history-row .h-meta {
+        font-size: 0.75rem;
+        color: #a0a0b8;
+      }
+      .game-pool-item {
+        background: rgba(20, 36, 26, 0.85);
+        border: 1px solid rgba(108, 117, 125, 0.2);
+        border-radius: 8px;
+        padding: 0.6rem 1rem;
+        margin-bottom: 0.4rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .game-pool-item .gp-name {
+        color: #e4d9b5;
+        font-weight: 500;
+      }
+      .spin-btn {
+        background: #e6c65c;
+        color: #0b1f14;
+        border: none;
+        font-weight: 700;
+        font-size: 1.1rem;
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        transition: all 0.2s;
+      }
+      .spin-btn:hover:not(:disabled) {
+        background: #d4b445;
+        transform: scale(1.03);
+      }
+      .spin-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+  <body class="text-light" style="background: transparent">
+    <div class="container-fluid pt-3">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <a href="https://services.meduseld.io" class="btn btn-warning btn-sm">
+          <i class="bi bi-arrow-left"></i>
+          Back to Services
+        </a>
+        <div id="profile-container" style="display: none; position: relative"></div>
+      </div>
+    </div>
+  </body>
+</html>
+
+<div class="container py-4">
+  <h2 class="text-center mb-4" style="color: #e6c65c">
+    <i class="bi bi-dice-5 me-2"></i>
+    Party Game Picker
+  </h2>
+
+  <!-- Game of the Week Banner -->
+  <div id="gotw-section" style="display: none" class="mb-4">
+    <div class="gotw-banner" id="gotw-banner"></div>
+  </div>
+
+  <!-- Wheel + Spin -->
+  <div class="text-center mb-4">
+    <div class="wheel-container" id="wheel-wrap" style="display: none">
+      <div class="wheel-pointer"><i class="bi bi-caret-down-fill"></i></div>
+      <canvas id="wheel-canvas" class="wheel-canvas" width="340" height="340"></canvas>
+    </div>
+    <div id="no-games-msg" style="display: none" class="text-muted mb-3">
+      No games in the pool yet. An admin can add games below.
+    </div>
+    <button class="spin-btn mt-3" id="spin-btn" disabled>
+      <i class="bi bi-arrow-repeat me-1"></i>
+      Spin the Wheel
+    </button>
+    <div id="spin-status" class="mt-2" style="font-size: 0.85rem; color: #a0a0b8"></div>
+  </div>
+
+  <div class="row g-4">
+    <!-- History -->
+    <div class="col-lg-6">
+      <div class="card bg-dark border-warning">
+        <div class="card-body">
+          <h5 style="color: #e6c65c">
+            <i class="bi bi-clock-history me-2"></i>
+            Past Picks
+          </h5>
+          <div id="history-list">
+            <div class="text-center text-muted py-3">
+              <div class="spinner-border spinner-border-sm text-warning" role="status"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Pool -->
+    <div class="col-lg-6">
+      <div class="card bg-dark border-warning">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0" style="color: #e6c65c">
+              <i class="bi bi-controller me-2"></i>
+              Game Pool
+            </h5>
+            <button
+              class="btn btn-warning btn-sm text-dark"
+              id="add-game-btn"
+              style="display: none"
+            >
+              <i class="bi bi-plus-lg"></i>
+              Add Game
+            </button>
+          </div>
+          <div id="game-pool-list">
+            <div class="text-center text-muted py-3">
+              <div class="spinner-border spinner-border-sm text-warning" role="status"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Game Modal -->
+<div class="modal fade" id="addGameModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-light border-warning">
+      <div class="modal-header border-warning">
+        <h5 class="modal-title" style="color: #e6c65c">Add Game to Pool</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Game Name</label>
+          <input
+            type="text"
+            class="form-control bg-dark text-light border-secondary"
+            id="game-name-input"
+            placeholder="e.g. Jackbox Party Pack 9"
+          />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">
+            Cover Image URL
+            <span class="text-muted">(optional)</span>
+          </label>
+          <input
+            type="text"
+            class="form-control bg-dark text-light border-secondary"
+            id="game-image-input"
+            placeholder="https://..."
+          />
+        </div>
+      </div>
+      <div class="modal-footer border-warning">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-warning text-dark" id="save-game-btn">Add Game</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="text-center py-3 mt-auto" style="border-top: 1px solid rgba(230, 198, 92, 0.2)">
+  <p class="text-light mb-0" style="font-size: 0.85rem">
+    &copy;
+    <span id="copyright-year"></span>
+    <a href="https://quietarca.de" target="_blank" class="text-warning text-decoration-none">
+      quietarcade
+    </a>
+    ~ All rights reserved.
+  </p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://meduseld.io/static/auth.js"></script>
+    <script>
+      var HEALTH_BASE = 'https://health.meduseld.io/check';
+      var games = [];
+      var currentPick = null;
+      var isAdmin = false;
+      var isSpinning = false;
+
+      document.getElementById('copyright-year').textContent = new Date().getFullYear();
+
+      // Auth
+      if (typeof MeduseldAuth !== 'undefined') {
+        MeduseldAuth.renderProfile('profile-container');
+        MeduseldAuth.syncUser().then(function () {
+          MeduseldAuth.renderProfile('profile-container');
+          isAdmin = MeduseldAuth.hasRole('admin');
+          updateAdminUI();
+          updateSpinButton();
+        });
+        isAdmin = MeduseldAuth.hasRole('admin');
+      }
+
+      function getCfToken() {
+        return (document.cookie.match(/(?:^|; )CF_Authorization=([^;]*)/) || [])[1] || '';
+      }
+
+      function escapeHtml(s) {
+        var d = document.createElement('div');
+        d.appendChild(document.createTextNode(s || ''));
+        return d.innerHTML;
+      }
+
+      function updateAdminUI() {
+        document.getElementById('add-game-btn').style.display = isAdmin ? '' : 'none';
+        renderGamePool();
+        updateSpinButton();
+      }
+
+      // ========== WHEEL DRAWING ==========
+      var WHEEL_COLORS = [
+        '#e6c65c', '#2d6a4f', '#d4a017', '#1b4332', '#b8860b',
+        '#3a7d5e', '#c9a227', '#245c3e', '#a67c00', '#4a8c6f',
+        '#daa520', '#357a52', '#cd9b1d', '#2e7d4e', '#b8960c'
+      ];
+
+      function drawWheel(gameList, highlightIndex) {
+        var canvas = document.getElementById('wheel-canvas');
+        var ctx = canvas.getContext('2d');
+        var cx = 170, cy = 170, r = 160;
+        var n = gameList.length;
+        if (n === 0) return;
+        var arc = (2 * Math.PI) / n;
+
+        ctx.clearRect(0, 0, 340, 340);
+
+        for (var i = 0; i < n; i++) {
+          var startAngle = i * arc - Math.PI / 2;
+          var endAngle = startAngle + arc;
+
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.arc(cx, cy, r, startAngle, endAngle);
+          ctx.closePath();
+
+          var color = WHEEL_COLORS[i % WHEEL_COLORS.length];
+          if (highlightIndex !== undefined && highlightIndex === i) {
+            ctx.fillStyle = '#fff';
+          } else {
+            ctx.fillStyle = color;
+          }
+          ctx.fill();
+          ctx.strokeStyle = '#0b1f14';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          // Text
+          ctx.save();
+          ctx.translate(cx, cy);
+          ctx.rotate(startAngle + arc / 2);
+          ctx.textAlign = 'right';
+          ctx.fillStyle = highlightIndex === i ? '#0b1f14' : '#0b1f14';
+          ctx.font = 'bold ' + Math.min(14, Math.max(9, Math.floor(140 / n))) + 'px sans-serif';
+          var label = gameList[i].name;
+          if (label.length > 18) label = label.substring(0, 16) + '…';
+          ctx.fillText(label, r - 12, 4);
+          ctx.restore();
+        }
+
+        // Center circle
+        ctx.beginPath();
+        ctx.arc(cx, cy, 22, 0, 2 * Math.PI);
+        ctx.fillStyle = '#0b1f14';
+        ctx.fill();
+        ctx.strokeStyle = '#e6c65c';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        ctx.fillStyle = '#e6c65c';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('GO', cx, cy);
+      }
+
+      function animateSpin(gameList, winnerIndex, callback) {
+        isSpinning = true;
+        document.getElementById('spin-btn').disabled = true;
+        document.getElementById('spin-status').textContent = 'Spinning...';
+
+        var canvas = document.getElementById('wheel-canvas');
+        var n = gameList.length;
+        var arc = (2 * Math.PI) / n;
+        // Target: the winner segment should be at the top (pointer position)
+        // Pointer is at top (- PI/2). Segment i center is at i*arc + arc/2 - PI/2
+        // We need to rotate so that winnerIndex center aligns with top
+        var targetAngle = -(winnerIndex * arc + arc / 2);
+        // Add several full rotations for drama
+        var totalRotation = targetAngle + Math.PI * 2 * (5 + Math.floor(Math.random() * 3));
+
+        var startTime = null;
+        var duration = 4000;
+
+        function easeOut(t) {
+          return 1 - Math.pow(1 - t, 3);
+        }
+
+        function frame(ts) {
+          if (!startTime) startTime = ts;
+          var elapsed = ts - startTime;
+          var progress = Math.min(elapsed / duration, 1);
+          var easedProgress = easeOut(progress);
+          var currentRotation = totalRotation * easedProgress;
+
+          // Redraw wheel rotated
+          var ctx = canvas.getContext('2d');
+          var cx = 170, cy = 170, r = 160;
+          ctx.clearRect(0, 0, 340, 340);
+          ctx.save();
+          ctx.translate(cx, cy);
+          ctx.rotate(currentRotation);
+          ctx.translate(-cx, -cy);
+
+          for (var i = 0; i < n; i++) {
+            var startAngle = i * arc - Math.PI / 2;
+            var endAngle = startAngle + arc;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.arc(cx, cy, r, startAngle, endAngle);
+            ctx.closePath();
+            ctx.fillStyle = WHEEL_COLORS[i % WHEEL_COLORS.length];
+            ctx.fill();
+            ctx.strokeStyle = '#0b1f14';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(startAngle + arc / 2);
+            ctx.textAlign = 'right';
+            ctx.fillStyle = '#0b1f14';
+            ctx.font = 'bold ' + Math.min(14, Math.max(9, Math.floor(140 / n))) + 'px sans-serif';
+            var label = gameList[i].name;
+            if (label.length > 18) label = label.substring(0, 16) + '…';
+            ctx.fillText(label, r - 12, 4);
+            ctx.restore();
+          }
+
+          // Center circle
+          ctx.beginPath();
+          ctx.arc(cx, cy, 22, 0, 2 * Math.PI);
+          ctx.fillStyle = '#0b1f14';
+          ctx.fill();
+          ctx.strokeStyle = '#e6c65c';
+          ctx.lineWidth = 3;
+          ctx.stroke();
+
+          ctx.restore();
+
+          if (progress < 1) {
+            requestAnimationFrame(frame);
+          } else {
+            isSpinning = false;
+            drawWheel(gameList, winnerIndex);
+            callback();
+          }
+        }
+
+        requestAnimationFrame(frame);
+      }
+
+      // ========== SPIN BUTTON ==========
+      function updateSpinButton() {
+        var btn = document.getElementById('spin-btn');
+        if (games.length === 0) {
+          btn.disabled = true;
+          btn.innerHTML = '<i class="bi bi-arrow-repeat me-1"></i> Spin the Wheel';
+          return;
+        }
+        if (currentPick && !isAdmin) {
+          btn.disabled = true;
+          btn.innerHTML = '<i class="bi bi-lock me-1"></i> Already Spun This Week';
+        } else if (currentPick && isAdmin) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="bi bi-arrow-repeat me-1"></i> Re-Spin (Admin)';
+        } else {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="bi bi-arrow-repeat me-1"></i> Spin the Wheel';
+        }
+      }
+
+      document.getElementById('spin-btn').addEventListener('click', function () {
+        if (isSpinning || games.length === 0) return;
+        var cfToken = getCfToken();
+
+        fetch(HEALTH_BASE + '/picker-spin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ _cf_token: cfToken })
+        })
+          .then(function (r) {
+            if (r.status === 409) return r.json().then(function (d) { throw { conflict: true, pick: d.pick }; });
+            if (!r.ok) return r.json().then(function (d) { throw new Error(d.error || 'Spin failed'); });
+            return r.json();
+          })
+          .then(function (data) {
+            var pick = data.pick;
+            // Find winner index in current games array
+            var winnerIdx = 0;
+            for (var i = 0; i < games.length; i++) {
+              if (games[i].id === pick.game_id) { winnerIdx = i; break; }
+            }
+            animateSpin(games, winnerIdx, function () {
+              currentPick = pick;
+              renderGOTW();
+              updateSpinButton();
+              loadHistory();
+              document.getElementById('spin-status').textContent = '';
+            });
+          })
+          .catch(function (err) {
+            if (err && err.conflict) {
+              currentPick = err.pick;
+              renderGOTW();
+              updateSpinButton();
+              document.getElementById('spin-status').textContent = 'Already spun this week.';
+              return;
+            }
+            console.error('Failed to spin the wheel:', err);
+            document.getElementById('spin-status').textContent = err.message || 'Spin failed.';
+          });
+      });
+
+      // ========== GAME OF THE WEEK ==========
+      function renderGOTW() {
+        var section = document.getElementById('gotw-section');
+        var banner = document.getElementById('gotw-banner');
+        if (!currentPick) {
+          section.style.display = 'none';
+          return;
+        }
+        section.style.display = '';
+        var imgHtml = currentPick.game_image
+          ? '<img src="' + escapeHtml(currentPick.game_image) + '" alt="" /><br/>'
+          : '';
+        var spunDate = currentPick.spun_at
+          ? new Date(currentPick.spun_at).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })
+          : '';
+        banner.innerHTML =
+          '<h3><i class="bi bi-trophy me-2"></i>Game of the Week</h3>' +
+          imgHtml +
+          '<div class="gotw-game">' + escapeHtml(currentPick.game_name) + '</div>' +
+          '<div class="gotw-meta">Spun by ' + escapeHtml(currentPick.spun_by_name || 'Unknown') +
+          (spunDate ? ' on ' + spunDate : '') + '</div>';
+      }
+
+      // ========== HISTORY ==========
+      function loadHistory() {
+        fetch(HEALTH_BASE + '/picker-history')
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            var list = document.getElementById('history-list');
+            var items = data.history || [];
+            if (items.length === 0) {
+              list.innerHTML = '<p class="text-muted text-center py-2">No past picks yet.</p>';
+              return;
+            }
+            var html = '';
+            items.forEach(function (p) {
+              var weekLabel = p.week_start
+                ? new Date(p.week_start + 'T00:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+                : '';
+              var imgHtml = p.game_image
+                ? '<img src="' + escapeHtml(p.game_image) + '" alt="" />'
+                : '<div style="width:40px;height:40px;border-radius:6px;background:rgba(108,117,125,0.3);display:flex;align-items:center;justify-content:center"><i class="bi bi-controller" style="color:#6c757d"></i></div>';
+              html +=
+                '<div class="history-row">' +
+                imgHtml +
+                '<div class="flex-grow-1">' +
+                '<div class="h-name">' + escapeHtml(p.game_name) + '</div>' +
+                '<div class="h-meta">Week of ' + weekLabel + ' &middot; Spun by ' + escapeHtml(p.spun_by_name || 'Unknown') + '</div>' +
+                '</div></div>';
+            });
+            list.innerHTML = html;
+          })
+          .catch(function (err) {
+            console.error('Failed to load picker history:', err);
+            document.getElementById('history-list').innerHTML = '<p class="text-danger text-center">Failed to load history.</p>';
+          });
+      }
+
+      // ========== GAME POOL ==========
+      function loadGames() {
+        fetch(HEALTH_BASE + '/picker-games')
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            games = data.games || [];
+            renderGamePool();
+            if (games.length > 0) {
+              document.getElementById('wheel-wrap').style.display = '';
+              document.getElementById('no-games-msg').style.display = 'none';
+              drawWheel(games);
+            } else {
+              document.getElementById('wheel-wrap').style.display = 'none';
+              document.getElementById('no-games-msg').style.display = '';
+            }
+            updateSpinButton();
+          })
+          .catch(function (err) {
+            console.error('Failed to load picker games:', err);
+            document.getElementById('game-pool-list').innerHTML = '<p class="text-danger text-center">Failed to load games.</p>';
+          });
+      }
+
+      function renderGamePool() {
+        var list = document.getElementById('game-pool-list');
+        // Dispose existing tooltips
+        list.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
+          var tip = bootstrap.Tooltip.getInstance(el);
+          if (tip) tip.dispose();
+        });
+
+        if (games.length === 0) {
+          list.innerHTML = '<p class="text-muted text-center py-2">No games in the pool.</p>';
+          return;
+        }
+        var html = '';
+        games.forEach(function (g) {
+          var deleteBtn = isAdmin
+            ? '<button class="btn btn-sm btn-outline-danger ms-2 delete-game-btn" data-id="' + g.id + '" data-bs-toggle="tooltip" data-bs-title="Remove game"><i class="bi bi-x-lg"></i></button>'
+            : '';
+          html +=
+            '<div class="game-pool-item">' +
+            '<span class="gp-name">' + escapeHtml(g.name) + '</span>' +
+            '<div class="d-flex align-items-center">' +
+            '<span class="text-muted" style="font-size:0.7rem">' + escapeHtml(g.added_by_name || '') + '</span>' +
+            deleteBtn +
+            '</div></div>';
+        });
+        list.innerHTML = html;
+
+        // Init tooltips
+        list.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
+          new bootstrap.Tooltip(el);
+        });
+
+        // Delete handlers
+        list.querySelectorAll('.delete-game-btn').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var gameId = this.getAttribute('data-id');
+            var gameName = '';
+            for (var i = 0; i < games.length; i++) {
+              if (String(games[i].id) === String(gameId)) { gameName = games[i].name; break; }
+            }
+            if (!confirm('Remove "' + gameName + '" from the pool?')) return;
+            var cfToken = getCfToken();
+            fetch(HEALTH_BASE + '/picker-games-' + gameId + '?cf_token=' + encodeURIComponent(cfToken), {
+              method: 'DELETE'
+            })
+              .then(function (r) {
+                if (!r.ok) return r.json().then(function (d) { throw new Error(d.error || 'Delete failed'); });
+                loadGames();
+              })
+              .catch(function (err) {
+                console.error('Failed to delete picker game:', err);
+                alert('Failed to remove game: ' + err.message);
+              });
+          });
+        });
+      }
+
+      // ========== ADD GAME ==========
+      document.getElementById('add-game-btn').addEventListener('click', function () {
+        document.getElementById('game-name-input').value = '';
+        document.getElementById('game-image-input').value = '';
+        new bootstrap.Modal(document.getElementById('addGameModal')).show();
+      });
+
+      document.getElementById('save-game-btn').addEventListener('click', function () {
+        var name = document.getElementById('game-name-input').value.trim();
+        if (!name) { alert('Game name is required.'); return; }
+        var imageUrl = document.getElementById('game-image-input').value.trim();
+        var cfToken = getCfToken();
+
+        fetch(HEALTH_BASE + '/picker-games', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: name, image_url: imageUrl, _cf_token: cfToken })
+        })
+          .then(function (r) {
+            if (!r.ok) return r.json().then(function (d) { throw new Error(d.error || 'Add failed'); });
+            return r.json();
+          })
+          .then(function () {
+            bootstrap.Modal.getInstance(document.getElementById('addGameModal')).hide();
+            loadGames();
+          })
+          .catch(function (err) {
+            console.error('Failed to add picker game:', err);
+            alert('Failed to add game: ' + err.message);
+          });
+      });
+
+      // ========== LOAD CURRENT PICK ==========
+      function loadCurrentPick() {
+        fetch(HEALTH_BASE + '/picker-current')
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            currentPick = data.pick;
+            renderGOTW();
+            updateSpinButton();
+          })
+          .catch(function (err) {
+            console.error('Failed to load current pick:', err);
+          });
+      }
+
+      // ========== INIT ==========
+      loadCurrentPick();
+      loadGames();
+      loadHistory();
+    </script>
+  </body>
+</html>
