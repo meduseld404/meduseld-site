@@ -697,9 +697,14 @@
               View Library
             </a>
             <a
-              href="https://requests.meduseld.io"
-              target="_blank"
+              href="#"
+              id="seerr-button"
               class="btn btn-outline-warning w-100"
+              onclick="
+                event.preventDefault();
+                bootstrap.Modal.getInstance(document.getElementById('edorasModal')).hide();
+                openSeerr();
+              "
             >
               <i class="bi bi-plus-circle me-2"></i>
               Request
@@ -1261,6 +1266,42 @@
           resetBtn();
           alert('Could not connect to Edoras. Please try again.');
           return;
+        }
+      }
+
+      async function openSeerr() {
+        var btn = document.getElementById('seerr-button');
+        var origText = btn ? btn.innerHTML : '';
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML =
+            '<span class="spinner-border spinner-border-sm me-2"></span>Connecting...';
+        }
+        function resetBtn() {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = origText;
+          }
+        }
+        try {
+          var cfCookie = document.cookie.split('; ').find(function (c) {
+            return c.startsWith('CF_Authorization=');
+          });
+          var cfToken = cfCookie ? cfCookie.split('=')[1] : '';
+          if (!cfToken) {
+            console.error('Seerr SSO: No CF_Authorization cookie found');
+            resetBtn();
+            alert('Authentication error. Please log out and log back in.');
+            return;
+          }
+          // This endpoint authenticates against Jellyseerr, sets the
+          // connect.sid cookie on .meduseld.io, and returns a redirect
+          window.location.href =
+            'https://health.meduseld.io/check/seerr-auth?cf_token=' + encodeURIComponent(cfToken);
+        } catch (e) {
+          console.error('Seerr SSO auth failed:', e);
+          resetBtn();
+          alert('Could not connect to Jellyseerr. Please try again.');
         }
       }
 
