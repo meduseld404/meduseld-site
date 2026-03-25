@@ -403,6 +403,15 @@
               </h4>
               <div class="d-flex gap-1">
                 <button
+                  id="add-game-btn"
+                  class="btn btn-sm btn-outline-warning"
+                  onclick="openAddGameModal()"
+                  data-bs-toggle="tooltip"
+                  data-bs-title="Add a game"
+                >
+                  <i class="bi bi-plus-lg"></i>
+                </button>
+                <button
                   id="vote-btn"
                   class="btn btn-sm btn-outline-warning"
                   onclick="toggleVoteMode()"
@@ -1615,7 +1624,8 @@
         return (document.cookie.match(/(?:^|;\s*)CF_Authorization=([^;]*)/) || [])[1] || '';
       }
 
-      var GAMES = [
+      // Default games — used as seed data and as fallback if API is unreachable
+      var DEFAULT_GAMES = [
         { appId: '648800', name: 'Raft', url: 'https://store.steampowered.com/app/648800/Raft/' },
         {
           appId: '2059530',
@@ -1646,9 +1656,31 @@
         { appId: '1857950', name: 'VEIN', url: 'https://store.steampowered.com/app/1857950/VEIN/' },
       ];
 
+      var GAMES = DEFAULT_GAMES.slice();
+      var gamesLoadedFromApi = false;
       var gameVoteData = { scores: {}, my_rankings: {}, total_voters: 0 };
       var voteMode = false;
-      var voteDraftOrder = []; // appIds in draft rank order during vote mode
+      var voteDraftOrder = [];
+      var gamesIsAdmin = typeof MeduseldAuth !== 'undefined' && MeduseldAuth.hasRole('admin');
+
+      function fetchGamesList() {
+        return fetch('https://health.meduseld.io/check/games')
+          .then(function (res) {
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return res.json();
+          })
+          .then(function (data) {
+            if (data.games && data.games.length > 0) {
+              GAMES = data.games.map(function (g) {
+                return { appId: g.app_id, name: g.name, url: g.url, tooltip: g.tooltip || '' };
+              });
+              gamesLoadedFromApi = true;
+            }
+          })
+          .catch(function (err) {
+            console.error('Failed to fetch games list:', err);
+          });
+      }
 
       function getGamesSortedByScore() {
         // Sort games by weighted score (descending), then vote count, then default order
@@ -1669,18 +1701,25 @@
 
       function renderGamesList() {
         var list = document.getElementById('games-list');
-        // Dispose existing tooltips before re-rendering
         list.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
           var tip = bootstrap.Tooltip.getInstance(el);
           if (tip) tip.dispose();
         });
 
+        if (GAMES.length === 0) {
+          list.innerHTML =
+            '<p class="text-muted text-center mb-0 py-3">No games in the list yet. Click + to add one.</p>';
+          return;
+        }
+
         var games = voteMode
-          ? voteDraftOrder.map(function (id) {
-              return GAMES.find(function (g) {
-                return g.appId === id;
-              });
-            })
+          ? voteDraftOrder
+              .map(function (id) {
+                return GAMES.find(function (g) {
+                  return g.appId === id;
+                });
+              })
+              .filter(Boolean)
           : getGamesSortedByScore();
 
         var html = '';
@@ -1733,8 +1772,16 @@
           }
           html += '</div>';
 
-          // Right side: vote badge + price badge
+          // Right side: admin delete + vote badge + price badge
           html += '<div class="d-flex align-items-center gap-2">';
+          if (gamesIsAdmin && !voteMode) {
+            html +=
+              '<button class="btn btn-link btn-sm text-danger p-0 game-delete-btn" data-appid="' +
+              game.appId +
+              '" data-name="' +
+              escapeHtml(game.name) +
+              '" data-bs-toggle="tooltip" data-bs-title="Remove game" style="font-size:0.8rem;line-height:1;"><i class="bi bi-x-circle"></i></button>';
+          }
           if (voteCount > 0 && !voteMode) {
             html +=
               '<span class="badge vote-score-badge" style="background:rgba(230,198,92,0.15);color:#e6c65c;" data-bs-toggle="tooltip" data-bs-title="' +
@@ -1757,6 +1804,21 @@
         // Initialize Bootstrap tooltips on new elements
         list.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
           new bootstrap.Tooltip(el);
+        });
+
+        // Attach admin delete handlers
+        list.querySelectorAll('.game-delete-btn').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var appId = this.getAttribute('data-appid');
+            var name = this.getAttribute('data-name');
+            if (
+              confirm(
+                'Remove "' + name + '" from the list? This will also delete all votes for it.'
+              )
+            ) {
+              deleteGame(appId);
+            }
+          });
         });
 
         // If in vote mode, attach drag handlers
@@ -1828,22 +1890,28 @@
           cancelVoteMode();
           return;
         }
-        // Check if user is authenticated
         if (typeof MeduseldAuth === 'undefined' || !MeduseldAuth.isAuthenticated()) {
           alert('You need to be logged in to vote.');
           return;
         }
+        if (GAMES.length === 0) {
+          alert('No games to vote on yet.');
+          return;
+        }
         voteMode = true;
 
-        // Initialize draft order: if user has existing votes, use those; otherwise use current display order
         var myRankings = gameVoteData.my_rankings || {};
         var rankedIds = Object.keys(myRankings);
         if (rankedIds.length > 0) {
-          // Sort by their existing rank
           rankedIds.sort(function (a, b) {
             return myRankings[a] - myRankings[b];
           });
-          // Add any unranked games at the end
+          // Filter out ranked IDs for games that no longer exist
+          rankedIds = rankedIds.filter(function (id) {
+            return GAMES.some(function (g) {
+              return g.appId === id;
+            });
+          });
           var unranked = GAMES.filter(function (g) {
             return !myRankings[g.appId];
           }).map(function (g) {
@@ -1946,9 +2014,109 @@
           });
       }
 
-      // Initialize: render games list, then fetch votes to re-sort
-      renderGamesList();
-      fetchGameVotes();
+      // ===== Add / Delete Games =====
+
+      function openAddGameModal() {
+        if (typeof MeduseldAuth === 'undefined' || !MeduseldAuth.isAuthenticated()) {
+          alert('You need to be logged in to add a game.');
+          return;
+        }
+        document.getElementById('add-game-appid').value = '';
+        document.getElementById('add-game-name').value = '';
+        document.getElementById('add-game-url').value = '';
+        document.getElementById('add-game-tooltip').value = '';
+        document.getElementById('add-game-error').style.display = 'none';
+        new bootstrap.Modal(document.getElementById('addGameModal')).show();
+      }
+
+      function submitAddGame() {
+        var appId = document.getElementById('add-game-appid').value.trim();
+        var name = document.getElementById('add-game-name').value.trim();
+        var url = document.getElementById('add-game-url').value.trim();
+        var tooltip = document.getElementById('add-game-tooltip').value.trim();
+        var errorEl = document.getElementById('add-game-error');
+
+        if (!appId || !name) {
+          errorEl.textContent = 'Steam App ID and game name are required.';
+          errorEl.style.display = '';
+          return;
+        }
+        if (!/^\d+$/.test(appId)) {
+          errorEl.textContent = 'Steam App ID must be a number (e.g. 648800).';
+          errorEl.style.display = '';
+          return;
+        }
+
+        var btn = document.getElementById('save-add-game-btn');
+        btn.disabled = true;
+        btn.textContent = 'Adding...';
+        errorEl.style.display = 'none';
+
+        var token = getCfToken();
+        fetch('https://health.meduseld.io/check/games', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            app_id: appId,
+            name: name,
+            url: url || undefined,
+            tooltip: tooltip || undefined,
+            _cf_token: token,
+          }),
+        })
+          .then(function (res) {
+            if (!res.ok) {
+              return res.json().then(function (d) {
+                throw new Error(d.error || 'HTTP ' + res.status);
+              });
+            }
+            return res.json();
+          })
+          .then(function () {
+            bootstrap.Modal.getInstance(document.getElementById('addGameModal')).hide();
+            return fetchGamesList().then(function () {
+              return fetchGameVotes();
+            });
+          })
+          .catch(function (err) {
+            console.error('Failed to add game:', err);
+            errorEl.textContent = err.message;
+            errorEl.style.display = '';
+          })
+          .finally(function () {
+            btn.disabled = false;
+            btn.textContent = 'Add Game';
+          });
+      }
+
+      function deleteGame(appId) {
+        var token = getCfToken();
+        var url = 'https://health.meduseld.io/check/games-' + appId;
+        if (token) url += '?cf_token=' + encodeURIComponent(token);
+        fetch(url, { method: 'DELETE' })
+          .then(function (res) {
+            if (!res.ok) {
+              return res.json().then(function (d) {
+                throw new Error(d.error || 'HTTP ' + res.status);
+              });
+            }
+            return res.json();
+          })
+          .then(function () {
+            return fetchGamesList().then(function () {
+              return fetchGameVotes();
+            });
+          })
+          .catch(function (err) {
+            console.error('Failed to delete game:', err);
+            alert('Failed to remove game: ' + err.message);
+          });
+      }
+
+      // Initialize: fetch games from API, then votes, then render
+      fetchGamesList().then(function () {
+        return fetchGameVotes();
+      });
 
       document.getElementById('newsCollapse').addEventListener('show.bs.collapse', function () {
         document.getElementById('news-chevron').style.transform = 'rotate(180deg)';
@@ -2484,6 +2652,84 @@
             </button>
             <button type="button" class="btn btn-warning btn-sm" id="save-edit-event-btn">
               Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Game Modal -->
+    <div class="modal fade" id="addGameModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content bg-dark text-light border-warning">
+          <div class="modal-header border-0 pb-0">
+            <h5 class="modal-title" style="color: #e6c65c">
+              <i class="bi bi-plus-circle me-2"></i>
+              Add Game
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div
+              class="alert alert-danger py-1 px-2 small"
+              id="add-game-error"
+              style="display: none"
+            ></div>
+            <div class="mb-2">
+              <label class="form-label small text-muted">Steam App ID</label>
+              <input
+                type="text"
+                class="form-control form-control-sm bg-dark text-light border-secondary"
+                id="add-game-appid"
+                placeholder="e.g. 648800"
+              />
+            </div>
+            <div class="mb-2">
+              <label class="form-label small text-muted">Game Name</label>
+              <input
+                type="text"
+                class="form-control form-control-sm bg-dark text-light border-secondary"
+                id="add-game-name"
+                maxlength="256"
+              />
+            </div>
+            <div class="mb-2">
+              <label class="form-label small text-muted">
+                Store URL (optional, auto-generated from App ID)
+              </label>
+              <input
+                type="text"
+                class="form-control form-control-sm bg-dark text-light border-secondary"
+                id="add-game-url"
+                placeholder="https://store.steampowered.com/app/..."
+              />
+            </div>
+            <div class="mb-2">
+              <label class="form-label small text-muted">Note (optional)</label>
+              <input
+                type="text"
+                class="form-control form-control-sm bg-dark text-light border-secondary"
+                id="add-game-tooltip"
+                maxlength="256"
+              />
+            </div>
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-warning btn-sm"
+              id="save-add-game-btn"
+              onclick="submitAddGame()"
+            >
+              Add Game
             </button>
           </div>
         </div>
