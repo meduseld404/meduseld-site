@@ -23,7 +23,8 @@
         "status",
         "trivia",
         "edoras",
-        "picker"
+        "picker",
+        "remote"
       ]
     ],
     "scope-empty": [1, "never"],
