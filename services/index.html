@@ -300,14 +300,20 @@
         </div>
         <!-- Trivia Game -->
         <div class="col-md-6 col-lg-4">
-          <div class="card h-100 text-white bg-dark border-secondary disabled-card">
+          <div class="card h-100 text-white bg-dark border-warning service-card">
             <div class="card-body d-flex flex-column text-center p-4">
-              <div class="mb-3"><i class="bi bi-question-circle" style="font-size: 3rem"></i></div>
-              <h3 class="card-title mb-3 text-secondary">Trivia Game</h3>
+              <div class="mb-3">
+                <i class="bi bi-question-circle" style="font-size: 3rem; color: #e6c65c"></i>
+              </div>
+              <h3 class="card-title mb-3" style="color: #e6c65c">Trivia Game</h3>
               <p class="card-text flex-grow-1 d-flex align-items-center justify-content-center">
                 Test your knowledge with trivia questions.
               </p>
-              <button class="btn btn-secondary btn-lg" disabled>Coming Soon</button>
+              <div class="mt-auto">
+                <a href="https://trivia.meduseld.io" class="btn btn-warning text-dark btn-lg w-100">
+                  Play Trivia
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -382,176 +388,69 @@
               class="card-header d-flex justify-content-between align-items-center"
               style="background-color: rgba(230, 198, 92, 0.1); border-bottom: 2px solid #e6c65c"
             >
-              <div style="width: 40px"></div>
+              <div style="width: 80px">
+                <span
+                  id="vote-count-badge"
+                  class="badge bg-secondary"
+                  style="font-size: 0.75rem"
+                  data-bs-toggle="tooltip"
+                  data-bs-title="Total voters"
+                ></span>
+              </div>
               <h4 class="mb-0 flex-grow-1 text-center" style="color: #e6c65c">
                 <i class="bi bi-controller me-2"></i>
                 Games Up Next
               </h4>
-              <button
-                id="refresh-prices-btn"
-                class="btn btn-sm btn-outline-warning"
-                onclick="fetchGamePrices(true)"
-                title="Refresh prices"
-              >
-                <i class="bi bi-arrow-clockwise"></i>
-              </button>
+              <div class="d-flex gap-1">
+                <button
+                  id="vote-btn"
+                  class="btn btn-sm btn-outline-warning"
+                  onclick="toggleVoteMode()"
+                  data-bs-toggle="tooltip"
+                  data-bs-title="Vote on game order"
+                >
+                  <i class="bi bi-hand-thumbs-up"></i>
+                </button>
+                <button
+                  id="refresh-prices-btn"
+                  class="btn btn-sm btn-outline-warning"
+                  onclick="fetchGamePrices(true)"
+                  data-bs-toggle="tooltip"
+                  data-bs-title="Refresh prices"
+                >
+                  <i class="bi bi-arrow-clockwise"></i>
+                </button>
+              </div>
             </div>
             <div class="card-body">
-              <div class="list-group list-group-flush bg-dark">
-                <div
-                  class="list-group-item bg-dark border-secondary d-flex align-items-center justify-content-between"
-                  data-appid="648800"
-                >
-                  <div class="d-flex align-items-center">
-                    <span class="badge bg-warning text-dark me-3" style="font-size: 1rem">1</span>
-                    <a
-                      href="https://store.steampowered.com/app/648800/Raft/"
-                      target="_blank"
-                      class="text-warning text-decoration-none"
+              <!-- Vote mode controls (hidden by default) -->
+              <div
+                id="vote-mode-bar"
+                style="display: none"
+                class="mb-3 p-2 rounded"
+                style="background: rgba(230, 198, 92, 0.08)"
+              >
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="text-muted small">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Drag games to rank them by preference. #1 = most wanted.
+                  </span>
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-secondary" onclick="cancelVoteMode()">
+                      Cancel
+                    </button>
+                    <button
+                      id="save-votes-btn"
+                      class="btn btn-sm btn-warning"
+                      onclick="saveVotes()"
                     >
-                      Raft
-                    </a>
-                  </div>
-                  <div class="game-price-badge" data-appid="648800">
-                    <span
-                      class="spinner-border spinner-border-sm text-warning"
-                      role="status"
-                    ></span>
+                      Save Votes
+                    </button>
                   </div>
                 </div>
-                <div
-                  class="list-group-item bg-dark border-secondary d-flex align-items-center justify-content-between"
-                  data-appid="2059530"
-                >
-                  <div class="d-flex align-items-center">
-                    <span class="badge bg-warning text-dark me-3" style="font-size: 1rem">2</span>
-                    <a
-                      href="https://store.steampowered.com/app/2059530/Dawn_of_Defiance/"
-                      target="_blank"
-                      class="text-warning text-decoration-none"
-                    >
-                      Dawn of Defiance
-                    </a>
-                    <i
-                      class="bi bi-info-circle ms-2 text-warning"
-                      style="cursor: pointer"
-                      title="Playing this game depends on dedicated server support"
-                      data-bs-toggle="tooltip"
-                      data-bs-placement="top"
-                    ></i>
-                  </div>
-                  <div class="game-price-badge" data-appid="2059530">
-                    <span
-                      class="spinner-border spinner-border-sm text-warning"
-                      role="status"
-                    ></span>
-                  </div>
-                </div>
-                <div
-                  class="list-group-item bg-dark border-secondary d-flex align-items-center justify-content-between"
-                  data-appid="2646460"
-                >
-                  <div class="d-flex align-items-center">
-                    <span class="badge bg-warning text-dark me-3" style="font-size: 1rem">3</span>
-                    <a
-                      href="https://store.steampowered.com/app/2646460/Soulmask/"
-                      target="_blank"
-                      class="text-warning text-decoration-none"
-                    >
-                      Soulmask
-                    </a>
-                  </div>
-                  <div class="game-price-badge" data-appid="2646460">
-                    <span
-                      class="spinner-border spinner-border-sm text-warning"
-                      role="status"
-                    ></span>
-                  </div>
-                </div>
-                <div
-                  class="list-group-item bg-dark border-secondary d-flex align-items-center justify-content-between"
-                  data-appid="251570"
-                >
-                  <div class="d-flex align-items-center">
-                    <span class="badge bg-warning text-dark me-3" style="font-size: 1rem">4</span>
-                    <a
-                      href="https://store.steampowered.com/app/251570/7_Days_to_Die/"
-                      target="_blank"
-                      class="text-warning text-decoration-none"
-                    >
-                      7 Days to Die
-                    </a>
-                  </div>
-                  <div class="game-price-badge" data-appid="251570">
-                    <span
-                      class="spinner-border spinner-border-sm text-warning"
-                      role="status"
-                    ></span>
-                  </div>
-                </div>
-                <div
-                  class="list-group-item bg-dark border-secondary d-flex align-items-center justify-content-between"
-                  data-appid="2933130"
-                >
-                  <div class="d-flex align-items-center">
-                    <span class="badge bg-warning text-dark me-3" style="font-size: 1rem">5</span>
-                    <a
-                      href="https://store.steampowered.com/app/2933130/The_Lord_of_the_Rings_Return_to_Moria/"
-                      target="_blank"
-                      class="text-warning text-decoration-none"
-                    >
-                      LOTR: Return to Moria
-                    </a>
-                  </div>
-                  <div class="game-price-badge" data-appid="2933130">
-                    <span
-                      class="spinner-border spinner-border-sm text-warning"
-                      role="status"
-                    ></span>
-                  </div>
-                </div>
-                <div
-                  class="list-group-item bg-dark border-secondary d-flex align-items-center justify-content-between"
-                  data-appid="2352620"
-                >
-                  <div class="d-flex align-items-center">
-                    <span class="badge bg-warning text-dark me-3" style="font-size: 1rem">6</span>
-                    <a
-                      href="https://store.steampowered.com/app/2352620/Fellowship/"
-                      target="_blank"
-                      class="text-warning text-decoration-none"
-                    >
-                      Fellowship
-                    </a>
-                  </div>
-                  <div class="game-price-badge" data-appid="2352620">
-                    <span
-                      class="spinner-border spinner-border-sm text-warning"
-                      role="status"
-                    ></span>
-                  </div>
-                </div>
-                <div
-                  class="list-group-item bg-dark border-secondary d-flex align-items-center justify-content-between"
-                  data-appid="1857950"
-                >
-                  <div class="d-flex align-items-center">
-                    <span class="badge bg-warning text-dark me-3" style="font-size: 1rem">7</span>
-                    <a
-                      href="https://store.steampowered.com/app/1857950/VEIN/"
-                      target="_blank"
-                      class="text-warning text-decoration-none"
-                    >
-                      VEIN
-                    </a>
-                  </div>
-                  <div class="game-price-badge" data-appid="1857950">
-                    <span
-                      class="spinner-border spinner-border-sm text-warning"
-                      role="status"
-                    ></span>
-                  </div>
-                </div>
+              </div>
+              <div id="games-list" class="list-group list-group-flush bg-dark">
+                <!-- Games rendered dynamically by JS -->
               </div>
             </div>
           </div>
@@ -968,6 +867,29 @@
           margin: 0 !important;
           font-size: 16px;
         }
+      }
+
+      /* Game voting styles */
+      #games-list.vote-mode .game-item {
+        cursor: grab;
+        user-select: none;
+        transition: background-color 0.15s;
+      }
+      #games-list.vote-mode .game-item:hover {
+        background-color: rgba(230, 198, 92, 0.08) !important;
+      }
+      #games-list.vote-mode .game-item:active {
+        cursor: grabbing;
+      }
+      #games-list .game-item.dragging {
+        opacity: 0.4;
+      }
+      #games-list .game-item.drag-over {
+        border-top: 2px solid #e6c65c !important;
+      }
+      .vote-score-badge {
+        font-size: 0.7rem;
+        padding: 2px 6px;
       }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -1685,6 +1607,349 @@
         // Re-init tooltips on dynamically rendered price badges
         if (typeof MeduseldTooltips !== 'undefined') MeduseldTooltips.refresh();
       }
+
+      // ===== Game Voting System =====
+
+      // Shared auth helper — extracts CF_Authorization cookie value
+      function getCfToken() {
+        return (document.cookie.match(/(?:^|;\s*)CF_Authorization=([^;]*)/) || [])[1] || '';
+      }
+
+      var GAMES = [
+        { appId: '648800', name: 'Raft', url: 'https://store.steampowered.com/app/648800/Raft/' },
+        {
+          appId: '2059530',
+          name: 'Dawn of Defiance',
+          url: 'https://store.steampowered.com/app/2059530/Dawn_of_Defiance/',
+          tooltip: 'Playing this game depends on dedicated server support',
+        },
+        {
+          appId: '2646460',
+          name: 'Soulmask',
+          url: 'https://store.steampowered.com/app/2646460/Soulmask/',
+        },
+        {
+          appId: '251570',
+          name: '7 Days to Die',
+          url: 'https://store.steampowered.com/app/251570/7_Days_to_Die/',
+        },
+        {
+          appId: '2933130',
+          name: 'LOTR: Return to Moria',
+          url: 'https://store.steampowered.com/app/2933130/The_Lord_of_the_Rings_Return_to_Moria/',
+        },
+        {
+          appId: '2352620',
+          name: 'Fellowship',
+          url: 'https://store.steampowered.com/app/2352620/Fellowship/',
+        },
+        { appId: '1857950', name: 'VEIN', url: 'https://store.steampowered.com/app/1857950/VEIN/' },
+      ];
+
+      var gameVoteData = { scores: {}, my_rankings: {}, total_voters: 0 };
+      var voteMode = false;
+      var voteDraftOrder = []; // appIds in draft rank order during vote mode
+
+      function getGamesSortedByScore() {
+        // Sort games by weighted score (descending), then vote count, then default order
+        var sorted = GAMES.slice();
+        var hasVotes = Object.keys(gameVoteData.scores).length > 0;
+        if (hasVotes) {
+          sorted.sort(function (a, b) {
+            var sa = (gameVoteData.scores[a.appId] || {}).score || 0;
+            var sb = (gameVoteData.scores[b.appId] || {}).score || 0;
+            if (sb !== sa) return sb - sa;
+            var ca = (gameVoteData.scores[a.appId] || {}).vote_count || 0;
+            var cb = (gameVoteData.scores[b.appId] || {}).vote_count || 0;
+            return cb - ca;
+          });
+        }
+        return sorted;
+      }
+
+      function renderGamesList() {
+        var list = document.getElementById('games-list');
+        // Dispose existing tooltips before re-rendering
+        list.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
+          var tip = bootstrap.Tooltip.getInstance(el);
+          if (tip) tip.dispose();
+        });
+
+        var games = voteMode
+          ? voteDraftOrder.map(function (id) {
+              return GAMES.find(function (g) {
+                return g.appId === id;
+              });
+            })
+          : getGamesSortedByScore();
+
+        var html = '';
+        games.forEach(function (game, idx) {
+          var rank = idx + 1;
+          var scoreInfo = gameVoteData.scores[game.appId];
+          var voteCount = scoreInfo ? scoreInfo.vote_count : 0;
+          var score = scoreInfo ? scoreInfo.score : 0;
+
+          // Build voter tooltip
+          var voterTooltip = '';
+          if (scoreInfo && scoreInfo.voters && scoreInfo.voters.length > 0) {
+            var voterLines = scoreInfo.voters
+              .sort(function (a, b) {
+                return a.rank - b.rank;
+              })
+              .map(function (v) {
+                return '#' + v.rank + ' ' + v.display_name;
+              });
+            voterTooltip = escapeHtml(voterLines.join(', '));
+          }
+
+          html +=
+            '<div class="list-group-item bg-dark border-secondary d-flex align-items-center justify-content-between game-item" data-appid="' +
+            game.appId +
+            '" draggable="' +
+            (voteMode ? 'true' : 'false') +
+            '">';
+
+          // Left side: rank badge + name + optional info icon
+          html += '<div class="d-flex align-items-center">';
+          if (voteMode) {
+            html += '<i class="bi bi-grip-vertical text-muted me-2" style="cursor:grab;"></i>';
+          }
+          html +=
+            '<span class="badge bg-warning text-dark me-3" style="font-size: 1rem">' +
+            rank +
+            '</span>';
+          html +=
+            '<a href="' +
+            game.url +
+            '" target="_blank" class="text-warning text-decoration-none">' +
+            escapeHtml(game.name) +
+            '</a>';
+          if (game.tooltip) {
+            html +=
+              ' <i class="bi bi-info-circle ms-2 text-warning" style="cursor:pointer" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' +
+              escapeHtml(game.tooltip) +
+              '"></i>';
+          }
+          html += '</div>';
+
+          // Right side: vote badge + price badge
+          html += '<div class="d-flex align-items-center gap-2">';
+          if (voteCount > 0 && !voteMode) {
+            html +=
+              '<span class="badge vote-score-badge" style="background:rgba(230,198,92,0.15);color:#e6c65c;" data-bs-toggle="tooltip" data-bs-title="' +
+              voterTooltip +
+              '">';
+            html += '<i class="bi bi-hand-thumbs-up-fill me-1"></i>' + voteCount;
+            html += '</span>';
+          }
+          html += '<div class="game-price-badge" data-appid="' + game.appId + '">';
+          html +=
+            '<span class="spinner-border spinner-border-sm text-warning" role="status"></span>';
+          html += '</div>';
+          html += '</div>';
+
+          html += '</div>';
+        });
+
+        list.innerHTML = html;
+
+        // Initialize Bootstrap tooltips on new elements
+        list.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
+          new bootstrap.Tooltip(el);
+        });
+
+        // If in vote mode, attach drag handlers
+        if (voteMode) {
+          list.classList.add('vote-mode');
+          attachDragHandlers();
+        } else {
+          list.classList.remove('vote-mode');
+        }
+
+        // Re-fetch prices into the new elements
+        fetchGamePrices(false);
+      }
+
+      function attachDragHandlers() {
+        var items = document.querySelectorAll('#games-list .game-item');
+        var dragSrcEl = null;
+
+        items.forEach(function (item) {
+          item.addEventListener('dragstart', function (e) {
+            dragSrcEl = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', this.getAttribute('data-appid'));
+          });
+
+          item.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            if (this !== dragSrcEl) {
+              this.classList.add('drag-over');
+            }
+          });
+
+          item.addEventListener('dragleave', function () {
+            this.classList.remove('drag-over');
+          });
+
+          item.addEventListener('drop', function (e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+            if (dragSrcEl === this) return;
+
+            var draggedId = e.dataTransfer.getData('text/plain');
+            var targetId = this.getAttribute('data-appid');
+            var fromIdx = voteDraftOrder.indexOf(draggedId);
+            var toIdx = voteDraftOrder.indexOf(targetId);
+
+            if (fromIdx === -1 || toIdx === -1) return;
+
+            // Remove from old position and insert at new
+            voteDraftOrder.splice(fromIdx, 1);
+            voteDraftOrder.splice(toIdx, 0, draggedId);
+
+            renderGamesList();
+          });
+
+          item.addEventListener('dragend', function () {
+            this.classList.remove('dragging');
+            document.querySelectorAll('#games-list .game-item').forEach(function (el) {
+              el.classList.remove('drag-over');
+            });
+          });
+        });
+      }
+
+      function toggleVoteMode() {
+        if (voteMode) {
+          cancelVoteMode();
+          return;
+        }
+        // Check if user is authenticated
+        if (typeof MeduseldAuth === 'undefined' || !MeduseldAuth.isAuthenticated()) {
+          alert('You need to be logged in to vote.');
+          return;
+        }
+        voteMode = true;
+
+        // Initialize draft order: if user has existing votes, use those; otherwise use current display order
+        var myRankings = gameVoteData.my_rankings || {};
+        var rankedIds = Object.keys(myRankings);
+        if (rankedIds.length > 0) {
+          // Sort by their existing rank
+          rankedIds.sort(function (a, b) {
+            return myRankings[a] - myRankings[b];
+          });
+          // Add any unranked games at the end
+          var unranked = GAMES.filter(function (g) {
+            return !myRankings[g.appId];
+          }).map(function (g) {
+            return g.appId;
+          });
+          voteDraftOrder = rankedIds.concat(unranked);
+        } else {
+          voteDraftOrder = getGamesSortedByScore().map(function (g) {
+            return g.appId;
+          });
+        }
+
+        document.getElementById('vote-mode-bar').style.display = '';
+        document.getElementById('vote-btn').classList.remove('btn-outline-warning');
+        document.getElementById('vote-btn').classList.add('btn-warning');
+        renderGamesList();
+      }
+
+      function cancelVoteMode() {
+        voteMode = false;
+        voteDraftOrder = [];
+        document.getElementById('vote-mode-bar').style.display = 'none';
+        document.getElementById('vote-btn').classList.remove('btn-warning');
+        document.getElementById('vote-btn').classList.add('btn-outline-warning');
+        renderGamesList();
+      }
+
+      function saveVotes() {
+        var token = getCfToken();
+        var rankings = {};
+        voteDraftOrder.forEach(function (appId, idx) {
+          rankings[appId] = idx + 1;
+        });
+
+        var btn = document.getElementById('save-votes-btn');
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+
+        fetch('https://health.meduseld.io/check/game-votes', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rankings: rankings, _cf_token: token }),
+        })
+          .then(function (res) {
+            if (!res.ok) {
+              return res.json().then(function (d) {
+                throw new Error(d.error || 'HTTP ' + res.status);
+              });
+            }
+            return res.json();
+          })
+          .then(function () {
+            // Refresh vote data and exit vote mode
+            return fetchGameVotes();
+          })
+          .then(function () {
+            cancelVoteMode();
+          })
+          .catch(function (err) {
+            console.error('Failed to save game votes:', err);
+            alert('Failed to save votes: ' + err.message);
+          })
+          .finally(function () {
+            btn.disabled = false;
+            btn.textContent = 'Save Votes';
+          });
+      }
+
+      function fetchGameVotes() {
+        var token = getCfToken();
+        var url = 'https://health.meduseld.io/check/game-votes';
+        if (token) url += '?cf_token=' + encodeURIComponent(token);
+        return fetch(url)
+          .then(function (res) {
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return res.json();
+          })
+          .then(function (data) {
+            gameVoteData = data;
+            var badge = document.getElementById('vote-count-badge');
+            if (data.total_voters > 0) {
+              badge.textContent =
+                data.total_voters + ' voter' + (data.total_voters !== 1 ? 's' : '');
+              badge.style.display = '';
+              // Dispose and re-init tooltip
+              var existing = bootstrap.Tooltip.getInstance(badge);
+              if (existing) existing.dispose();
+              new bootstrap.Tooltip(badge);
+            } else {
+              badge.style.display = 'none';
+            }
+            if (!voteMode) {
+              renderGamesList();
+            }
+          })
+          .catch(function (err) {
+            console.error('Failed to fetch game votes:', err);
+            // Still render the list with default order
+            if (!voteMode) renderGamesList();
+          });
+      }
+
+      // Initialize: render games list, then fetch votes to re-sort
+      renderGamesList();
+      fetchGameVotes();
+
       document.getElementById('newsCollapse').addEventListener('show.bs.collapse', function () {
         document.getElementById('news-chevron').style.transform = 'rotate(180deg)';
       });
@@ -1756,10 +2021,6 @@
       if (calendarIsAdmin) {
         var addBtn = document.getElementById('add-event-btn');
         if (addBtn) addBtn.style.display = '';
-      }
-
-      function getCfToken() {
-        return (document.cookie.match(/(?:^|;\s*)CF_Authorization=([^;]*)/) || [])[1] || '';
       }
 
       function fetchCalendarEvents() {
