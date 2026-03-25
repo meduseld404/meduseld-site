@@ -348,6 +348,7 @@
         socket.on('player_answered', function(d) { currentLobby = d.lobby; updatePlayerChips(); });
         socket.on('answer_reveal', function(d) { revealAnswer(d); });
         socket.on('game_over', function(d) { showMpResults(d.standings); });
+        socket.on('game_aborted', function(d) { showAbortedResults(d.standings); });
       }
       function getCfToken() { return (document.cookie.match(/(?:^|; )CF_Authorization=([^;]*)/) || [])[1] || ''; }
 
@@ -523,7 +524,10 @@
           + '<div class="card bg-dark border-warning">'
           + '<div class="card-header d-flex justify-content-between align-items-center" style="background-color:rgba(230,198,92,0.1);border-bottom:2px solid #e6c65c">'
           + '<span style="color:#e6c65c;font-weight:600">Question '+(data.index+1)+' / '+total+'</span>'
+          + '<div class="d-flex align-items-center gap-2">'
+          + (myUserId && currentLobby && myUserId === currentLobby.host_user_id ? '<button class="btn btn-outline-danger btn-sm" style="font-size:0.7rem;padding:2px 8px" onclick="endGameEarly()">End Game</button>' : '')
           + '<span class="badge bg-warning text-dark" id="mp-score">Score: '+getMyScore()+'</span>'
+          + '</div>'
           + '</div><div class="card-body">'
           + '<div class="timer-bar-track"><div class="timer-bar" id="timer-bar" style="width:100%"></div></div>'
           + '<div class="mb-2"><span class="badge bg-secondary">'+esc(data.category)+'</span> <span class="badge bg-secondary ms-1">'+data.difficulty.charAt(0).toUpperCase()+data.difficulty.slice(1)+'</span></div>'
@@ -584,6 +588,33 @@
       }
 
       // ==================== MULTIPLAYER RESULTS ====================
+      function endGameEarly() {
+        if (!socket || !currentLobby) return;
+        if (!confirm('End the game early? No stats will be recorded.')) return;
+        socket.emit('end_game', { code: currentLobby.code });
+      }
+      function showAbortedResults(standings) {
+        clearTimers();
+        var medals = ['\u{1F947}','\u{1F948}','\u{1F949}'];
+        var html = '<div class="row justify-content-center mb-4"><div class="col-12 col-lg-8">'
+          + '<div class="card bg-dark border-warning"><div class="card-header text-center" style="background-color:rgba(230,198,92,0.1);border-bottom:2px solid #e6c65c">'
+          + '<h4 class="mb-0" style="color:#e6c65c"><i class="bi bi-x-circle me-2"></i>Game Ended Early</h4></div><div class="card-body">';
+        standings.forEach(function(s,i) {
+          var av = s.avatar_url ? '<img src="'+s.avatar_url+'" alt="" />'
+            : '<div style="width:32px;height:32px;border-radius:50%;background:rgba(108,117,125,0.3);display:flex;align-items:center;justify-content:center"><i class="bi bi-person-fill" style="color:#6c757d"></i></div>';
+          html += '<div class="scoreboard-row'+(i===0?' winner':'')+'">'
+            + '<span style="font-size:1.2rem;min-width:30px">'+(medals[i]||'#'+(i+1))+'</span>' + av
+            + '<span style="color:#e4d9b5;flex:1">'+esc(s.display_name)+(s.user_id===myUserId?' <span class="badge bg-secondary" style="font-size:0.65rem">You</span>':'')+'</span>'
+            + '<span style="color:#e6c65c;font-weight:700;font-size:1.1rem">'+s.score+'/'+s.total+'</span></div>';
+        });
+        html += '<div class="text-center mt-3"><span class="badge bg-secondary"><i class="bi bi-x-circle me-1"></i>Game ended early — no stats recorded</span></div>'
+          + '<div class="d-flex justify-content-center gap-2 mt-4">'
+          + '<button class="btn btn-outline-secondary" onclick="showBrowser()"><i class="bi bi-arrow-left me-1"></i>Back to Lobbies</button>'
+          + '<button class="btn btn-warning px-4" onclick="showBrowser()"><i class="bi bi-arrow-repeat me-1"></i>Play Again</button>'
+          + '</div></div></div></div></div>';
+        document.getElementById('main-panel').innerHTML = html;
+        currentLobby = null;
+      }
       function showMpResults(standings) {
         clearTimers();
         var medals = ['\u{1F947}','\u{1F948}','\u{1F949}'];
