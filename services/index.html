@@ -36,6 +36,61 @@
         <h1 style="color: #e6c65c; font-weight: 600">The Great Hall</h1>
         <p style="opacity: 0.8">Choose your service</p>
       </div>
+      <!-- FellowSync Active Room Banner -->
+      <div id="fellowsync-banner" class="mb-4" style="display: none">
+        <div class="d-flex align-items-center justify-content-center">
+          <a
+            href="https://fellowsync.meduseld.io"
+            class="text-decoration-none"
+            style="max-width: 500px; width: 100%"
+          >
+            <div
+              class="card bg-dark border-warning py-2 px-3"
+              style="
+                background: linear-gradient(
+                  135deg,
+                  rgba(230, 198, 92, 0.12) 0%,
+                  rgba(230, 198, 92, 0.04) 100%
+                );
+                cursor: pointer;
+                transition: border-color 0.2s;
+              "
+            >
+              <div class="d-flex align-items-center gap-3">
+                <img
+                  src="https://meduseld.io/fellowsync/fellowsync-bi.png"
+                  alt="FellowSync"
+                  style="width: 2rem; height: 2rem; object-fit: contain"
+                />
+                <div class="flex-grow-1" style="min-width: 0">
+                  <div
+                    class="d-flex align-items-center gap-2"
+                    style="color: #e6c65c; font-weight: 600; font-size: 0.9rem"
+                  >
+                    <i class="bi bi-music-note-beamed"></i>
+                    <span id="fellowsync-banner-text">Listening room active</span>
+                    <span
+                      class="badge rounded-pill"
+                      style="
+                        background-color: rgba(230, 198, 92, 0.2);
+                        color: #e6c65c;
+                        font-size: 0.7rem;
+                      "
+                      id="fellowsync-banner-count"
+                    ></span>
+                  </div>
+                  <small
+                    class="text-muted"
+                    id="fellowsync-banner-detail"
+                    style="font-size: 0.75rem"
+                  ></small>
+                </div>
+                <i class="bi bi-arrow-right" style="color: #e6c65c; font-size: 1rem"></i>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
       <!-- Calendar Widget -->
       <div class="row g-4 justify-content-center mb-4">
         <div class="col-md-6 col-lg-4" id="calendar-widget">
@@ -2198,6 +2253,55 @@
       document.getElementById('newsCollapse').addEventListener('hide.bs.collapse', function () {
         document.getElementById('news-chevron').style.transform = 'rotate(0deg)';
       });
+
+      // ===== FellowSync Active Room Banner =====
+      async function checkFellowSyncRooms() {
+        var banner = document.getElementById('fellowsync-banner');
+        if (!banner) return;
+        try {
+          var resp = await fetch(
+            'https://health.meduseld.io/check/fellowsync-rooms?t=' + Date.now(),
+            {
+              method: 'GET',
+              mode: 'cors',
+              credentials: 'omit',
+            }
+          );
+          if (!resp.ok) throw new Error('Status ' + resp.status);
+          var data = await resp.json();
+          var count = data.count || 0;
+          if (count === 0) {
+            banner.style.display = 'none';
+            return;
+          }
+          var textEl = document.getElementById('fellowsync-banner-text');
+          var countEl = document.getElementById('fellowsync-banner-count');
+          var detailEl = document.getElementById('fellowsync-banner-detail');
+          textEl.textContent =
+            count === 1 ? 'Listening room active' : count + ' listening rooms active';
+          countEl.textContent =
+            data.rooms.reduce(function (sum, r) {
+              return sum + r.participant_count;
+            }, 0) + ' listening';
+          // Show current track if a room is playing
+          var playing = data.rooms.find(function (r) {
+            return r.is_playing && r.current_track;
+          });
+          if (playing) {
+            var detail = '\u266B ' + playing.current_track;
+            if (playing.current_artist) detail += ' \u2014 ' + playing.current_artist;
+            detailEl.textContent = detail;
+          } else {
+            detailEl.textContent = '';
+          }
+          banner.style.display = '';
+        } catch (e) {
+          console.error('FellowSync rooms check failed:', e);
+          banner.style.display = 'none';
+        }
+      }
+      checkFellowSyncRooms();
+      setInterval(checkFellowSyncRooms, 30000);
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@widgetbot/crate@3" async defer></script>
     <script>
