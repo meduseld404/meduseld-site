@@ -736,12 +736,12 @@
             });
             var html = '<div class="list-group list-group-flush">';
             items.forEach(function (item) {
-              var headerImg = 'https://cdn.akamai.steamstatic.com/steam/apps/' + item.id + '/header.jpg';
+              var coverImg = item.tiny_image || '';
               html +=
                 '<button type="button" class="list-group-item list-group-item-action bg-dark text-light border-secondary d-flex align-items-center gap-2 steam-result-btn" ' +
-                'data-name="' + escapeHtml(item.name) + '" data-img="' + escapeHtml(headerImg) + '" ' +
+                'data-name="' + escapeHtml(item.name) + '" data-img="' + escapeHtml(coverImg) + '" ' +
                 'data-bs-toggle="tooltip" data-bs-title="Use this cover">' +
-                '<img src="' + escapeHtml(item.tiny_image || headerImg) + '" alt="" style="width:40px;height:20px;border-radius:3px;object-fit:cover;" />' +
+                '<img src="' + escapeHtml(coverImg) + '" alt="" style="width:40px;height:20px;border-radius:3px;object-fit:cover;" />' +
                 '<span class="small">' + escapeHtml(item.name) + '</span>' +
                 '</button>';
             });
