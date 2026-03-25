@@ -537,7 +537,7 @@
           ? new Date(currentPick.spun_at).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })
           : '';
         banner.innerHTML =
-          '<h3><i class="bi bi-trophy me-2"></i>Game of the Week</h3>' +
+          '<h3><i class="bi bi-trophy me-2"></i>Game Chosen!</h3>' +
           imgHtml +
           '<div class="gotw-game">' + escapeHtml(currentPick.game_name) + '</div>' +
           '<div class="gotw-meta">Spun by ' + escapeHtml(currentPick.spun_by_name || 'Unknown') +
