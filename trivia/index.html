@@ -279,6 +279,7 @@
       showBrowser();
 
       // ==================== CATEGORIES ====================
+      var FLAG_CATEGORY_ID = 'flags';
       function loadCategories() {
         fetch('https://opentdb.com/api_category.php')
           .then(function(r) { return r.json(); })
@@ -286,6 +287,8 @@
             categories = (data.trivia_categories || []).map(function(c) {
               return { id: c.id, name: c.name.replace('Entertainment: ','').replace('Science: ','') };
             });
+            // Add custom flag category
+            categories.unshift({ id: FLAG_CATEGORY_ID, name: '\u{1F3F3}\uFE0F Country Flags' });
           })
           .catch(function(err) { console.error('Failed to load trivia categories:', err); });
       }
@@ -418,11 +421,19 @@
           + '<div class="col-md-4"><label class="form-label text-muted small">Questions</label><select id="c-num" class="form-select form-select-sm bg-dark text-light border-secondary"><option value="5">5</option><option value="10" selected>10</option><option value="15">15</option><option value="20">20</option></select></div>'
           + '<div class="col-md-4"><label class="form-label text-muted small">Difficulty</label><select id="c-diff" class="form-select form-select-sm bg-dark text-light border-secondary"><option value="">Any</option><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select></div>'
           + '<div class="col-md-4"><label class="form-label text-muted small">Max Players</label><select id="c-max" class="form-select form-select-sm bg-dark text-light border-secondary">'+maxOpts+'</select></div>'
-          + '<div class="col-12"><label class="form-label text-muted small">Category</label><select id="c-cat" class="form-select form-select-sm bg-dark text-light border-secondary">'+catOpts+'</select></div>'
+          + '<div class="col-12"><label class="form-label text-muted small">Category</label><select id="c-cat" class="form-select form-select-sm bg-dark text-light border-secondary" onchange="onCategoryChange(\'c\')">'+catOpts+'</select></div>'
           + '</div><div class="d-flex justify-content-center gap-2 mt-4">'
           + '<button class="btn btn-outline-secondary" onclick="showBrowser()">Cancel</button>'
           + '<button class="btn btn-warning px-4" onclick="createLobby()"><i class="bi bi-play-fill me-1"></i>Create Lobby</button>'
           + '</div></div></div></div></div>';
+      }
+      function onCategoryChange(prefix) {
+        var cat = document.getElementById(prefix + '-cat').value;
+        var diff = document.getElementById(prefix + '-diff');
+        if (diff) {
+          diff.disabled = cat === FLAG_CATEGORY_ID;
+          if (cat === FLAG_CATEGORY_ID) diff.value = '';
+        }
       }
       function createLobby() {
         var catSel = document.getElementById('c-cat');
@@ -510,16 +521,26 @@
       }
 
       // ==================== MULTIPLAYER QUESTION ====================
+      var currentQuestionType = null; // track if current question is 'flags' or normal
       function showMpQuestion(data) {
         clearTimers();
         if (currentLobby) currentLobby.current_question = data.index;
         currentAnswers = data.answers; // store raw answer strings
+        currentQuestionType = data.type || null;
         var total = currentLobby ? currentLobby.total_questions : '?';
         var p = document.getElementById('main-panel');
+        var isFlag = data.type === 'flags';
         var ansHtml = '';
-        data.answers.forEach(function(ans, idx) {
-          ansHtml += '<button class="answer-btn" data-idx="'+idx+'">'+ans+'</button>';
-        });
+        if (isFlag) {
+          ansHtml = '<div class="text-center mb-3"><img src="'+esc(data.question)+'" alt="Country flag" style="max-width:320px;width:100%;border-radius:8px;border:2px solid rgba(230,198,92,0.3);box-shadow:0 4px 12px rgba(0,0,0,0.4)" /></div>'
+            + '<div class="d-flex gap-2"><input type="text" id="flag-input" class="form-control bg-dark text-light border-secondary" placeholder="Type the country name..." autocomplete="off" />'
+            + '<button class="btn btn-warning px-3" id="flag-submit-btn" onclick="submitFlagAnswer()"><i class="bi bi-send"></i></button></div>';
+        } else {
+          data.answers.forEach(function(ans, idx) {
+            ansHtml += '<button class="answer-btn" data-idx="'+idx+'">'+ans+'</button>';
+          });
+        }
+        var questionDisplay = isFlag ? 'Name this country' : data.question;
         p.innerHTML = '<div class="row justify-content-center mb-4"><div class="col-12 col-lg-8">'
           + '<div class="card bg-dark border-warning">'
           + '<div class="card-header d-flex justify-content-between align-items-center" style="background-color:rgba(230,198,92,0.1);border-bottom:2px solid #e6c65c">'
@@ -530,20 +551,40 @@
           + '</div>'
           + '</div><div class="card-body">'
           + '<div class="timer-bar-track"><div class="timer-bar" id="timer-bar" style="width:100%"></div></div>'
-          + '<div class="mb-2"><span class="badge bg-secondary">'+esc(data.category)+'</span> <span class="badge bg-secondary ms-1">'+data.difficulty.charAt(0).toUpperCase()+data.difficulty.slice(1)+'</span></div>'
-          + '<h5 class="mb-4" style="color:#e4d9b5;line-height:1.6">'+data.question+'</h5>'
+          + '<div class="mb-2"><span class="badge bg-secondary">'+esc(data.category)+'</span>'
+          + (isFlag ? '' : ' <span class="badge bg-secondary ms-1">'+data.difficulty.charAt(0).toUpperCase()+data.difficulty.slice(1)+'</span>')
+          + '</div>'
+          + '<h5 class="mb-4" style="color:#e4d9b5;line-height:1.6">'+questionDisplay+'</h5>'
           + '<div id="mp-answers" class="d-flex flex-column gap-2">'+ansHtml+'</div>'
           + '<div class="mt-3 d-flex flex-wrap gap-2 justify-content-center" id="lobby-players"></div>'
           + '<div class="progress-dots mt-3" id="mp-dots"></div>'
           + '</div></div></div></div>';
 
-        // Bind click handlers using data attributes (avoids escaping issues)
-        document.querySelectorAll('#mp-answers .answer-btn').forEach(function(btn) {
-          btn.addEventListener('click', function() { submitMpAnswer(btn, currentAnswers[parseInt(btn.getAttribute('data-idx'))]); });
-        });
+        if (isFlag) {
+          var flagInput = document.getElementById('flag-input');
+          if (flagInput) {
+            flagInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') submitFlagAnswer(); });
+            flagInput.focus();
+          }
+        } else {
+          // Bind click handlers using data attributes (avoids escaping issues)
+          document.querySelectorAll('#mp-answers .answer-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() { submitMpAnswer(btn, currentAnswers[parseInt(btn.getAttribute('data-idx'))]); });
+          });
+        }
         renderLobbyPlayers();
         buildDots('mp-dots', data.index, total);
         startTimerBar(data.time_limit);
+      }
+      function submitFlagAnswer() {
+        var input = document.getElementById('flag-input');
+        var btn = document.getElementById('flag-submit-btn');
+        if (!input || !socket || !currentLobby) return;
+        var answer = input.value.trim();
+        if (!answer) return;
+        input.disabled = true;
+        if (btn) btn.disabled = true;
+        socket.emit('submit_answer', { code: currentLobby.code, answer: answer });
       }
       function getMyScore() {
         if (!currentLobby || !myUserId) return 0;
@@ -559,18 +600,43 @@
       function revealAnswer(data) {
         clearTimers();
         var correct = data.correct_answer;
-        // Match buttons by comparing raw answer text to currentAnswers
-        document.querySelectorAll('#mp-answers .answer-btn').forEach(function(b) {
-          var idx = parseInt(b.getAttribute('data-idx'));
-          if (currentAnswers[idx] === correct) b.classList.add('correct');
-        });
+        var isFlag = currentQuestionType === 'flags';
+        if (isFlag) {
+          // For flag questions, show the correct answer and color the input
+          var input = document.getElementById('flag-input');
+          var btn = document.getElementById('flag-submit-btn');
+          if (input) input.disabled = true;
+          if (btn) btn.disabled = true;
+          var myR = null;
+          if (data.player_results) { for (var i=0;i<data.player_results.length;i++) { if (data.player_results[i].user_id === myUserId) { myR = data.player_results[i]; break; } } }
+          var ansContainer = document.getElementById('mp-answers');
+          if (ansContainer) {
+            var resultHtml = '<div class="text-center mt-2 mb-2" style="font-size:1.1rem;font-weight:600;color:#28a745"><i class="bi bi-check-circle me-1"></i>' + esc(correct) + '</div>';
+            if (myR && input) {
+              if (myR.correct) {
+                input.style.borderColor = '#28a745';
+                input.style.color = '#28a745';
+              } else if (myR.answer) {
+                input.style.borderColor = '#dc3545';
+                input.style.color = '#dc3545';
+              }
+            }
+            ansContainer.insertAdjacentHTML('beforeend', resultHtml);
+          }
+        } else {
+          // Match buttons by comparing raw answer text to currentAnswers
+          document.querySelectorAll('#mp-answers .answer-btn').forEach(function(b) {
+            var idx = parseInt(b.getAttribute('data-idx'));
+            if (currentAnswers[idx] === correct) b.classList.add('correct');
+          });
+        }
         // Update scores + highlight my wrong answer
         if (currentLobby && data.player_results) {
           data.player_results.forEach(function(pr) {
             for (var i=0;i<currentLobby.players.length;i++) {
               if (currentLobby.players[i].user_id === pr.user_id) { currentLobby.players[i].score = pr.score; currentLobby.players[i].answered = false; }
             }
-            if (pr.user_id === myUserId && pr.answer && pr.answer !== correct) {
+            if (!isFlag && pr.user_id === myUserId && pr.answer && pr.answer !== correct) {
               document.querySelectorAll('#mp-answers .answer-btn').forEach(function(b) {
                 var idx = parseInt(b.getAttribute('data-idx'));
                 if (currentAnswers[idx] === pr.answer) b.classList.add('wrong');
@@ -650,7 +716,7 @@
           + '<div class="card-body"><div class="row g-3">'
           + '<div class="col-md-6"><label class="form-label text-muted small">Questions</label><select id="s-num" class="form-select form-select-sm bg-dark text-light border-secondary"><option value="5">5</option><option value="10" selected>10</option><option value="15">15</option><option value="20">20</option></select></div>'
           + '<div class="col-md-6"><label class="form-label text-muted small">Difficulty</label><select id="s-diff" class="form-select form-select-sm bg-dark text-light border-secondary"><option value="">Any</option><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select></div>'
-          + '<div class="col-12"><label class="form-label text-muted small">Category</label><select id="s-cat" class="form-select form-select-sm bg-dark text-light border-secondary">'+catOpts+'</select></div>'
+          + '<div class="col-12"><label class="form-label text-muted small">Category</label><select id="s-cat" class="form-select form-select-sm bg-dark text-light border-secondary" onchange="onCategoryChange(\'s\')">'+catOpts+'</select></div>'
           + '</div><div class="d-flex justify-content-center gap-2 mt-4">'
           + '<button class="btn btn-outline-secondary" onclick="showBrowser()">Cancel</button>'
           + '<button id="s-start" class="btn btn-warning btn-lg px-5" onclick="startSolo()"><i class="bi bi-play-fill me-2"></i>Start Game</button>'
@@ -659,8 +725,13 @@
       function startSolo() {
         var btn = document.getElementById('s-start');
         btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Loading...';
+        var cat = document.getElementById('s-cat').value;
+        if (cat === FLAG_CATEGORY_ID) {
+          startSoloFlags(btn);
+          return;
+        }
         var url = 'https://opentdb.com/api.php?amount='+document.getElementById('s-num').value+'&type=multiple';
-        var cat = document.getElementById('s-cat').value, diff = document.getElementById('s-diff').value;
+        var diff = document.getElementById('s-diff').value;
         if (cat) url += '&category='+cat;
         if (diff) url += '&difficulty='+diff;
         fetch(url).then(function(r) { return r.json(); }).then(function(d) {
@@ -673,30 +744,106 @@
           btn.disabled = false; btn.innerHTML = '<i class="bi bi-play-fill me-2"></i>Start Game';
         });
       }
+      function startSoloFlags(btn) {
+        var num = parseInt(document.getElementById('s-num').value) || 10;
+        fetch('https://restcountries.com/v3.1/all?fields=name,flags')
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            var pool = data.filter(function(c) { return c.name && c.name.common && c.flags && (c.flags.svg || c.flags.png); });
+            if (pool.length < num) throw new Error('Not enough countries');
+            // Shuffle and pick
+            for (var i = pool.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = pool[i]; pool[i] = pool[j]; pool[j] = t; }
+            soloQuestions = pool.slice(0, num).map(function(c) {
+              return {
+                question: c.flags.svg || c.flags.png,
+                correct_answer: c.name.common,
+                incorrect_answers: [],
+                category: 'Country Flags',
+                difficulty: 'mixed',
+                type: 'flags'
+              };
+            });
+            soloIndex = 0; soloScore = 0; soloAnswers = [];
+            showSoloQ();
+          })
+          .catch(function(err) {
+            console.error('Failed to fetch flag questions:', err);
+            showToast('Could not load flag questions: ' + err.message, 'danger');
+            btn.disabled = false; btn.innerHTML = '<i class="bi bi-play-fill me-2"></i>Start Game';
+          });
+      }
       function showSoloQ() {
         clearTimers();
         var q = soloQuestions[soloIndex], total = soloQuestions.length;
-        var all = q.incorrect_answers.slice();
-        all.splice(Math.floor(Math.random()*(all.length+1)), 0, q.correct_answer);
+        var isFlag = q.type === 'flags';
         var ansHtml = '';
-        all.forEach(function(a,i) { ansHtml += '<button class="answer-btn" data-idx="'+i+'">'+a+'</button>'; });
+        var all = [];
+        if (isFlag) {
+          ansHtml = '<div class="text-center mb-3"><img src="'+esc(q.question)+'" alt="Country flag" style="max-width:320px;width:100%;border-radius:8px;border:2px solid rgba(230,198,92,0.3);box-shadow:0 4px 12px rgba(0,0,0,0.4)" /></div>'
+            + '<div class="d-flex gap-2"><input type="text" id="solo-flag-input" class="form-control bg-dark text-light border-secondary" placeholder="Type the country name..." autocomplete="off" />'
+            + '<button class="btn btn-warning px-3" id="solo-flag-btn" onclick="soloFlagAnswer()"><i class="bi bi-send"></i></button></div>';
+        } else {
+          all = q.incorrect_answers.slice();
+          all.splice(Math.floor(Math.random()*(all.length+1)), 0, q.correct_answer);
+          all.forEach(function(a,i) { ansHtml += '<button class="answer-btn" data-idx="'+i+'">'+a+'</button>'; });
+        }
+        var questionDisplay = isFlag ? 'Name this country' : q.question;
+        var diffBadge = isFlag ? '' : ' <span class="badge bg-secondary ms-1">'+q.difficulty.charAt(0).toUpperCase()+q.difficulty.slice(1)+'</span>';
         document.getElementById('main-panel').innerHTML = '<div class="row justify-content-center mb-4"><div class="col-12 col-lg-8">'
           + '<div class="card bg-dark border-warning">'
           + '<div class="card-header d-flex justify-content-between align-items-center" style="background-color:rgba(230,198,92,0.1);border-bottom:2px solid #e6c65c">'
           + '<span style="color:#e6c65c;font-weight:600">Question '+(soloIndex+1)+' / '+total+' <span class="solo-badge ms-2">Solo</span></span>'
           + '<span class="badge bg-warning text-dark" id="s-score">Score: '+soloScore+'</span>'
           + '</div><div class="card-body">'
-          + '<div class="mb-2"><span class="badge bg-secondary">'+q.category+'</span> <span class="badge bg-secondary ms-1">'+q.difficulty.charAt(0).toUpperCase()+q.difficulty.slice(1)+'</span></div>'
-          + '<h5 class="mb-4" style="color:#e4d9b5;line-height:1.6">'+q.question+'</h5>'
+          + '<div class="mb-2"><span class="badge bg-secondary">'+q.category+'</span>'+diffBadge+'</div>'
+          + '<h5 class="mb-4" style="color:#e4d9b5;line-height:1.6">'+questionDisplay+'</h5>'
           + '<div id="s-answers" class="d-flex flex-column gap-2">'+ansHtml+'</div>'
           + '<div class="progress-dots mt-4" id="s-dots"></div>'
           + '</div></div></div></div>';
         // Store answers and bind clicks
         currentAnswers = all;
-        document.querySelectorAll('#s-answers .answer-btn').forEach(function(btn) {
-          btn.addEventListener('click', function() { soloAnswer(btn, all[parseInt(btn.getAttribute('data-idx'))]); });
-        });
+        if (isFlag) {
+          var flagInput = document.getElementById('solo-flag-input');
+          if (flagInput) {
+            flagInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') soloFlagAnswer(); });
+            flagInput.focus();
+          }
+        } else {
+          document.querySelectorAll('#s-answers .answer-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() { soloAnswer(btn, all[parseInt(btn.getAttribute('data-idx'))]); });
+          });
+        }
         buildDots('s-dots', soloIndex, total, soloAnswers);
+      }
+      function soloFlagAnswer() {
+        var input = document.getElementById('solo-flag-input');
+        var btn = document.getElementById('solo-flag-btn');
+        if (!input) return;
+        var answer = input.value.trim();
+        if (!answer) return;
+        input.disabled = true;
+        if (btn) btn.disabled = true;
+        var q = soloQuestions[soloIndex], correct = q.correct_answer;
+        var ok = checkFlagAnswerClient(answer, correct);
+        if (ok) {
+          soloScore++;
+          input.style.borderColor = '#28a745';
+          input.style.color = '#28a745';
+          soloAnswers.push('correct');
+        } else {
+          input.style.borderColor = '#dc3545';
+          input.style.color = '#dc3545';
+          soloAnswers.push('wrong');
+        }
+        // Show correct answer
+        var ansContainer = document.getElementById('s-answers');
+        if (ansContainer) {
+          ansContainer.insertAdjacentHTML('beforeend', '<div class="text-center mt-2" style="font-size:1.1rem;font-weight:600;color:#28a745"><i class="bi bi-check-circle me-1"></i>' + esc(correct) + '</div>');
+        }
+        document.getElementById('s-score').textContent = 'Score: '+soloScore;
+        var dot = document.getElementById('dot-'+soloIndex);
+        if (dot) { dot.classList.remove('current'); dot.classList.add(ok?'correct':'wrong'); }
+        setTimeout(function() { soloIndex++; if (soloIndex < soloQuestions.length) showSoloQ(); else showSoloResults(); }, 2000);
       }
       function soloAnswer(btn, selected) {
         var q = soloQuestions[soloIndex], correct = q.correct_answer;
@@ -736,6 +883,47 @@
 
       // ==================== HELPERS ====================
       function esc(s) { var d = document.createElement('div'); d.appendChild(document.createTextNode(s||'')); return d.innerHTML; }
+
+      // Client-side country name aliases for solo flag matching
+      var SOLO_COUNTRY_ALIASES = {
+        'usa': 'United States', 'us': 'United States', 'america': 'United States', 'united states of america': 'United States',
+        'uk': 'United Kingdom', 'great britain': 'United Kingdom', 'britain': 'United Kingdom', 'england': 'United Kingdom',
+        'russia': 'Russia', 'south korea': 'South Korea', 'north korea': 'North Korea',
+        'czech republic': 'Czechia', 'ivory coast': "Côte d'Ivoire", "cote d'ivoire": "Côte d'Ivoire", 'cote divoire': "Côte d'Ivoire",
+        'east timor': 'Timor-Leste', 'burma': 'Myanmar', 'holland': 'Netherlands', 'the netherlands': 'Netherlands',
+        'vatican': 'Vatican City', 'vatican city state': 'Vatican City', 'holy see': 'Vatican City',
+        'congo': 'Republic of the Congo', 'republic of congo': 'Republic of the Congo', 'republic of the congo': 'Republic of the Congo',
+        'dr congo': 'DR Congo', 'drc': 'DR Congo', 'democratic republic of the congo': 'DR Congo', 'democratic republic of congo': 'DR Congo',
+        'swaziland': 'Eswatini', 'cape verde': 'Cape Verde', 'cabo verde': 'Cape Verde',
+        'uae': 'United Arab Emirates', 'emirates': 'United Arab Emirates',
+        'macau': 'Macau', 'macao': 'Macau',
+        'falklands': 'Falkland Islands', 'falkland islands': 'Falkland Islands',
+        'micronesia': 'Micronesia', 'federated states of micronesia': 'Micronesia',
+        'palestine': 'Palestine', 'taiwan': 'Taiwan', 'republic of china': 'Taiwan', 'chinese taipei': 'Taiwan',
+        'the gambia': 'Gambia', 'the bahamas': 'Bahamas',
+        'turks and caicos': 'Turks and Caicos Islands',
+        'bvi': 'British Virgin Islands', 'usvi': 'United States Virgin Islands', 'us virgin islands': 'United States Virgin Islands',
+        'st kitts': 'Saint Kitts and Nevis', 'st lucia': 'Saint Lucia', 'st vincent': 'Saint Vincent and the Grenadines',
+        'st helena': 'Saint Helena, Ascension and Tristan da Cunha', 'st martin': 'Saint Martin',
+        'st barthelemy': 'Saint Barthélemy', 'st barts': 'Saint Barthélemy', 'st pierre': 'Saint Pierre and Miquelon',
+        'curacao': 'Curaçao', 'reunion': 'Réunion', 'sint maarten': 'Sint Maarten',
+        'cocos islands': 'Cocos (Keeling) Islands', 'pitcairn': 'Pitcairn Islands',
+        'svalbard': 'Svalbard and Jan Mayen', 'faroes': 'Faroe Islands', 'faroe islands': 'Faroe Islands'
+      };
+      function normalizeCountryName(s) {
+        s = s.trim().toLowerCase();
+        ['the ', 'republic of ', 'kingdom of ', 'state of '].forEach(function(p) { if (s.indexOf(p) === 0) s = s.substring(p.length); });
+        return s.replace(/[''`]/g, '').replace(/\s+/g, ' ').trim();
+      }
+      function checkFlagAnswerClient(submitted, correct) {
+        var sub = submitted.trim().toLowerCase();
+        var cor = correct.toLowerCase();
+        if (sub === cor) return true;
+        var alias = SOLO_COUNTRY_ALIASES[sub];
+        if (alias && alias.toLowerCase() === cor) return true;
+        if (normalizeCountryName(submitted) === normalizeCountryName(correct)) return true;
+        return false;
+      }
       function buildDots(containerId, currentIdx, total, pastAnswers) {
         var el = document.getElementById(containerId); if (!el) return;
         var h = '';
