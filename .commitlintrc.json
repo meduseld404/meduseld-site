@@ -21,7 +21,8 @@
         "prices",
         "release",
         "status",
-        "trivia"
+        "trivia",
+        "edoras"
       ]
     ],
     "scope-empty": [1, "never"],
