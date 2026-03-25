@@ -308,7 +308,7 @@
       }
 
       function updateAdminUI() {
-        document.getElementById('add-game-btn').style.display = isAdmin ? '' : 'none';
+        document.getElementById('add-game-btn').style.display = '';
         document.getElementById('clear-history-btn').style.display = isAdmin ? '' : 'none';
         if (isAdmin) {
           new bootstrap.Tooltip(document.getElementById('clear-history-btn'));
