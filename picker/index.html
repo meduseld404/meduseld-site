@@ -274,6 +274,7 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script src="https://meduseld.io/static/auth.js"></script>
     <script>
       var HEALTH_BASE = 'https://health.meduseld.io/check';
@@ -490,6 +491,7 @@
       document.getElementById('spin-btn').addEventListener('click', function () {
         if (isSpinning || games.length === 0) return;
         var cfToken = getCfToken();
+        isSpinning = true; // Set early to block WebSocket spin_result
 
         fetch(HEALTH_BASE + '/picker-spin', {
           method: 'POST',
@@ -820,6 +822,67 @@
       document.getElementById('game-image-input').addEventListener('input', function () {
         showCoverPreview(this.value.trim());
       });
+
+      // ========== WEBSOCKET (Live Updates) ==========
+      var pickerSocket = null;
+      try {
+        pickerSocket = io('https://panel.meduseld.io/picker', {
+          transports: ['websocket', 'polling'],
+          reconnection: true,
+          reconnectionDelay: 2000
+        });
+
+        pickerSocket.on('connect', function () {
+          console.log('Picker WebSocket connected');
+        });
+
+        pickerSocket.on('disconnect', function () {
+          console.log('Picker WebSocket disconnected');
+        });
+
+        pickerSocket.on('connect_error', function (err) {
+          console.error('Picker WebSocket connection error:', err);
+        });
+
+        // Another user spun the wheel — animate it for everyone
+        pickerSocket.on('spin_result', function (data) {
+          if (isSpinning) return; // Don't interrupt our own spin
+          var pick = data.pick;
+          var winnerIdx = data.winner_index || 0;
+
+          // If we have games loaded, animate the wheel
+          if (games.length > 0) {
+            animateSpin(games, winnerIdx, function () {
+              currentPick = pick;
+              renderGOTW();
+              updateSpinButton();
+              loadHistory();
+              document.getElementById('spin-status').textContent = '';
+            });
+          } else {
+            // No games loaded yet, just update the data
+            currentPick = pick;
+            renderGOTW();
+            updateSpinButton();
+            loadHistory();
+          }
+        });
+
+        // Game pool changed (add/delete) — reload games and redraw wheel
+        pickerSocket.on('pool_updated', function () {
+          loadGames();
+        });
+
+        // History cleared — reload everything
+        pickerSocket.on('history_cleared', function () {
+          currentPick = null;
+          renderGOTW();
+          updateSpinButton();
+          loadHistory();
+        });
+      } catch (e) {
+        console.error('Failed to initialize picker WebSocket:', e);
+      }
 
       // ========== INIT ==========
       loadCurrentPick();
