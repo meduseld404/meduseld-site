@@ -57,6 +57,12 @@ Served via Cloudflare Pages at `/srv/meduseld-site`
   - Polls health Worker for live service status
   - No authentication required
 
+- **picker.meduseld.io** (picker/index.html)
+  - Party Game Picker — spin wheel to select the weekly party game
+  - Canvas-based animated wheel, Game of the Week banner, history, game pool management
+  - Any authenticated user can spin once per week; admins can re-spin and manage the game pool
+  - Data from `health.meduseld.io/check/picker-*` endpoints
+
 ### meduseld Repository (Flask Backend)
 
 Python Flask application at `/srv/meduseld`
@@ -298,6 +304,33 @@ Table: `custom_achievements`
 
 Admin-created achievements. Merged with hardcoded `ACHIEVEMENTS` via `get_all_achievements()`. Can be manually awarded to users via the `/check/custom-achievements-award` endpoint.
 
+### PickerGame Model (`app/models.py`)
+
+Table: `picker_games`
+
+| Column     | Type        | Notes                                   |
+| ---------- | ----------- | --------------------------------------- |
+| id         | Integer     | Primary key                             |
+| name       | String(256) | Game display name                       |
+| image_url  | String(512) | Optional cover art URL                  |
+| is_active  | Boolean     | Default true, soft-delete sets to false |
+| added_by   | Integer     | FK to `users.id`                        |
+| created_at | DateTime    | UTC, auto-set on creation               |
+
+### WeeklyPick Model (`app/models.py`)
+
+Table: `weekly_picks`
+
+| Column     | Type     | Notes                                                  |
+| ---------- | -------- | ------------------------------------------------------ |
+| id         | Integer  | Primary key                                            |
+| game_id    | Integer  | FK to `picker_games.id`                                |
+| spun_by    | Integer  | FK to `users.id`                                       |
+| spun_at    | DateTime | UTC, auto-set on creation                              |
+| week_start | Date     | Unique. Monday of the week (defines one pick per week) |
+
+"Week" is defined as Monday 00:00 UTC to Sunday 23:59 UTC. The `week_start` unique constraint ensures only one pick per week. Admins can override by updating the existing row.
+
 ### Database Commands
 
 ```bash
@@ -511,7 +544,7 @@ Three lightweight Python HTTP servers run independently of the Flask app so the 
    - Triggers `meduseld-backup.service` via systemd
    - Env: `BACKUP_SECRET`
 
-Flask proxy routing (`check_service()` in `webserver.py`): requests to `health.meduseld.io/check/stats` → `127.0.0.1:5004/stats`, `/check/history` → `127.0.0.1:5004/history`, `/check/backup` → `127.0.0.1:5003/backup`, `/check/backup-status` → `127.0.0.1:5003/status`, `/check/reboot` → `127.0.0.1:5002/reboot`, `/check/system-logs` → Flask's own `api_server_logs()`, `/check/media-auth` → Jellyfin SSO auth (authenticated, calls `_jellyfin_auth_inner()` to auto-provision and authenticate a Jellyfin account, returns `{token, user_id, server_id}`), `/check/team-roster` → admin users list with trivia stats (authenticated via CF_Authorization JWT passed as `cf_token` query param or `_cf_token` in body; each user includes a `trivia` object with `games_played`, `total_correct`, `total_wrong`, `total_questions`, `best_score`, `accuracy`), `/check/team-roster-<id>` → admin user update (PUT), `/check/calendar` → calendar events list (GET) and create (POST, admin only), `/check/calendar-<id>` → delete calendar event (DELETE, admin only) or edit calendar event (PUT with `title`/`event_date`, admin only) or RSVP (PUT with `status`, any authenticated user), `/check/game-votes` → game voting (GET returns aggregated scores + user's rankings, PUT submits user's ranked list), `/check/games` → games list (GET returns all games, POST adds a game — authenticated), `/check/games-<app_id>` → delete game (DELETE, admin only — also removes associated votes), `/check/trivia-lobbies` → list active multiplayer trivia lobbies (GET, public — returns lobbies with status `waiting`), `/check/trivia-leaderboard` → trivia leaderboard (GET, public — returns aggregated wins per user sorted by win count), `/check/trivia-record-win` → record a trivia game result (POST, authenticated — body: `{score, total_questions, category?, _cf_token}`), `/check/profile` → user profile with achievements and trivia stats (GET, authenticated — runs achievement checks and returns full profile data with all achievements and their locked/unlocked status). All authenticated endpoints use `_authenticate_from_cookie()` which reads the CF_Authorization JWT from cookie, header, `cf_token` query param, or `_cf_token` in JSON body.
+Flask proxy routing (`check_service()` in `webserver.py`): requests to `health.meduseld.io/check/stats` → `127.0.0.1:5004/stats`, `/check/history` → `127.0.0.1:5004/history`, `/check/backup` → `127.0.0.1:5003/backup`, `/check/backup-status` → `127.0.0.1:5003/status`, `/check/reboot` → `127.0.0.1:5002/reboot`, `/check/system-logs` → Flask's own `api_server_logs()`, `/check/media-auth` → Jellyfin SSO auth (authenticated, calls `_jellyfin_auth_inner()` to auto-provision and authenticate a Jellyfin account, returns `{token, user_id, server_id}`), `/check/team-roster` → admin users list with trivia stats (authenticated via CF_Authorization JWT passed as `cf_token` query param or `_cf_token` in body; each user includes a `trivia` object with `games_played`, `total_correct`, `total_wrong`, `total_questions`, `best_score`, `accuracy`), `/check/team-roster-<id>` → admin user update (PUT), `/check/calendar` → calendar events list (GET) and create (POST, admin only), `/check/calendar-<id>` → delete calendar event (DELETE, admin only) or edit calendar event (PUT with `title`/`event_date`, admin only) or RSVP (PUT with `status`, any authenticated user), `/check/game-votes` → game voting (GET returns aggregated scores + user's rankings, PUT submits user's ranked list), `/check/games` → games list (GET returns all games, POST adds a game — authenticated), `/check/games-<app_id>` → delete game (DELETE, admin only — also removes associated votes), `/check/trivia-lobbies` → list active multiplayer trivia lobbies (GET, public — returns lobbies with status `waiting`), `/check/trivia-leaderboard` → trivia leaderboard (GET, public — returns aggregated wins per user sorted by win count), `/check/trivia-record-win` → record a trivia game result (POST, authenticated — body: `{score, total_questions, category?, _cf_token}`), `/check/profile` → user profile with achievements and trivia stats (GET, authenticated — runs achievement checks and returns full profile data with all achievements and their locked/unlocked status), `/check/picker-current` → current week's game pick (GET, public), `/check/picker-spin` → spin the wheel to pick a game (POST, authenticated — admins can re-spin), `/check/picker-history` → past weekly picks (GET, public), `/check/picker-games` → game pool list (GET, public) and add game (POST, admin only), `/check/picker-games-<id>` → soft-delete game from pool (DELETE, admin only). All authenticated endpoints use `_authenticate_from_cookie()` which reads the CF_Authorization JWT from cookie, header, `cf_token` query param, or `_cf_token` in JSON body.
 
 ### Common Issues
 
@@ -621,6 +654,15 @@ Events (server → client):
 - `POST /check/custom-achievements` - (Admin only) Create a custom achievement. Body: `{name, description, icon?, category?}`. Auto-generates `achievement_id` from name with `custom_` prefix.
 - `POST /check/custom-achievements-award` - (Admin only) Award a custom achievement to a user. Body: `{achievement_id, user_id, _cf_token}`.
 - `DELETE /check/custom-achievements-<id>` - (Admin only) Delete a custom achievement and remove all user unlocks for it.
+
+### Party Game Picker Endpoints (via health proxy)
+
+- `GET /check/picker-current` - (Public) Returns the current week's pick or `{pick: null}` if no spin yet. Week starts Monday 00:00 UTC.
+- `POST /check/picker-spin` - (Authenticated) Spin the wheel. Server randomly selects a game from the active pool. Returns `{pick}`. Rejects with 409 if already spun this week (unless admin, who can re-spin to override). Body: `{_cf_token}`.
+- `GET /check/picker-history` - (Public) Returns last 20 weekly picks, newest first. Response: `{history: [{game_name, game_image, spun_by_name, spun_at, week_start, ...}]}`.
+- `GET /check/picker-games` - (Public) Returns all active games in the pool. Response: `{games: [{id, name, image_url, added_by_name, ...}]}`.
+- `POST /check/picker-games` - (Admin only) Add a game to the pool. Body: `{name, image_url?, _cf_token}`.
+- `DELETE /check/picker-games-<id>` - (Admin only) Soft-delete a game from the pool (sets `is_active = false`). Auth via `cf_token` query param.
 
 ### Jellyfin Auto-Login
 

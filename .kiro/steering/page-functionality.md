@@ -71,6 +71,11 @@ Each active service card has a status indicator badge that shows Online/Offline/
    - Description: "Test your knowledge with trivia questions."
    - No status badge (static page, not health-checked)
 
+6. **Game Picker**
+   - "Open Game Picker" button → links to `https://picker.meduseld.io`
+   - Description: "Spin the wheel to pick this week's party game."
+   - No status badge (static page, not health-checked)
+
 ### Service Cards (Coming Soon — Disabled)
 
 - VPN Access — Mullvad remote access
@@ -547,6 +552,47 @@ Multiplayer trivia game with lobby system using WebSocket (Flask-SocketIO). User
 - Advances to next question after 1.2 seconds on answer
 - Results: score with percentage, contextual message, progress dots, "Win recorded to leaderboard" badge
 - Win recording: POSTs to `https://health.meduseld.io/check/trivia-record-win` with `{score, total_questions, category, _cf_token}`
+
+---
+
+## picker.meduseld.io — Party Game Picker
+
+File: `meduseld-site/picker/index.html`
+
+Weekly game wheel where users spin to randomly select the party game for the week. Any authenticated user can spin once per week; admins can re-spin to override.
+
+### Navigation
+
+- "Back to Services" button → navigates to `https://services.meduseld.io`
+- Profile widget (top-right, inside header nav bar)
+
+### Game of the Week Banner
+
+- Displayed at the top when a game has been picked for the current week
+- Shows: game name, optional cover art, who spun it, and when
+- Hidden if no spin has occurred this week
+- Data fetched from `GET https://health.meduseld.io/check/picker-current`
+
+### Spin Wheel
+
+- Canvas-based wheel with colored segments, one per game in the pool
+- "Spin the Wheel" button triggers animation, server picks the winner randomly (client animation is visual only)
+- Button disabled once a game has been picked for the current week (non-admin users)
+- Admins see "Re-Spin (Admin)" button to override the current week's pick
+- Wheel hidden if no games are in the pool
+- Spin POSTs to `https://health.meduseld.io/check/picker-spin` with `{_cf_token}`
+
+### Past Picks (History)
+
+- List of previous weekly picks showing game name, cover art, week date, and who spun
+- Fetched from `GET https://health.meduseld.io/check/picker-history` (last 20 picks, newest first)
+
+### Game Pool
+
+- List of all active games in the pool with names and who added them
+- Admins see "Add Game" button → opens modal with name and optional cover image URL fields
+- Admins see delete buttons (x icon) on each game → confirms then soft-deletes via `DELETE https://health.meduseld.io/check/picker-games-<id>`
+- Games added via `POST https://health.meduseld.io/check/picker-games` with `{name, image_url?, _cf_token}`
 
 ---
 
