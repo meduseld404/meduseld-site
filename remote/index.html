@@ -299,6 +299,27 @@
           return;
         }
 
+        setStatus('connecting', 'Connecting...');
+
+        // Bootstrap the Cloudflare Access session for panel.meduseld.io first.
+        // Cross-origin Socket.IO polling needs an active Access session on the
+        // Panel app. A simple fetch with credentials establishes it via the
+        // CF_Authorization cookie (set on .meduseld.io by any Access login).
+        fetch('https://panel.meduseld.io/health', {
+          credentials: 'include',
+          redirect: 'manual',
+        })
+          .then(function () {
+            _initSocket(cfToken);
+          })
+          .catch(function (e) {
+            console.error('Failed to bootstrap panel session:', e);
+            // Try connecting anyway — might work if session already exists
+            _initSocket(cfToken);
+          });
+      }
+
+      function _initSocket(cfToken) {
         socket = io('https://panel.meduseld.io/remote', {
           query: { token: cfToken },
           transports: ['polling', 'websocket'],
