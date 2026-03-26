@@ -608,7 +608,7 @@ Weekly game wheel where users spin to randomly select the party game for the wee
 
 ### Live Updates (WebSocket)
 
-- Connects to `panel.meduseld.io` on the `/picker` namespace via Socket.IO (no auth required)
+- Connects to `health.meduseld.io` on the `/picker` namespace via Socket.IO (no auth required)
 - When any user spins, all other connected viewers see the wheel animate to the winner in real-time via `spin_result` event
 - Game pool changes (add/delete) broadcast `pool_updated` — all viewers reload the game list and wheel
 - History clears broadcast `history_cleared` — all viewers see the banner and history reset
