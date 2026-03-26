@@ -24,7 +24,8 @@
         "trivia",
         "edoras",
         "picker",
-        "remote"
+        "remote",
+        "fame"
       ]
     ],
     "scope-empty": [1, "never"],
