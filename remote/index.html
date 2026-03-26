@@ -301,7 +301,7 @@
 
         socket = io('https://panel.meduseld.io/remote', {
           query: { token: cfToken },
-          transports: ['websocket', 'polling'],
+          transports: ['polling', 'websocket'],
           withCredentials: true,
         });
 
