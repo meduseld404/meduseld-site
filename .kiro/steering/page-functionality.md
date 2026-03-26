@@ -86,6 +86,8 @@ Each active service card has a status indicator badge that shows Online/Offline/
    - "Open Hall of Fame" button → links to `https://fame.meduseld.io`
    - Description: "Funny moments, clips, and memorable screenshots from our adventures."
    - No status badge (static page, not health-checked)
+   - "Under Construction" badge shown on the card
+   - Button is admin-gated: admins see "Open Hall of Fame", non-admins see disabled "Coming Soon" button. Toggled via `showAdminCards()` in JS.
 
 ### Service Cards (Coming Soon — Disabled)
 
