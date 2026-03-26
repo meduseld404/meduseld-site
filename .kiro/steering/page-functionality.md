@@ -777,8 +777,9 @@ Community gallery where authenticated users share and vote on gaming moments. An
 
 - "Submit Entry" button → opens modal (requires authentication)
 - Two tabs: "Upload File" and "Paste Link"
-- Upload tab: title (required), caption (optional), file picker (JPEG, PNG, GIF, WebP up to 10MB; MP4, WebM up to 50MB). Shows preview after file selection.
-- Link tab: title (required), caption (optional), URL (required, supports YouTube/Imgur/direct links), media type dropdown (video or image)
+- Upload tab: title (required), caption (optional), game tag (optional, datalist with presets + custom input), file picker (JPEG, PNG, GIF, WebP, MP4, WebM up to 250MB). Shows preview after file selection.
+- Link tab: title (required), caption (optional), game tag (optional, same datalist), URL (required, supports YouTube/Imgur/direct links), media type dropdown (video or image)
+- Game tag input uses a `<datalist>` populated from preset defaults (PEAK, R.E.P.O., RV There Yet?, Icarus, Battlefield 6, YAPYAP) merged with any custom tags from the database. Users can select a preset or type a custom tag. Case-insensitive dedup prevents duplicate tags.
 - Files uploaded to `/srv/media/fame/` on the server, served via `GET /check/fame-media/<filename>`
 - New entries prepended to gallery on success
 
@@ -786,12 +787,13 @@ Community gallery where authenticated users share and vote on gaming moments. An
 
 - Type filters: All, Screenshots (image), Clips (video) — toggle buttons
 - Sort options: Top Rated (by vote count), Newest, Oldest — toggle buttons
+- Game tag filter row: "All Games" button + one button per known tag. Loaded from `GET /check/fame-tags` merged with preset defaults. Clicking a tag filters the gallery to entries with that tag.
 - Filters and sort trigger a fresh gallery load
 
 ### Gallery
 
 - Responsive grid (3 columns on desktop, 2 on tablet, 1 on mobile)
-- Each card shows: media (image/video/YouTube embed), title, optional caption, submitter avatar + name, time ago, vote button with count
+- Each card shows: media (image/video/YouTube embed), title with optional tag badge (gold pill), optional caption, submitter avatar + name, time ago, vote button with count
 - Images: click to open lightbox overlay (full-size, click overlay to close)
 - Videos (non-YouTube): auto-play on hover (muted, looped), click to open lightbox with controls
 - YouTube links: auto-embedded via `youtube-nocookie.com` iframe

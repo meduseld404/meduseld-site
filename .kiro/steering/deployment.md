@@ -361,6 +361,7 @@ Table: `fame_entries`
 | file_path   | String(512) | Server path for uploads (e.g. `/srv/media/fame/<uuid>.jpg`) |
 | url         | String(512) | External URL for link entries                               |
 | vote_count  | Integer     | Denormalized vote count, default 0                          |
+| tag         | String(64)  | Optional game tag (e.g. `PEAK`, `R.E.P.O.`, `Icarus`)       |
 | created_at  | DateTime    | UTC, auto-set on creation                                   |
 
 ### FameVote Model (`app/models.py`)
@@ -757,10 +758,11 @@ Events (server → client):
 
 ### Hall of Fame Endpoints (via health proxy)
 
-- `GET /check/fame` - (Public, optional auth for vote status) List fame entries, paginated. Query params: `page` (default 1), `per_page` (default 20, max 50), `sort` (`votes`/`newest`/`oldest`, default `votes`), `type` (`image`/`video`/empty for all). Response: `{entries: [{id, user_id, display_name, avatar_url, title, caption, media_type, source_type, vote_count, created_at, voted, media_url}], total, page, per_page}`. If authenticated, each entry includes `voted` boolean.
+- `GET /check/fame` - (Public, optional auth for vote status) List fame entries, paginated. Query params: `page` (default 1), `per_page` (default 20, max 50), `sort` (`votes`/`newest`/`oldest`, default `votes`), `type` (`image`/`video`/empty for all), `tag` (game tag, case-insensitive filter). Response: `{entries: [{id, user_id, display_name, avatar_url, title, caption, media_type, source_type, vote_count, tag, created_at, voted, media_url}], total, page, per_page}`. If authenticated, each entry includes `voted` boolean.
 - `POST /check/fame` - (Authenticated) Create a fame entry. Supports two content types:
-  - `multipart/form-data`: file upload with `title`, `caption`, `file` fields. Images (JPEG/PNG/GIF/WebP) up to 10MB, videos (MP4/WebM) up to 50MB. Files saved to `/srv/media/fame/` with UUID filenames.
-  - `application/json`: external link with `{title, url, caption?, media_type?, _cf_token}`. `media_type` defaults to `video`.
+  - `multipart/form-data`: file upload with `title`, `caption`, `tag`, `file` fields. Images (JPEG/PNG/GIF/WebP) and videos (MP4/WebM) up to 250MB. Files saved to `/srv/media/fame/` with UUID filenames.
+  - `application/json`: external link with `{title, url, caption?, tag?, media_type?, _cf_token}`. `media_type` defaults to `video`.
+- `GET /check/fame-tags` - (Public) Returns all unique tags from existing entries. Response: `{tags: ["PEAK", "R.E.P.O.", ...]}`. Sorted alphabetically (case-insensitive). Frontend merges with hardcoded default tags (PEAK, R.E.P.O., RV There Yet?, Icarus, Battlefield 6, YAPYAP) with case-insensitive dedup.
 - `DELETE /check/fame-<id>` - (Authenticated) Delete a fame entry. Owner or admin only. Removes associated votes and deletes uploaded file if applicable. Auth via `cf_token` query param.
 - `POST /check/fame-<id>-vote` - (Authenticated) Toggle vote on an entry. Body: `{_cf_token}`. Returns `{voted, vote_count}`. Creates or removes a `FameVote` row and updates the denormalized `vote_count` on `FameEntry`.
 - `GET /check/fame-media/<filename>` - (Public) Dedicated Flask route (not in `check_service`). Serves uploaded fame media files from `/srv/media/fame/`. Returns file with correct MIME type and 24-hour cache header. Returns 404 for missing files or path traversal attempts.
