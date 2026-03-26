@@ -826,8 +826,8 @@
       // ========== WEBSOCKET (Live Updates) ==========
       var pickerSocket = null;
       try {
-        pickerSocket = io('https://panel.meduseld.io/picker', {
-          transports: ['websocket', 'polling'],
+        pickerSocket = io('https://health.meduseld.io/picker', {
+          transports: ['polling', 'websocket'],
           withCredentials: true,
           reconnection: true,
           reconnectionAttempts: 3,
