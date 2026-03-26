@@ -320,7 +320,7 @@
       }
 
       function _initSocket(cfToken) {
-        socket = io('https://panel.meduseld.io/remote', {
+        socket = io('https://health.meduseld.io/remote', {
           query: { token: cfToken },
           transports: ['polling', 'websocket'],
           withCredentials: true,
