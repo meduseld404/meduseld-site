@@ -157,6 +157,24 @@
       .fame-card:hover .delete-btn {
         opacity: 1;
       }
+      .tag-badge {
+        display: inline-block;
+        background: rgba(230, 198, 92, 0.12);
+        border: 1px solid rgba(230, 198, 92, 0.3);
+        border-radius: 10px;
+        padding: 0.1rem 0.5rem;
+        font-size: 0.7rem;
+        color: #e6c65c;
+        margin-right: 0.3rem;
+      }
+      .tag-filter-row {
+        display: flex;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+      }
       .lightbox-overlay {
         position: fixed;
         inset: 0;
@@ -225,6 +243,11 @@
         </button>
       </div>
 
+      <!-- Tag filter -->
+      <div class="tag-filter-row" id="tag-filter-row">
+        <button class="filter-btn active" data-tag="" onclick="setTag(this, '')">All Games</button>
+      </div>
+
       <!-- Gallery -->
       <div id="gallery" class="row g-3"></div>
       <div id="loading" class="text-center py-4" style="display: none">
@@ -291,8 +314,21 @@
             />
           </div>
           <div class="mb-3">
+            <label class="form-label small text-muted">Game Tag</label>
+            <input
+              type="text"
+              class="form-control bg-dark text-light border-secondary"
+              id="upload-tag"
+              list="tag-options"
+              maxlength="64"
+              placeholder="Select or type a game..."
+              autocomplete="off"
+            />
+            <datalist id="tag-options"></datalist>
+          </div>
+          <div class="mb-3">
             <label class="form-label small text-muted">
-              File (images up to 10MB, videos up to 50MB)
+              File (images and videos up to 250MB)
             </label>
             <input
               type="file"
@@ -323,6 +359,18 @@
               id="link-caption"
               maxlength="500"
               placeholder="Add some context..."
+            />
+          </div>
+          <div class="mb-3">
+            <label class="form-label small text-muted">Game Tag</label>
+            <input
+              type="text"
+              class="form-control bg-dark text-light border-secondary"
+              id="link-tag"
+              list="tag-options"
+              maxlength="64"
+              placeholder="Select or type a game..."
+              autocomplete="off"
             />
           </div>
           <div class="mb-3">
@@ -381,11 +429,14 @@
       var HEALTH_BASE = 'https://health.meduseld.io/check';
       var currentFilter = '';
       var currentSort = 'votes';
+      var currentTag = '';
       var currentPage = 1;
       var totalEntries = 0;
       var perPage = 20;
       var currentUser = null;
       var submitModal = null;
+      var DEFAULT_TAGS = ['PEAK', 'R.E.P.O.', 'RV There Yet?', 'Icarus', 'Battlefield 6', 'YAPYAP'];
+      var allTags = [];
 
       document.getElementById('copyright-year').textContent = new Date().getFullYear();
 
@@ -429,6 +480,7 @@
         var url = HEALTH_BASE + '/fame?page=' + currentPage + '&per_page=' + perPage +
           '&sort=' + currentSort;
         if (currentFilter) url += '&type=' + currentFilter;
+        if (currentTag) url += '&tag=' + encodeURIComponent(currentTag);
 
         var token = getCfToken();
         if (token) url += '&cf_token=' + encodeURIComponent(token);
@@ -518,7 +570,9 @@
 
         card.innerHTML = deleteHtml + mediaHtml +
           '<div class="fame-body">' +
-            '<div class="fame-title">' + escapeHtml(entry.title) + '</div>' +
+            '<div class="fame-title">' + escapeHtml(entry.title) +
+              (entry.tag ? ' <span class="tag-badge">' + escapeHtml(entry.tag) + '</span>' : '') +
+            '</div>' +
             (entry.caption ? '<div class="fame-caption">' + escapeHtml(entry.caption) + '</div>' : '') +
             '<div class="fame-meta">' +
               '<div class="fame-user">' + avatarHtml +
@@ -565,6 +619,14 @@
         currentSort = sort;
         document.querySelectorAll('.filter-btn[data-sort]').forEach(function (b) {
           b.classList.toggle('active', b.getAttribute('data-sort') === sort);
+        });
+        loadEntries(false);
+      }
+
+      function setTag(btn, tag) {
+        currentTag = tag;
+        document.querySelectorAll('.filter-btn[data-tag]').forEach(function (b) {
+          b.classList.toggle('active', b.getAttribute('data-tag') === tag);
         });
         loadEntries(false);
       }
@@ -657,10 +719,12 @@
         document.getElementById('submit-error').style.display = 'none';
         document.getElementById('upload-title').value = '';
         document.getElementById('upload-caption').value = '';
+        document.getElementById('upload-tag').value = '';
         document.getElementById('upload-file').value = '';
         document.getElementById('upload-preview').style.display = 'none';
         document.getElementById('link-title').value = '';
         document.getElementById('link-caption').value = '';
+        document.getElementById('link-tag').value = '';
         document.getElementById('link-url').value = '';
         document.getElementById('submit-btn').disabled = false;
         switchTab('upload');
@@ -704,6 +768,7 @@
         if (currentTab === 'upload') {
           var title = document.getElementById('upload-title').value.trim();
           var caption = document.getElementById('upload-caption').value.trim();
+          var tag = document.getElementById('upload-tag').value.trim();
           var fileInput = document.getElementById('upload-file');
           if (!title) { showError('Title is required.'); btn.disabled = false; return; }
           if (!fileInput.files || !fileInput.files[0]) { showError('Please select a file.'); btn.disabled = false; return; }
@@ -711,6 +776,7 @@
           var formData = new FormData();
           formData.append('title', title);
           formData.append('caption', caption);
+          formData.append('tag', tag);
           formData.append('file', fileInput.files[0]);
           formData.append('_cf_token', token);
 
@@ -727,6 +793,7 @@
         } else {
           var title = document.getElementById('link-title').value.trim();
           var caption = document.getElementById('link-caption').value.trim();
+          var tag = document.getElementById('link-tag').value.trim();
           var url = document.getElementById('link-url').value.trim();
           var mediaType = document.getElementById('link-type').value;
           if (!title) { showError('Title is required.'); btn.disabled = false; return; }
@@ -735,7 +802,7 @@
           fetch(HEALTH_BASE + '/fame?cf_token=' + encodeURIComponent(token), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title: title, caption: caption, url: url, media_type: mediaType, _cf_token: token }),
+            body: JSON.stringify({ title: title, caption: caption, tag: tag, url: url, media_type: mediaType, _cf_token: token }),
           })
             .then(handleSubmitResponse)
             .catch(function (err) {
@@ -780,7 +847,69 @@
         el.style.display = 'block';
       }
 
+      // Load tags from API, merge with defaults (case-insensitive dedup)
+      function loadTags() {
+        fetch(HEALTH_BASE + '/fame-tags')
+          .then(function (r) {
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            return r.json();
+          })
+          .then(function (data) {
+            var serverTags = data.tags || [];
+            var seen = {};
+            var merged = [];
+            // Add defaults first
+            DEFAULT_TAGS.forEach(function (t) {
+              var key = t.toLowerCase();
+              if (!seen[key]) { seen[key] = true; merged.push(t); }
+            });
+            // Add server tags (skip case-insensitive dupes)
+            serverTags.forEach(function (t) {
+              var key = t.toLowerCase();
+              if (!seen[key]) { seen[key] = true; merged.push(t); }
+            });
+            allTags = merged;
+            renderTagFilters();
+            renderTagDatalist();
+          })
+          .catch(function (err) {
+            console.error('Failed to load fame tags:', err);
+            allTags = DEFAULT_TAGS.slice();
+            renderTagFilters();
+            renderTagDatalist();
+          });
+      }
+
+      function renderTagFilters() {
+        var row = document.getElementById('tag-filter-row');
+        // Dispose existing tooltips
+        row.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
+          var tip = bootstrap.Tooltip.getInstance(el);
+          if (tip) tip.dispose();
+        });
+        row.innerHTML = '<button class="filter-btn active" data-tag="" onclick="setTag(this, \'\')">All Games</button>';
+        allTags.forEach(function (tag) {
+          var btn = document.createElement('button');
+          btn.className = 'filter-btn';
+          btn.setAttribute('data-tag', tag);
+          btn.textContent = tag;
+          btn.onclick = function () { setTag(btn, tag); };
+          row.appendChild(btn);
+        });
+      }
+
+      function renderTagDatalist() {
+        var dl = document.getElementById('tag-options');
+        dl.innerHTML = '';
+        allTags.forEach(function (tag) {
+          var opt = document.createElement('option');
+          opt.value = tag;
+          dl.appendChild(opt);
+        });
+      }
+
       // Init
+      loadTags();
       loadEntries(false);
     </script>
   </body>
