@@ -425,19 +425,39 @@
         </div>
         <!-- Hall of Fame -->
         <div class="col-md-6 col-lg-4">
-          <div class="card h-100 text-white bg-dark border-warning service-card">
+          <div
+            class="card h-100 text-white bg-dark border-warning service-card"
+            style="position: relative"
+          >
             <div class="card-body d-flex flex-column text-center p-4">
               <div class="mb-3">
                 <i class="bi bi-star" style="font-size: 3rem; color: #e6c65c"></i>
               </div>
               <h3 class="card-title mb-3" style="color: #e6c65c">Hall of Fame</h3>
+              <div class="mb-2">
+                <span
+                  class="badge"
+                  style="background: rgba(230, 198, 92, 0.2); color: #e6c65c; font-size: 0.7rem"
+                >
+                  <i class="bi bi-cone-striped me-1"></i>
+                  Under Construction
+                </span>
+              </div>
               <p class="card-text flex-grow-1 d-flex align-items-center justify-content-center">
                 Funny moments, clips, and memorable screenshots from our adventures.
               </p>
               <div class="mt-auto">
-                <a href="https://fame.meduseld.io" class="btn btn-warning text-dark btn-lg w-100">
+                <a
+                  id="fame-button"
+                  href="https://fame.meduseld.io"
+                  class="btn btn-warning text-dark btn-lg w-100"
+                  style="display: none"
+                >
                   Open Hall of Fame
                 </a>
+                <button id="fame-button-disabled" class="btn btn-secondary btn-lg w-100" disabled>
+                  Coming Soon
+                </button>
               </div>
             </div>
           </div>
@@ -1083,6 +1103,11 @@
           document.querySelectorAll('.edoras-admin-btn').forEach(function (btn) {
             btn.style.display = '';
           });
+          // Show Hall of Fame button for admins (under construction)
+          var fameBtn = document.getElementById('fame-button');
+          var fameBtnDisabled = document.getElementById('fame-button-disabled');
+          if (fameBtn) fameBtn.style.display = '';
+          if (fameBtnDisabled) fameBtnDisabled.style.display = 'none';
         }
       }
 
