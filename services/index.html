@@ -2473,7 +2473,8 @@
             }
             var html = '';
             data.events.forEach(function (ev) {
-              var d = new Date(ev.event_date);
+              var rawDate = ev.event_date.endsWith('Z') ? ev.event_date : ev.event_date + 'Z';
+              var d = new Date(rawDate);
               var dateStr = d.toLocaleDateString(undefined, {
                 weekday: 'short',
                 month: 'short',
@@ -2702,9 +2703,11 @@
         document.getElementById('edit-event-id').value = eventId;
         document.getElementById('edit-event-title').value = title;
         document.getElementById('edit-event-description').value = description || '';
-        // Convert ISO date to datetime-local format
+        // The backend stores naive UTC datetimes and returns them without Z.
+        // Append Z so the browser interprets it as UTC, then convert to local
+        // for the datetime-local input.
         try {
-          var d = new Date(dateStr);
+          var d = new Date(dateStr.endsWith('Z') ? dateStr : dateStr + 'Z');
           var local = new Date(d.getTime() - d.getTimezoneOffset() * 60000)
             .toISOString()
             .slice(0, 16);
