@@ -40,6 +40,7 @@
       <div id="fellowsync-banner" class="mb-4" style="display: none">
         <div class="d-flex align-items-center justify-content-center">
           <a
+            id="fellowsync-banner-link"
             href="https://fellowsync.meduseld.io"
             class="text-decoration-none"
             style="max-width: 500px; width: 100%"
@@ -2298,6 +2299,7 @@
           var textEl = document.getElementById('fellowsync-banner-text');
           var countEl = document.getElementById('fellowsync-banner-count');
           var detailEl = document.getElementById('fellowsync-banner-detail');
+          var linkEl = document.getElementById('fellowsync-banner-link');
           textEl.textContent =
             count === 1 ? 'Listening room active' : count + ' listening rooms active';
           countEl.textContent =
@@ -2314,6 +2316,13 @@
             detailEl.textContent = detail;
           } else {
             detailEl.textContent = '';
+          }
+          // Link directly to the room when there's exactly one active
+          if (count === 1 && data.rooms[0].room_id) {
+            linkEl.href =
+              'https://fellowsync.meduseld.io/room/' + encodeURIComponent(data.rooms[0].room_id);
+          } else {
+            linkEl.href = 'https://fellowsync.meduseld.io';
           }
           banner.style.display = '';
         } catch (e) {
