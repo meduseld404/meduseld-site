@@ -262,6 +262,8 @@
       var soloQuestions = [], soloIndex = 0, soloScore = 0, soloAnswers = [];
       var questionTimerInterval = null;
       var currentAnswers = []; // store raw answer strings for current question
+      var isSuddenDeath = false;
+      var suddenDeathPlayers = []; // user_ids of dueling players
 
       document.getElementById('copyright-year').textContent = new Date().getFullYear();
       if (typeof MeduseldAuth !== 'undefined') {
@@ -345,9 +347,10 @@
         socket.on('question', function(d) { showMpQuestion(d); });
         socket.on('player_answered', function(d) { currentLobby = d.lobby; updatePlayerChips(); });
         socket.on('answer_reveal', function(d) { revealAnswer(d); });
-        socket.on('game_over', function(d) { showMpResults(d.standings); });
-        socket.on('game_aborted', function(d) { showAbortedResults(d.standings); });
-        socket.on('lobby_reset', function(d) { currentLobby = d.lobby; showLobbyView(); });
+        socket.on('game_over', function(d) { isSuddenDeath = false; suddenDeathPlayers = []; showMpResults(d.standings); });
+        socket.on('game_aborted', function(d) { isSuddenDeath = false; suddenDeathPlayers = []; showAbortedResults(d.standings); });
+        socket.on('lobby_reset', function(d) { isSuddenDeath = false; suddenDeathPlayers = []; currentLobby = d.lobby; showLobbyView(); });
+        socket.on('sudden_death', function(d) { showSuddenDeath(d); });
       }
       function getCfToken() { return (document.cookie.match(/(?:^|; )CF_Authorization=([^;]*)/) || [])[1] || ''; }
 
@@ -517,6 +520,22 @@
         }, 1000);
       }
 
+      // ==================== SUDDEN DEATH ====================
+      function showSuddenDeath(data) {
+        clearTimers();
+        isSuddenDeath = true;
+        suddenDeathPlayers = data.players.map(function(p) { return p.user_id; });
+        var amDueling = suddenDeathPlayers.indexOf(myUserId) !== -1;
+        var names = data.players.map(function(p) { return esc(p.display_name); }).join(' vs ');
+        document.getElementById('main-panel').innerHTML = '<div class="text-center py-5">'
+          + '<div style="font-size:3rem;margin-bottom:0.5rem">\u2694\uFE0F</div>'
+          + '<h2 style="color:#dc3545;font-weight:700;text-transform:uppercase;letter-spacing:3px">Sudden Death</h2>'
+          + '<p style="color:#e4d9b5;font-size:1.1rem" class="mb-2">Tied at <span style="color:#e6c65c;font-weight:700">'+data.score+'</span> points</p>'
+          + '<p style="color:#e6c65c;font-weight:600;font-size:1.2rem">'+names+'</p>'
+          + '<p class="text-muted mt-2">'+(amDueling ? 'First mistake loses. Good luck.' : 'You\'re spectating — watch the duel.')+'</p>'
+          + '</div>';
+      }
+
       // ==================== MULTIPLAYER QUESTION ====================
       var currentQuestionType = null; // track if current question is 'flags' or normal
       function showMpQuestion(data) {
@@ -527,50 +546,57 @@
         var total = currentLobby ? currentLobby.total_questions : '?';
         var p = document.getElementById('main-panel');
         var isFlag = data.type === 'flags';
+        var amSpectator = isSuddenDeath && suddenDeathPlayers.indexOf(myUserId) === -1;
         var ansHtml = '';
         if (isFlag) {
           ansHtml = '<div class="text-center mb-3"><img src="'+esc(data.question)+'" alt="Country flag" style="max-width:320px;width:100%;border-radius:8px;border:2px solid rgba(230,198,92,0.3);box-shadow:0 4px 12px rgba(0,0,0,0.4)" /></div>'
-            + '<div class="d-flex gap-2"><input type="text" id="flag-input" class="form-control bg-dark text-light border-secondary" placeholder="Type the country name..." autocomplete="off" />'
-            + '<button class="btn btn-warning px-3" id="flag-submit-btn" onclick="submitFlagAnswer()"><i class="bi bi-send"></i></button></div>';
+            + '<div class="d-flex gap-2"><input type="text" id="flag-input" class="form-control bg-dark text-light border-secondary" placeholder="'+(amSpectator ? 'Spectating...' : 'Type the country name...')+'" autocomplete="off"'+(amSpectator?' disabled':'')+' />'
+            + '<button class="btn btn-warning px-3" id="flag-submit-btn" onclick="submitFlagAnswer()"'+(amSpectator?' disabled':'')+' ><i class="bi bi-send"></i></button></div>';
         } else {
           data.answers.forEach(function(ans, idx) {
-            ansHtml += '<button class="answer-btn" data-idx="'+idx+'">'+ans+'</button>';
+            ansHtml += '<button class="answer-btn" data-idx="'+idx+'"'+(amSpectator?' disabled style="opacity:0.5"':'')+'>'+ans+'</button>';
           });
         }
         var questionDisplay = isFlag ? 'Name this country' : data.question;
+        // During sudden death, show round number instead of question index from original game
+        var qLabel = isSuddenDeath
+          ? 'Sudden Death Round '+(data.index - (currentLobby ? currentLobby.total_questions : 0) + 1)
+          : 'Question '+(data.index+1)+' / '+total;
+        var sdBadge = isSuddenDeath ? ' <span class="badge bg-danger ms-2" style="font-size:0.7rem">\u2694\uFE0F Sudden Death</span>' : '';
+        var spectatorBadge = amSpectator ? '<span class="badge bg-secondary ms-2" style="font-size:0.7rem"><i class="bi bi-eye me-1"></i>Spectating</span>' : '';
         p.innerHTML = '<div class="row justify-content-center mb-4"><div class="col-12 col-lg-8">'
-          + '<div class="card bg-dark border-warning">'
-          + '<div class="card-header d-flex justify-content-between align-items-center" style="background-color:rgba(230,198,92,0.1);border-bottom:2px solid #e6c65c">'
-          + '<span style="color:#e6c65c;font-weight:600">Question '+(data.index+1)+' / '+total+'</span>'
+          + '<div class="card bg-dark border-'+(isSuddenDeath?'danger':'warning')+'">'
+          + '<div class="card-header d-flex justify-content-between align-items-center" style="background-color:rgba('+(isSuddenDeath?'220,53,69':'230,198,92')+',0.1);border-bottom:2px solid '+(isSuddenDeath?'#dc3545':'#e6c65c')+'">'
+          + '<span style="color:'+(isSuddenDeath?'#dc3545':'#e6c65c')+';font-weight:600">'+qLabel+sdBadge+spectatorBadge+'</span>'
           + '<div class="d-flex align-items-center gap-2">'
-          + (myUserId && currentLobby && myUserId === currentLobby.host_user_id ? '<button class="btn btn-outline-danger btn-sm" style="font-size:0.7rem;padding:2px 8px" onclick="endGameEarly()">End Game</button>' : '')
+          + (!isSuddenDeath && myUserId && currentLobby && myUserId === currentLobby.host_user_id ? '<button class="btn btn-outline-danger btn-sm" style="font-size:0.7rem;padding:2px 8px" onclick="endGameEarly()">End Game</button>' : '')
           + '<span class="badge bg-warning text-dark" id="mp-score">Score: '+getMyScore()+'</span>'
           + '</div>'
           + '</div><div class="card-body">'
-          + '<div class="timer-bar-track"><div class="timer-bar" id="timer-bar" style="width:100%"></div></div>'
+          + '<div class="timer-bar-track"><div class="timer-bar" id="timer-bar" style="width:100%;'+(isSuddenDeath?'background:#dc3545':'')+'"></div></div>'
           + '<div class="mb-2"><span class="badge bg-secondary">'+esc(data.category)+'</span>'
           + (isFlag ? '' : ' <span class="badge bg-secondary ms-1">'+data.difficulty.charAt(0).toUpperCase()+data.difficulty.slice(1)+'</span>')
           + '</div>'
           + '<h5 class="mb-4" style="color:#e4d9b5;line-height:1.6">'+questionDisplay+'</h5>'
           + '<div id="mp-answers" class="d-flex flex-column gap-2">'+ansHtml+'</div>'
           + '<div class="mt-3 d-flex flex-wrap gap-2 justify-content-center" id="lobby-players"></div>'
-          + '<div class="progress-dots mt-3" id="mp-dots"></div>'
+          + (isSuddenDeath ? '' : '<div class="progress-dots mt-3" id="mp-dots"></div>')
           + '</div></div></div></div>';
 
         if (isFlag) {
           var flagInput = document.getElementById('flag-input');
-          if (flagInput) {
+          if (flagInput && !amSpectator) {
             flagInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') submitFlagAnswer(); });
             flagInput.focus();
           }
-        } else {
+        } else if (!amSpectator) {
           // Bind click handlers using data attributes (avoids escaping issues)
           document.querySelectorAll('#mp-answers .answer-btn').forEach(function(btn) {
             btn.addEventListener('click', function() { submitMpAnswer(btn, currentAnswers[parseInt(btn.getAttribute('data-idx'))]); });
           });
         }
         renderLobbyPlayers();
-        buildDots('mp-dots', data.index, total);
+        if (!isSuddenDeath) buildDots('mp-dots', data.index, total);
         startTimerBar(data.time_limit);
       }
       function submitFlagAnswer() {
