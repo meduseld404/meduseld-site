@@ -2238,11 +2238,22 @@
             }
             return res.json();
           })
-          .then(function () {
+          .then(function (data) {
             bootstrap.Modal.getInstance(document.getElementById('addGameModal')).hide();
-            return fetchGamesList().then(function () {
-              return fetchGameVotes();
-            });
+            // Append the new game to the existing list instead of re-fetching
+            // (re-fetching would replace DEFAULT_GAMES fallback with only DB entries)
+            if (data.game) {
+              var g = data.game;
+              // Avoid duplicates
+              if (
+                !GAMES.some(function (existing) {
+                  return existing.appId === g.app_id;
+                })
+              ) {
+                GAMES.push({ appId: g.app_id, name: g.name, url: g.url, tooltip: g.tooltip || '' });
+              }
+            }
+            return fetchGameVotes();
           })
           .catch(function (err) {
             console.error('Failed to add game:', err);
