@@ -85,6 +85,21 @@
                     id="fellowsync-banner-detail"
                     style="font-size: 0.75rem"
                   ></small>
+                  <small
+                    class="badge rounded-pill"
+                    id="fellowsync-banner-code"
+                    style="
+                      display: none;
+                      font-size: 0.65rem;
+                      font-family: monospace;
+                      background-color: rgba(230, 198, 92, 0.15);
+                      color: #e6c65c;
+                      cursor: pointer;
+                      margin-top: 2px;
+                    "
+                    data-bs-toggle="tooltip"
+                    data-bs-title="Click to copy room code"
+                  ></small>
                 </div>
                 <i class="bi bi-arrow-right" style="color: #e6c65c; font-size: 1rem"></i>
               </div>
@@ -2300,6 +2315,7 @@
           var countEl = document.getElementById('fellowsync-banner-count');
           var detailEl = document.getElementById('fellowsync-banner-detail');
           var linkEl = document.getElementById('fellowsync-banner-link');
+          var codeEl = document.getElementById('fellowsync-banner-code');
           textEl.textContent =
             count === 1 ? 'Listening room active' : count + ' listening rooms active';
           countEl.textContent =
@@ -2321,8 +2337,14 @@
           if (count === 1 && data.rooms[0].room_id) {
             linkEl.href =
               'https://fellowsync.meduseld.io/room/' + encodeURIComponent(data.rooms[0].room_id);
+            codeEl.textContent = data.rooms[0].room_id;
+            codeEl.style.display = '';
+            if (!bootstrap.Tooltip.getInstance(codeEl)) {
+              new bootstrap.Tooltip(codeEl);
+            }
           } else {
             linkEl.href = 'https://fellowsync.meduseld.io';
+            codeEl.style.display = 'none';
           }
           banner.style.display = '';
         } catch (e) {
@@ -2332,6 +2354,27 @@
       }
       checkFellowSyncRooms();
       setInterval(checkFellowSyncRooms, 30000);
+      // Copy room code on click (prevent link navigation)
+      document.getElementById('fellowsync-banner-code').addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var code = this.textContent;
+        if (!code) return;
+        navigator.clipboard
+          .writeText(code)
+          .then(function () {
+            var tip = bootstrap.Tooltip.getInstance(e.target);
+            if (tip) {
+              tip.setContent({ '.tooltip-inner': 'Copied!' });
+              setTimeout(function () {
+                tip.setContent({ '.tooltip-inner': 'Click to copy room code' });
+              }, 1500);
+            }
+          })
+          .catch(function (err) {
+            console.error('Failed to copy room code:', err);
+          });
+      });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@widgetbot/crate@3" async defer></script>
     <script>
