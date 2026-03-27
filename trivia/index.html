@@ -290,7 +290,7 @@
 
       // ==================== LEADERBOARD ====================
       function loadLeaderboard() {
-        fetch(HEALTH_BASE + '/trivia-leaderboard')
+        fetch(HEALTH_BASE + '/trivia-leaderboard?_t=' + Date.now())
           .then(function(r) { return r.json(); })
           .then(function(data) { renderPodium(data.leaderboard || []); })
           .catch(function(err) {
