@@ -77,6 +77,57 @@
         border-radius: 8px;
         border: 2px solid rgba(108, 117, 125, 0.3);
       }
+      .video-wrapper {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+      }
+      .remote-cursor {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        pointer-events: none;
+        z-index: 10;
+        transform: translate(-2px, -2px);
+        transition:
+          left 0.05s linear,
+          top 0.05s linear;
+        display: none;
+      }
+      .remote-cursor svg {
+        filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.7));
+      }
+      .remote-cursor .cursor-label {
+        position: absolute;
+        left: 18px;
+        top: 16px;
+        background: rgba(230, 198, 92, 0.9);
+        color: #0b1f14;
+        font-size: 0.6rem;
+        padding: 0.1rem 0.35rem;
+        border-radius: 4px;
+        white-space: nowrap;
+        font-weight: 600;
+      }
+      .remote-cursor.clicking {
+        transform: translate(-2px, -2px) scale(0.85);
+      }
+      .input-log {
+        position: fixed;
+        bottom: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(20, 36, 26, 0.9);
+        border: 1px solid rgba(230, 198, 92, 0.4);
+        border-radius: 8px;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.75rem;
+        color: #e6c65c;
+        z-index: 100;
+        display: none;
+        max-width: 400px;
+        text-align: center;
+      }
       .pending-card {
         background: rgba(230, 198, 92, 0.08);
         border: 1px dashed #e6c65c;
@@ -207,6 +258,49 @@
             </div>
           </div>
         </div>
+        <!-- Host screen preview with remote cursor overlay -->
+        <div
+          class="card bg-dark border-secondary mb-3"
+          id="host-preview-card"
+          style="display: none"
+        >
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span class="text-muted small">
+              <i class="bi bi-display me-1"></i>
+              Screen Preview
+            </span>
+            <button class="btn btn-sm btn-outline-secondary" onclick="toggleHostPreview()">
+              <i class="bi bi-eye-slash" id="preview-toggle-icon"></i>
+            </button>
+          </div>
+          <div class="card-body p-2" id="host-preview-body">
+            <div class="video-wrapper">
+              <video
+                id="host-preview-video"
+                autoplay
+                playsinline
+                muted
+                style="width: 100%; max-height: 50vh; border-radius: 6px; background: #000"
+              ></video>
+              <div class="remote-cursor" id="remote-cursor-overlay">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="#e6c65c"
+                  stroke="#0b1f14"
+                  stroke-width="1"
+                >
+                  <path
+                    d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87c.45 0 .67-.54.35-.85L5.85 2.36a.5.5 0 0 0-.35.85z"
+                  />
+                </svg>
+                <span class="cursor-label" id="cursor-label"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="host-input-log" class="input-log"></div>
         <div class="text-center">
           <p class="text-muted small">
             <i class="bi bi-info-circle me-1"></i>
@@ -233,7 +327,9 @@
             </div>
           </div>
           <div class="card-body p-2">
-            <video id="remote-video" autoplay playsinline></video>
+            <div class="video-wrapper" id="viewer-video-wrapper">
+              <video id="remote-video" autoplay playsinline></video>
+            </div>
           </div>
         </div>
         <div id="viewer-viewers" class="d-flex flex-wrap gap-2 mb-3"></div>
@@ -370,6 +466,7 @@
           };
           var tt = bootstrap.Tooltip.getInstance(codeEl);
           if (!tt) new bootstrap.Tooltip(codeEl);
+          showHostPreview();
         });
 
         socket.on('viewer_request', function (data) {
@@ -378,6 +475,7 @@
 
         socket.on('viewer_joined', function (data) {
           renderHostViewers(data.session);
+          updateCursorNames(data.session);
           if (currentMode === 'host') {
             // Create peer connection for this viewer
             createHostPeerConnection(data.user_id);
@@ -395,6 +493,7 @@
         socket.on('session_updated', function (data) {
           if (currentMode === 'host') {
             renderHostViewers(data.session);
+            updateCursorNames(data.session);
           } else if (currentMode === 'viewer') {
             renderViewerInfo(data.session);
           }
@@ -444,11 +543,9 @@
           handleSignal(data.from_user_id, data.signal);
         });
 
-        // Input events (host receives)
+        // Input events (host receives) — show remote cursor and key presses
         socket.on('input_event', function (data) {
-          // Input events are informational on the host side.
-          // Actual remote control requires OS-level input injection
-          // which browsers cannot do. The host sees a visual indicator instead.
+          handleRemoteInput(data.from_user_id, data.event);
         });
       }
 
@@ -864,50 +961,204 @@
       }
 
       // ===== Input Forwarding (Viewer → Host) =====
+      var inputThrottleTimer = null;
+
       function setupInputForwarding() {
         var video = document.getElementById('remote-video');
 
+        function getRelCoords(e) {
+          var rect = video.getBoundingClientRect();
+          return {
+            x: (e.clientX - rect.left) / rect.width,
+            y: (e.clientY - rect.top) / rect.height,
+          };
+        }
+
+        function sendInput(evt) {
+          if (!controlGranted || !socket) return;
+          socket.emit('input_event', { code: currentSessionCode, event: evt });
+        }
+
         video.addEventListener('mousemove', function (e) {
           if (!controlGranted || !socket) return;
-          var rect = video.getBoundingClientRect();
-          socket.emit('input_event', {
-            code: currentSessionCode,
-            event: {
-              type: 'mousemove',
-              x: (e.clientX - rect.left) / rect.width,
-              y: (e.clientY - rect.top) / rect.height,
-            },
-          });
+          // Throttle mousemove to ~60fps
+          if (inputThrottleTimer) return;
+          inputThrottleTimer = setTimeout(function () {
+            inputThrottleTimer = null;
+          }, 16);
+          var c = getRelCoords(e);
+          sendInput({ type: 'mousemove', x: c.x, y: c.y });
+        });
+
+        video.addEventListener('mousedown', function (e) {
+          if (!controlGranted) return;
+          e.preventDefault();
+          var c = getRelCoords(e);
+          sendInput({ type: 'mousedown', x: c.x, y: c.y, button: e.button });
+        });
+
+        video.addEventListener('mouseup', function (e) {
+          if (!controlGranted) return;
+          e.preventDefault();
+          var c = getRelCoords(e);
+          sendInput({ type: 'mouseup', x: c.x, y: c.y, button: e.button });
         });
 
         video.addEventListener('click', function (e) {
-          if (!controlGranted || !socket) return;
-          var rect = video.getBoundingClientRect();
-          socket.emit('input_event', {
-            code: currentSessionCode,
-            event: {
-              type: 'click',
-              x: (e.clientX - rect.left) / rect.width,
-              y: (e.clientY - rect.top) / rect.height,
-              button: e.button,
-            },
-          });
+          if (!controlGranted) return;
+          e.preventDefault();
+          var c = getRelCoords(e);
+          sendInput({ type: 'click', x: c.x, y: c.y, button: e.button });
         });
+
+        video.addEventListener('dblclick', function (e) {
+          if (!controlGranted) return;
+          e.preventDefault();
+          var c = getRelCoords(e);
+          sendInput({ type: 'dblclick', x: c.x, y: c.y, button: e.button });
+        });
+
+        video.addEventListener('contextmenu', function (e) {
+          if (!controlGranted) return;
+          e.preventDefault();
+          var c = getRelCoords(e);
+          sendInput({ type: 'contextmenu', x: c.x, y: c.y });
+        });
+
+        video.addEventListener(
+          'wheel',
+          function (e) {
+            if (!controlGranted) return;
+            e.preventDefault();
+            var c = getRelCoords(e);
+            sendInput({ type: 'scroll', x: c.x, y: c.y, deltaX: e.deltaX, deltaY: e.deltaY });
+          },
+          { passive: false }
+        );
 
         document.addEventListener('keydown', function (e) {
           if (!controlGranted || !socket || currentMode !== 'viewer') return;
-          socket.emit('input_event', {
-            code: currentSessionCode,
-            event: { type: 'keydown', key: e.key, code: e.code },
+          e.preventDefault();
+          sendInput({
+            type: 'keydown',
+            key: e.key,
+            code: e.code,
+            ctrlKey: e.ctrlKey,
+            shiftKey: e.shiftKey,
+            altKey: e.altKey,
+            metaKey: e.metaKey,
           });
         });
 
         document.addEventListener('keyup', function (e) {
           if (!controlGranted || !socket || currentMode !== 'viewer') return;
-          socket.emit('input_event', {
-            code: currentSessionCode,
-            event: { type: 'keyup', key: e.key, code: e.code },
-          });
+          e.preventDefault();
+          sendInput({ type: 'keyup', key: e.key, code: e.code });
+        });
+      }
+
+      // ===== Host Screen Preview =====
+      var hostPreviewVisible = true;
+      var inputLogTimeout = null;
+      var cursorViewerNames = {}; // userId -> display_name
+
+      function showHostPreview() {
+        var card = document.getElementById('host-preview-card');
+        var video = document.getElementById('host-preview-video');
+        if (localStream) {
+          video.srcObject = localStream;
+          card.style.display = '';
+        }
+      }
+
+      function toggleHostPreview() {
+        var body = document.getElementById('host-preview-body');
+        var icon = document.getElementById('preview-toggle-icon');
+        hostPreviewVisible = !hostPreviewVisible;
+        body.style.display = hostPreviewVisible ? '' : 'none';
+        icon.className = hostPreviewVisible ? 'bi bi-eye-slash' : 'bi bi-eye';
+      }
+
+      function handleRemoteInput(fromUserId, evt) {
+        if (!evt || currentMode !== 'host') return;
+
+        var cursor = document.getElementById('remote-cursor-overlay');
+        var label = document.getElementById('cursor-label');
+        var video = document.getElementById('host-preview-video');
+        var logEl = document.getElementById('host-input-log');
+
+        // Resolve viewer name
+        if (!cursorViewerNames[fromUserId]) {
+          // Look up from current session viewers
+          var code = currentSessionCode;
+          var session = null;
+          // We don't have session data locally, use a fallback
+          cursorViewerNames[fromUserId] = 'Viewer ' + fromUserId;
+        }
+
+        if (evt.type === 'mousemove' && video && cursor) {
+          var rect = video.getBoundingClientRect();
+          if (rect.width > 0 && rect.height > 0) {
+            cursor.style.display = '';
+            cursor.style.left = evt.x * 100 + '%';
+            cursor.style.top = evt.y * 100 + '%';
+            label.textContent = cursorViewerNames[fromUserId];
+          }
+        } else if (evt.type === 'click' || evt.type === 'mousedown') {
+          if (cursor) {
+            cursor.classList.add('clicking');
+            setTimeout(function () {
+              cursor.classList.remove('clicking');
+            }, 150);
+          }
+          showInputLog(
+            cursorViewerNames[fromUserId] +
+              ': ' +
+              (evt.type === 'dblclick' ? 'double-click' : 'click'),
+            logEl
+          );
+        } else if (evt.type === 'dblclick') {
+          showInputLog(cursorViewerNames[fromUserId] + ': double-click', logEl);
+        } else if (evt.type === 'contextmenu') {
+          showInputLog(cursorViewerNames[fromUserId] + ': right-click', logEl);
+        } else if (evt.type === 'scroll') {
+          var dir = evt.deltaY < 0 ? 'up' : 'down';
+          showInputLog(cursorViewerNames[fromUserId] + ': scroll ' + dir, logEl);
+        } else if (evt.type === 'keydown') {
+          var keyLabel = formatKeyCombo(evt);
+          showInputLog(cursorViewerNames[fromUserId] + ': ⌨ ' + keyLabel, logEl);
+        }
+      }
+
+      function formatKeyCombo(evt) {
+        var parts = [];
+        if (evt.ctrlKey) parts.push('Ctrl');
+        if (evt.altKey) parts.push('Alt');
+        if (evt.shiftKey) parts.push('Shift');
+        if (evt.metaKey) parts.push('Meta');
+        var key = evt.key || evt.code || '?';
+        // Don't duplicate modifier names
+        if (!['Control', 'Alt', 'Shift', 'Meta'].includes(key)) {
+          parts.push(key.length === 1 ? key.toUpperCase() : key);
+        }
+        return parts.join('+') || key;
+      }
+
+      function showInputLog(msg, logEl) {
+        if (!logEl) return;
+        logEl.textContent = msg;
+        logEl.style.display = '';
+        clearTimeout(inputLogTimeout);
+        inputLogTimeout = setTimeout(function () {
+          logEl.style.display = 'none';
+        }, 2000);
+      }
+
+      // Update cursor viewer names when session updates
+      function updateCursorNames(session) {
+        if (!session || !session.viewers) return;
+        session.viewers.forEach(function (v) {
+          cursorViewerNames[v.user_id] = v.display_name;
         });
       }
 
@@ -941,6 +1192,17 @@
         var video = document.getElementById('remote-video');
         if (video) video.srcObject = null;
 
+        var previewVideo = document.getElementById('host-preview-video');
+        if (previewVideo) previewVideo.srcObject = null;
+        document.getElementById('host-preview-card').style.display = 'none';
+
+        var cursor = document.getElementById('remote-cursor-overlay');
+        if (cursor) cursor.style.display = 'none';
+
+        var logEl = document.getElementById('host-input-log');
+        if (logEl) logEl.style.display = 'none';
+
+        cursorViewerNames = {};
         controlGranted = false;
       }
 
