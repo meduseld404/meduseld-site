@@ -1502,16 +1502,38 @@
         // redirect back to the original page now that they have the CF_Authorization cookie
         var loginRedirect = params.get('login_redirect');
         if (loginRedirect && MeduseldAuth.isAuthenticated()) {
-          // Only allow redirects to *.meduseld.io to prevent open redirect attacks
+          // Allowlist of known meduseld.io subdomains to prevent open redirect
+          var allowedHosts = [
+            'meduseld.io',
+            'services.meduseld.io',
+            'panel.meduseld.io',
+            'system.meduseld.io',
+            'admin.meduseld.io',
+            'ssh.meduseld.io',
+            'trivia.meduseld.io',
+            'picker.meduseld.io',
+            'remote.meduseld.io',
+            'fame.meduseld.io',
+            'profile.meduseld.io',
+            'edoras.meduseld.io',
+            'jellyfin.meduseld.io',
+            'redbook.meduseld.io',
+            'status.meduseld.io',
+            'health.meduseld.io',
+            'herugrim.meduseld.io',
+            'fellowsync.meduseld.io',
+            'exspire.meduseld.io',
+            'requests.meduseld.io',
+            'terminal.meduseld.io',
+          ];
           try {
             var redirectUrl = new URL(loginRedirect);
             if (
-              (redirectUrl.hostname.endsWith('.meduseld.io') ||
-                redirectUrl.hostname === 'meduseld.io') &&
-              redirectUrl.protocol === 'https:'
+              redirectUrl.protocol === 'https:' &&
+              allowedHosts.indexOf(redirectUrl.hostname) !== -1
             ) {
               window.history.replaceState({}, '', window.location.pathname);
-              window.location.href = redirectUrl.href;
+              window.location.href = redirectUrl.origin + redirectUrl.pathname;
               return;
             }
           } catch (e) {
