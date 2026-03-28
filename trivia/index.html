@@ -315,8 +315,13 @@
             categories = (data.trivia_categories || []).map(function(c) {
               return { id: c.id, name: c.name.replace('Entertainment: ','').replace('Science: ','') };
             });
-            // Sort alphabetically by name
-            categories.sort(function(a, b) { return a.name.localeCompare(b.name); });
+            // Sort alphabetically by name (case-insensitive)
+            categories.sort(function(a, b) {
+              var na = a.name.toLowerCase(), nb = b.name.toLowerCase();
+              if (na < nb) return -1;
+              if (na > nb) return 1;
+              return 0;
+            });
             // Add custom flag category at the top
             categories.unshift({ id: FLAG_CATEGORY_ID, name: '\u{1F3F3}\uFE0F Country Flags' });
           })
