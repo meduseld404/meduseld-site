@@ -1414,7 +1414,6 @@
                   day: 'numeric',
                 });
                 let content = item.contents || '';
-                content = content.replace(/<[^>]*>/g, '');
                 content = new DOMParser().parseFromString(content, 'text/html').documentElement
                   .textContent;
                 const esc = (s) => {
