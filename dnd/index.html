@@ -341,6 +341,15 @@
               />
             </div>
             <div class="mb-3">
+              <label class="form-label">Image URL (optional, overrides icon)</label>
+              <input
+                type="url"
+                class="form-control bg-dark text-light border-secondary"
+                id="link-image-url"
+                placeholder="https://example.com/image.png"
+              />
+            </div>
+            <div class="mb-3">
               <label class="form-label">Description (optional)</label>
               <input
                 type="text"
@@ -643,19 +652,38 @@
               (l) => `
             <div class="col-6 col-md-4 col-lg-3">
               <a href="${l.url}" target="_blank" class="text-decoration-none">
-                <div class="card bg-dark border-secondary link-card h-100 p-3 text-center">
-                  <i class="bi ${l.icon}" style="font-size:2rem;color:#e6c65c"></i>
-                  <div class="mt-2 text-light fw-semibold">${l.label}</div>
-                  ${l.description ? '<div class="text-secondary" style="font-size:0.75rem">' + l.description + '</div>' : ''}
-                  ${isAdmin ? '<div class="mt-2"><button class="btn btn-sm btn-outline-secondary me-1" onclick="event.preventDefault();editLink(' + l.id + ",'" + l.label.replace(/'/g, "\\'") + "','" + l.url.replace(/'/g, "\\'") + "','" + (l.icon || '').replace(/'/g, "\\'") + "','" + (l.description || '').replace(/'/g, "\\'") + "'," + l.sort_order + ')"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-outline-danger" onclick="event.preventDefault();deleteLink(' + l.id + ')"><i class="bi bi-trash"></i></button></div>' : ''}
+                <div class="card bg-dark border-secondary link-card h-100 text-center" style="overflow:hidden">
+                  ${l.image_url ? '<img src="' + l.image_url + '" style="width:100%;height:100px;object-fit:cover" alt="">' : ''}
+                  <div class="p-3">
+                    ${!l.image_url ? '<i class="bi ' + l.icon + '" style="font-size:2rem;color:#e6c65c"></i>' : ''}
+                    <div class="${l.image_url ? '' : 'mt-2 '}text-light fw-semibold">${l.label}</div>
+                    ${l.description ? '<div class="text-secondary" style="font-size:0.75rem">' + l.description + '</div>' : ''}
+                    ${isAdmin ? '<div class="mt-2"><button class="btn btn-sm btn-outline-secondary me-1" onclick="event.preventDefault();editLinkById(' + l.id + ')"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-outline-danger" onclick="event.preventDefault();deleteLink(' + l.id + ')"><i class="bi bi-trash"></i></button></div>' : ''}
+                  </div>
                 </div>
               </a>
             </div>`
             )
             .join('');
+          // Store links data for edit
+          window._dndLinks = d.links;
         } catch (e) {
           console.error('Failed to load links:', e);
         }
+      }
+
+      function editLinkById(id) {
+        const l = (window._dndLinks || []).find((x) => x.id === id);
+        if (!l) return;
+        document.getElementById('link-edit-id').value = l.id;
+        document.getElementById('link-label').value = l.label || '';
+        document.getElementById('link-url').value = l.url || '';
+        document.getElementById('link-icon').value = l.icon || 'bi-link-45deg';
+        document.getElementById('link-image-url').value = l.image_url || '';
+        document.getElementById('link-desc').value = l.description || '';
+        document.getElementById('link-sort').value = l.sort_order || 0;
+        document.getElementById('linkModalTitle').textContent = 'Edit Link';
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('linkModal')).show();
       }
 
       function editLink(id, label, url, icon, desc, sort) {
@@ -663,6 +691,7 @@
         document.getElementById('link-label').value = label || '';
         document.getElementById('link-url').value = url || '';
         document.getElementById('link-icon').value = icon || 'bi-link-45deg';
+        document.getElementById('link-image-url').value = '';
         document.getElementById('link-desc').value = desc || '';
         document.getElementById('link-sort').value = sort || 0;
         document.getElementById('linkModalTitle').textContent = id ? 'Edit Link' : 'Add Link';
@@ -675,6 +704,7 @@
           label: document.getElementById('link-label').value,
           url: document.getElementById('link-url').value,
           icon: document.getElementById('link-icon').value,
+          image_url: document.getElementById('link-image-url').value,
           description: document.getElementById('link-desc').value,
           sort_order: parseInt(document.getElementById('link-sort').value) || 0,
           _cf_token: getCfToken(),
