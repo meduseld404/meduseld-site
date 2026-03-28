@@ -238,10 +238,23 @@
                 data-bs-title="Click to copy"
               ></span>
             </span>
-            <button class="btn btn-sm btn-outline-danger" onclick="endSession()">
-              <i class="bi bi-x-circle me-1"></i>
-              End Session
-            </button>
+            <div>
+              <button
+                id="btn-os-control"
+                class="btn btn-sm btn-outline-secondary me-2"
+                style="display: none"
+                onclick="toggleOsControl()"
+                data-bs-toggle="tooltip"
+                data-bs-title="Enable OS-level input injection (xdotool) so viewers can actually control this screen"
+              >
+                <i class="bi bi-pc-display me-1"></i>
+                OS Control
+              </button>
+              <button class="btn btn-sm btn-outline-danger" onclick="endSession()">
+                <i class="bi bi-x-circle me-1"></i>
+                End Session
+              </button>
+            </div>
           </div>
           <div class="card-body">
             <div class="mb-3">
@@ -466,6 +479,15 @@
           };
           var tt = bootstrap.Tooltip.getInstance(codeEl);
           if (!tt) new bootstrap.Tooltip(codeEl);
+          // Show OS control button for admins
+          if (MeduseldAuth.hasRole('admin')) {
+            var osBtn = document.getElementById('btn-os-control');
+            if (osBtn) {
+              osBtn.style.display = '';
+              var osTt = bootstrap.Tooltip.getInstance(osBtn);
+              if (!osTt) new bootstrap.Tooltip(osBtn);
+            }
+          }
           showHostPreview();
         });
 
@@ -494,6 +516,16 @@
           if (currentMode === 'host') {
             renderHostViewers(data.session);
             updateCursorNames(data.session);
+            // Sync OS control button state
+            var osBtn = document.getElementById('btn-os-control');
+            if (osBtn && osBtn.style.display !== 'none') {
+              osBtn.className = data.session.os_control
+                ? 'btn btn-sm btn-success me-2'
+                : 'btn btn-sm btn-outline-secondary me-2';
+              osBtn.innerHTML = data.session.os_control
+                ? '<i class="bi bi-pc-display me-1"></i>OS Control ON'
+                : '<i class="bi bi-pc-display me-1"></i>OS Control';
+            }
           } else if (currentMode === 'viewer') {
             renderViewerInfo(data.session);
           }
@@ -536,6 +568,24 @@
             badge.textContent = 'View Only';
             showToast('Remote control revoked', 'warning');
           }
+        });
+
+        socket.on('os_control_toggled', function (data) {
+          var btn = document.getElementById('btn-os-control');
+          if (btn) {
+            btn.className = data.enabled
+              ? 'btn btn-sm btn-success me-2'
+              : 'btn btn-sm btn-outline-secondary me-2';
+            btn.innerHTML = data.enabled
+              ? '<i class="bi bi-pc-display me-1"></i>OS Control ON'
+              : '<i class="bi bi-pc-display me-1"></i>OS Control';
+          }
+          showToast(
+            data.enabled
+              ? 'OS-level control enabled — viewer inputs will control this screen'
+              : 'OS-level control disabled',
+            data.enabled ? 'success' : 'warning'
+          );
         });
 
         // WebRTC signaling
@@ -684,6 +734,12 @@
       function toggleControl(userId) {
         if (socket && currentSessionCode) {
           socket.emit('toggle_control', { code: currentSessionCode, user_id: userId });
+        }
+      }
+
+      function toggleOsControl() {
+        if (socket && currentSessionCode) {
+          socket.emit('toggle_os_control', { code: currentSessionCode });
         }
       }
 
