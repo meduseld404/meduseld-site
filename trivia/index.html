@@ -315,7 +315,9 @@
             categories = (data.trivia_categories || []).map(function(c) {
               return { id: c.id, name: c.name.replace('Entertainment: ','').replace('Science: ','') };
             });
-            // Add custom flag category
+            // Sort alphabetically by name
+            categories.sort(function(a, b) { return a.name.localeCompare(b.name); });
+            // Add custom flag category at the top
             categories.unshift({ id: FLAG_CATEGORY_ID, name: '\u{1F3F3}\uFE0F Country Flags' });
           })
           .catch(function(err) { console.error('Failed to load trivia categories:', err); });
