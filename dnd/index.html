@@ -115,7 +115,7 @@
   </head>
   <body class="text-light" style="background: transparent">
     <!-- Header Navigation -->
-    <div class="container-fluid pt-3">
+    <div class="container-fluid pt-3 px-4">
       <div class="d-flex justify-content-between align-items-start">
         <a href="https://services.meduseld.io" class="btn btn-outline-warning">
           ← Back to Services
@@ -130,20 +130,33 @@
         <h1 style="color: #e6c65c; font-weight: 600" class="mt-2">D&D Companion</h1>
         <p style="opacity: 0.8">Session hub, soundboard & campaign wiki</p>
       </div>
-    </div>
-  </body>
-</html>
 
       <!-- Session Links -->
       <div class="dnd-section">
         <div class="card bg-dark border-warning">
-          <div class="card-header d-flex justify-content-between align-items-center" style="background-color: rgba(230,198,92,0.1); border-bottom: 2px solid #e6c65c">
-            <h5 class="mb-0" style="color: #e6c65c"><i class="bi bi-signpost-2 me-2"></i>Session Links</h5>
-            <button class="btn btn-sm btn-outline-warning" id="add-link-btn" style="display:none" data-bs-toggle="modal" data-bs-target="#linkModal"><i class="bi bi-plus-lg"></i></button>
+          <div
+            class="card-header d-flex justify-content-between align-items-center"
+            style="background-color: rgba(230, 198, 92, 0.1); border-bottom: 2px solid #e6c65c"
+          >
+            <h5 class="mb-0" style="color: #e6c65c">
+              <i class="bi bi-signpost-2 me-2"></i>
+              Session Links
+            </h5>
+            <button
+              class="btn btn-sm btn-outline-warning"
+              id="add-link-btn"
+              style="display: none"
+              data-bs-toggle="modal"
+              data-bs-target="#linkModal"
+            >
+              <i class="bi bi-plus-lg"></i>
+            </button>
           </div>
           <div class="card-body">
             <div id="links-container" class="row g-3">
-              <div class="text-center text-secondary py-3"><div class="spinner-border spinner-border-sm" role="status"></div></div>
+              <div class="text-center text-secondary py-3">
+                <div class="spinner-border spinner-border-sm" role="status"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -152,30 +165,69 @@
       <!-- Party Roster -->
       <div class="dnd-section">
         <div class="card bg-dark border-warning">
-          <div class="card-header d-flex justify-content-between align-items-center" style="background-color: rgba(230,198,92,0.1); border-bottom: 2px solid #e6c65c">
-            <h5 class="mb-0" style="color: #e6c65c"><i class="bi bi-people me-2"></i>Party Roster</h5>
-            <button class="btn btn-sm btn-outline-warning" id="edit-char-btn" data-bs-toggle="modal" data-bs-target="#charModal"><i class="bi bi-pencil me-1"></i>My Character</button>
+          <div
+            class="card-header d-flex justify-content-between align-items-center"
+            style="background-color: rgba(230, 198, 92, 0.1); border-bottom: 2px solid #e6c65c"
+          >
+            <h5 class="mb-0" style="color: #e6c65c">
+              <i class="bi bi-people me-2"></i>
+              Party Roster
+            </h5>
+            <button
+              class="btn btn-sm btn-outline-warning"
+              id="edit-char-btn"
+              data-bs-toggle="modal"
+              data-bs-target="#charModal"
+            >
+              <i class="bi bi-pencil me-1"></i>
+              My Character
+            </button>
           </div>
           <div class="card-body">
             <div id="roster-container" class="row g-3">
-              <div class="text-center text-secondary py-3"><div class="spinner-border spinner-border-sm" role="status"></div></div>
+              <div class="text-center text-secondary py-3">
+                <div class="spinner-border spinner-border-sm" role="status"></div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <!-- DM Soundboard (admin only) -->
-      <div class="dnd-section" id="soundboard-section" style="display:none">
+      <div class="dnd-section" id="soundboard-section" style="display: none">
         <div class="card bg-dark border-warning">
-          <div class="card-header d-flex justify-content-between align-items-center" style="background-color: rgba(230,198,92,0.1); border-bottom: 2px solid #e6c65c">
-            <h5 class="mb-0" style="color: #e6c65c"><i class="bi bi-music-note-list me-2"></i>DM Soundboard</h5>
+          <div
+            class="card-header d-flex justify-content-between align-items-center"
+            style="background-color: rgba(230, 198, 92, 0.1); border-bottom: 2px solid #e6c65c"
+          >
+            <h5 class="mb-0" style="color: #e6c65c">
+              <i class="bi bi-music-note-list me-2"></i>
+              DM Soundboard
+            </h5>
             <div class="d-flex align-items-center gap-3">
               <div class="d-flex align-items-center gap-2">
                 <i class="bi bi-volume-up" style="color: #e6c65c"></i>
-                <input type="range" class="master-volume" id="master-volume" min="0" max="100" value="80">
+                <input
+                  type="range"
+                  class="master-volume"
+                  id="master-volume"
+                  min="0"
+                  max="100"
+                  value="80"
+                />
               </div>
-              <button class="btn btn-sm btn-outline-warning" id="stop-all-btn"><i class="bi bi-stop-fill me-1"></i>Stop All</button>
-              <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#soundModal"><i class="bi bi-plus-lg me-1"></i>Upload</button>
+              <button class="btn btn-sm btn-outline-warning" id="stop-all-btn">
+                <i class="bi bi-stop-fill me-1"></i>
+                Stop All
+              </button>
+              <button
+                class="btn btn-sm btn-outline-warning"
+                data-bs-toggle="modal"
+                data-bs-target="#soundModal"
+              >
+                <i class="bi bi-plus-lg me-1"></i>
+                Upload
+              </button>
             </div>
           </div>
           <div class="card-body">
@@ -189,26 +241,57 @@
       <!-- Campaign Wiki / Session Recaps -->
       <div class="dnd-section">
         <div class="card bg-dark border-warning">
-          <div class="card-header" style="background-color: rgba(230,198,92,0.1); border-bottom: 2px solid #e6c65c">
+          <div
+            class="card-header"
+            style="background-color: rgba(230, 198, 92, 0.1); border-bottom: 2px solid #e6c65c"
+          >
             <div class="d-flex justify-content-between align-items-center mb-2">
-              <h5 class="mb-0" style="color: #e6c65c"><i class="bi bi-journal-text me-2"></i>Campaign Wiki</h5>
+              <h5 class="mb-0" style="color: #e6c65c">
+                <i class="bi bi-journal-text me-2"></i>
+                Campaign Wiki
+              </h5>
               <div class="d-flex gap-2">
                 <div class="input-group input-group-sm" style="width: 220px">
-                  <input type="text" class="form-control search-input" id="wiki-search" placeholder="Search...">
-                  <button class="btn btn-outline-warning" id="wiki-search-btn"><i class="bi bi-search"></i></button>
+                  <input
+                    type="text"
+                    class="form-control search-input"
+                    id="wiki-search"
+                    placeholder="Search..."
+                  />
+                  <button class="btn btn-outline-warning" id="wiki-search-btn">
+                    <i class="bi bi-search"></i>
+                  </button>
                 </div>
-                <button class="btn btn-sm btn-outline-warning" id="new-entry-btn" data-bs-toggle="modal" data-bs-target="#entryModal"><i class="bi bi-plus-lg me-1"></i>New</button>
+                <button
+                  class="btn btn-sm btn-outline-warning"
+                  id="new-entry-btn"
+                  data-bs-toggle="modal"
+                  data-bs-target="#entryModal"
+                >
+                  <i class="bi bi-plus-lg me-1"></i>
+                  New
+                </button>
               </div>
             </div>
             <div class="d-flex gap-2 flex-wrap">
-              <button class="btn btn-sm btn-outline-secondary tab-btn active" data-tab="sessions">Session Recaps</button>
-              <button class="btn btn-sm btn-outline-secondary tab-btn" data-tab="wiki">Wiki Pages</button>
-              <div class="ms-auto d-flex gap-1" id="wiki-category-filters" style="display:none !important"></div>
+              <button class="btn btn-sm btn-outline-secondary tab-btn active" data-tab="sessions">
+                Session Recaps
+              </button>
+              <button class="btn btn-sm btn-outline-secondary tab-btn" data-tab="wiki">
+                Wiki Pages
+              </button>
+              <div
+                class="ms-auto d-flex gap-1"
+                id="wiki-category-filters"
+                style="display: none !important"
+              ></div>
             </div>
           </div>
           <div class="card-body">
             <div id="wiki-content">
-              <div class="text-center text-secondary py-3"><div class="spinner-border spinner-border-sm" role="status"></div></div>
+              <div class="text-center text-secondary py-3">
+                <div class="spinner-border spinner-border-sm" role="status"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -217,92 +300,291 @@
 
     <!-- Link Modal -->
     <div class="modal fade" id="linkModal" tabindex="-1">
-      <div class="modal-dialog"><div class="modal-content bg-dark text-light border-warning">
-        <div class="modal-header border-secondary"><h5 class="modal-title" style="color:#e6c65c" id="linkModalTitle">Add Link</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
-        <div class="modal-body">
-          <input type="hidden" id="link-edit-id">
-          <div class="mb-3"><label class="form-label">Label</label><input type="text" class="form-control bg-dark text-light border-secondary" id="link-label" required></div>
-          <div class="mb-3"><label class="form-label">URL</label><input type="url" class="form-control bg-dark text-light border-secondary" id="link-url" required></div>
-          <div class="mb-3"><label class="form-label">Icon (Bootstrap Icons class)</label><input type="text" class="form-control bg-dark text-light border-secondary" id="link-icon" value="bi-link-45deg" placeholder="bi-link-45deg"></div>
-          <div class="mb-3"><label class="form-label">Description (optional)</label><input type="text" class="form-control bg-dark text-light border-secondary" id="link-desc"></div>
-          <div class="mb-3"><label class="form-label">Sort Order</label><input type="number" class="form-control bg-dark text-light border-secondary" id="link-sort" value="0"></div>
+      <div class="modal-dialog">
+        <div class="modal-content bg-dark text-light border-warning">
+          <div class="modal-header border-secondary">
+            <h5 class="modal-title" style="color: #e6c65c" id="linkModalTitle">Add Link</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="link-edit-id" />
+            <div class="mb-3">
+              <label class="form-label">Label</label>
+              <input
+                type="text"
+                class="form-control bg-dark text-light border-secondary"
+                id="link-label"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">URL</label>
+              <input
+                type="url"
+                class="form-control bg-dark text-light border-secondary"
+                id="link-url"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Icon (Bootstrap Icons class)</label>
+              <input
+                type="text"
+                class="form-control bg-dark text-light border-secondary"
+                id="link-icon"
+                value="bi-link-45deg"
+                placeholder="bi-link-45deg"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Description (optional)</label>
+              <input
+                type="text"
+                class="form-control bg-dark text-light border-secondary"
+                id="link-desc"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Sort Order</label>
+              <input
+                type="number"
+                class="form-control bg-dark text-light border-secondary"
+                id="link-sort"
+                value="0"
+              />
+            </div>
+          </div>
+          <div class="modal-footer border-secondary">
+            <button class="btn btn-warning text-dark" id="link-save-btn">Save</button>
+          </div>
         </div>
-        <div class="modal-footer border-secondary"><button class="btn btn-warning text-dark" id="link-save-btn">Save</button></div>
-      </div></div>
+      </div>
     </div>
 
     <!-- Character Modal -->
     <div class="modal fade" id="charModal" tabindex="-1">
-      <div class="modal-dialog"><div class="modal-content bg-dark text-light border-warning">
-        <div class="modal-header border-secondary"><h5 class="modal-title" style="color:#e6c65c">My Character</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
-        <div class="modal-body">
-          <div class="mb-3"><label class="form-label">Character Name</label><input type="text" class="form-control bg-dark text-light border-secondary" id="char-name" required></div>
-          <div class="row g-3 mb-3">
-            <div class="col"><label class="form-label">Race</label><input type="text" class="form-control bg-dark text-light border-secondary" id="char-race"></div>
-            <div class="col"><label class="form-label">Class</label><input type="text" class="form-control bg-dark text-light border-secondary" id="char-class"></div>
-            <div class="col-3"><label class="form-label">Level</label><input type="number" class="form-control bg-dark text-light border-secondary" id="char-level" value="1" min="1" max="20"></div>
+      <div class="modal-dialog">
+        <div class="modal-content bg-dark text-light border-warning">
+          <div class="modal-header border-secondary">
+            <h5 class="modal-title" style="color: #e6c65c">My Character</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
           </div>
-          <div class="mb-3"><label class="form-label">D&D Beyond Character URL</label><input type="url" class="form-control bg-dark text-light border-secondary" id="char-beyond" placeholder="https://www.dndbeyond.com/characters/..."></div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Character Name</label>
+              <input
+                type="text"
+                class="form-control bg-dark text-light border-secondary"
+                id="char-name"
+                required
+              />
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col">
+                <label class="form-label">Race</label>
+                <input
+                  type="text"
+                  class="form-control bg-dark text-light border-secondary"
+                  id="char-race"
+                />
+              </div>
+              <div class="col">
+                <label class="form-label">Class</label>
+                <input
+                  type="text"
+                  class="form-control bg-dark text-light border-secondary"
+                  id="char-class"
+                />
+              </div>
+              <div class="col-3">
+                <label class="form-label">Level</label>
+                <input
+                  type="number"
+                  class="form-control bg-dark text-light border-secondary"
+                  id="char-level"
+                  value="1"
+                  min="1"
+                  max="20"
+                />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">D&D Beyond Character URL</label>
+              <input
+                type="url"
+                class="form-control bg-dark text-light border-secondary"
+                id="char-beyond"
+                placeholder="https://www.dndbeyond.com/characters/..."
+              />
+            </div>
+          </div>
+          <div class="modal-footer border-secondary">
+            <button class="btn btn-warning text-dark" id="char-save-btn">Save</button>
+          </div>
         </div>
-        <div class="modal-footer border-secondary"><button class="btn btn-warning text-dark" id="char-save-btn">Save</button></div>
-      </div></div>
+      </div>
     </div>
 
     <!-- Sound Upload Modal -->
     <div class="modal fade" id="soundModal" tabindex="-1">
-      <div class="modal-dialog"><div class="modal-content bg-dark text-light border-warning">
-        <div class="modal-header border-secondary"><h5 class="modal-title" style="color:#e6c65c">Upload Sound</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
-        <div class="modal-body">
-          <div class="mb-3"><label class="form-label">Label</label><input type="text" class="form-control bg-dark text-light border-secondary" id="sound-label" required></div>
-          <div class="row g-3 mb-3">
-            <div class="col"><label class="form-label">Icon</label><input type="text" class="form-control bg-dark text-light border-secondary" id="sound-icon" value="bi-music-note-beamed"></div>
-            <div class="col"><label class="form-label">Type</label><select class="form-select bg-dark text-light border-secondary" id="sound-type"><option value="sfx">SFX (plays once)</option><option value="ambient">Ambient (loops)</option></select></div>
+      <div class="modal-dialog">
+        <div class="modal-content bg-dark text-light border-warning">
+          <div class="modal-header border-secondary">
+            <h5 class="modal-title" style="color: #e6c65c">Upload Sound</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
           </div>
-          <div class="mb-3"><label class="form-label">Audio File</label><input type="file" class="form-control bg-dark text-light border-secondary" id="sound-file" accept="audio/*"></div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Label</label>
+              <input
+                type="text"
+                class="form-control bg-dark text-light border-secondary"
+                id="sound-label"
+                required
+              />
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col">
+                <label class="form-label">Icon</label>
+                <input
+                  type="text"
+                  class="form-control bg-dark text-light border-secondary"
+                  id="sound-icon"
+                  value="bi-music-note-beamed"
+                />
+              </div>
+              <div class="col">
+                <label class="form-label">Type</label>
+                <select class="form-select bg-dark text-light border-secondary" id="sound-type">
+                  <option value="sfx">SFX (plays once)</option>
+                  <option value="ambient">Ambient (loops)</option>
+                </select>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Audio File</label>
+              <input
+                type="file"
+                class="form-control bg-dark text-light border-secondary"
+                id="sound-file"
+                accept="audio/*"
+              />
+            </div>
+          </div>
+          <div class="modal-footer border-secondary">
+            <button class="btn btn-warning text-dark" id="sound-save-btn">Upload</button>
+          </div>
         </div>
-        <div class="modal-footer border-secondary"><button class="btn btn-warning text-dark" id="sound-save-btn">Upload</button></div>
-      </div></div>
+      </div>
     </div>
 
     <!-- Entry Modal (Session Recap / Wiki Page) -->
     <div class="modal fade" id="entryModal" tabindex="-1">
-      <div class="modal-dialog modal-lg"><div class="modal-content bg-dark text-light border-warning">
-        <div class="modal-header border-secondary"><h5 class="modal-title" style="color:#e6c65c" id="entryModalTitle">New Entry</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
-        <div class="modal-body">
-          <input type="hidden" id="entry-edit-id">
-          <input type="hidden" id="entry-edit-type">
-          <div class="mb-3">
-            <label class="form-label">Type</label>
-            <select class="form-select bg-dark text-light border-secondary" id="entry-type">
-              <option value="session">Session Recap</option>
-              <option value="wiki">Wiki Page</option>
-            </select>
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark text-light border-warning">
+          <div class="modal-header border-secondary">
+            <h5 class="modal-title" style="color: #e6c65c" id="entryModalTitle">New Entry</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
           </div>
-          <div class="mb-3"><label class="form-label">Title</label><input type="text" class="form-control bg-dark text-light border-secondary" id="entry-title" required></div>
-          <div class="mb-3" id="entry-date-group"><label class="form-label">Session Date</label><input type="date" class="form-control bg-dark text-light border-secondary" id="entry-date"></div>
-          <div class="mb-3" id="entry-category-group" style="display:none">
-            <label class="form-label">Category</label>
-            <select class="form-select bg-dark text-light border-secondary" id="entry-category">
-              <option value="general">General</option>
-              <option value="npcs">NPCs</option>
-              <option value="locations">Locations</option>
-              <option value="items">Items</option>
-              <option value="factions">Factions</option>
-              <option value="lore">Lore</option>
-            </select>
+          <div class="modal-body">
+            <input type="hidden" id="entry-edit-id" />
+            <input type="hidden" id="entry-edit-type" />
+            <div class="mb-3">
+              <label class="form-label">Type</label>
+              <select class="form-select bg-dark text-light border-secondary" id="entry-type">
+                <option value="session">Session Recap</option>
+                <option value="wiki">Wiki Page</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Title</label>
+              <input
+                type="text"
+                class="form-control bg-dark text-light border-secondary"
+                id="entry-title"
+                required
+              />
+            </div>
+            <div class="mb-3" id="entry-date-group">
+              <label class="form-label">Session Date</label>
+              <input
+                type="date"
+                class="form-control bg-dark text-light border-secondary"
+                id="entry-date"
+              />
+            </div>
+            <div class="mb-3" id="entry-category-group" style="display: none">
+              <label class="form-label">Category</label>
+              <select class="form-select bg-dark text-light border-secondary" id="entry-category">
+                <option value="general">General</option>
+                <option value="npcs">NPCs</option>
+                <option value="locations">Locations</option>
+                <option value="items">Items</option>
+                <option value="factions">Factions</option>
+                <option value="lore">Lore</option>
+              </select>
+            </div>
+            <div class="mb-3" id="entry-tags-group">
+              <label class="form-label">Tags (comma-separated)</label>
+              <input
+                type="text"
+                class="form-control bg-dark text-light border-secondary"
+                id="entry-tags"
+                placeholder="combat, roleplay, boss fight"
+              />
+            </div>
+            <div class="mb-3" id="entry-image-group" style="display: none">
+              <label class="form-label">Image URL (optional)</label>
+              <input
+                type="url"
+                class="form-control bg-dark text-light border-secondary"
+                id="entry-image"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Content (Markdown supported)</label>
+              <textarea
+                class="form-control bg-dark text-light border-secondary"
+                id="entry-body"
+                rows="10"
+                required
+              ></textarea>
+            </div>
           </div>
-          <div class="mb-3" id="entry-tags-group"><label class="form-label">Tags (comma-separated)</label><input type="text" class="form-control bg-dark text-light border-secondary" id="entry-tags" placeholder="combat, roleplay, boss fight"></div>
-          <div class="mb-3" id="entry-image-group" style="display:none"><label class="form-label">Image URL (optional)</label><input type="url" class="form-control bg-dark text-light border-secondary" id="entry-image"></div>
-          <div class="mb-3"><label class="form-label">Content (Markdown supported)</label><textarea class="form-control bg-dark text-light border-secondary" id="entry-body" rows="10" required></textarea></div>
+          <div class="modal-footer border-secondary">
+            <button class="btn btn-warning text-dark" id="entry-save-btn">Save</button>
+          </div>
         </div>
-        <div class="modal-footer border-secondary"><button class="btn btn-warning text-dark" id="entry-save-btn">Save</button></div>
-      </div></div>
+      </div>
     </div>
 
     <!-- Toast -->
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index:9999">
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
       <div id="toast" class="toast align-items-center border-0" role="alert">
-        <div class="d-flex"><div class="toast-body" id="toast-body"></div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>
+        <div class="d-flex">
+          <div class="toast-body" id="toast-body"></div>
+          <button
+            type="button"
+            class="btn-close btn-close-white me-2 m-auto"
+            data-bs-dismiss="toast"
+          ></button>
+        </div>
       </div>
     </div>
 
@@ -330,7 +612,9 @@
       function renderMarkdown(text) {
         if (!text) return '';
         return text
-          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
           .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
           .replace(/\*(.+?)\*/g, '<em>$1</em>')
           .replace(/`(.+?)`/g, '<code>$1</code>')
@@ -347,19 +631,31 @@
           const r = await fetch(API + '/dnd-links');
           const d = await r.json();
           const c = document.getElementById('links-container');
-          if (!d.links || !d.links.length) { c.innerHTML = '<div class="text-center text-secondary py-3">No session links yet. ' + (isAdmin ? 'Click + to add one.' : '') + '</div>'; return; }
-          c.innerHTML = d.links.map(l => `
+          if (!d.links || !d.links.length) {
+            c.innerHTML =
+              '<div class="text-center text-secondary py-3">No session links yet. ' +
+              (isAdmin ? 'Click + to add one.' : '') +
+              '</div>';
+            return;
+          }
+          c.innerHTML = d.links
+            .map(
+              (l) => `
             <div class="col-6 col-md-4 col-lg-3">
               <a href="${l.url}" target="_blank" class="text-decoration-none">
                 <div class="card bg-dark border-secondary link-card h-100 p-3 text-center">
                   <i class="bi ${l.icon}" style="font-size:2rem;color:#e6c65c"></i>
                   <div class="mt-2 text-light fw-semibold">${l.label}</div>
                   ${l.description ? '<div class="text-secondary" style="font-size:0.75rem">' + l.description + '</div>' : ''}
-                  ${isAdmin ? '<div class="mt-2"><button class="btn btn-sm btn-outline-secondary me-1" onclick="event.preventDefault();editLink(' + l.id + ',\'' + l.label.replace(/'/g, "\\'") + '\',\'' + l.url.replace(/'/g, "\\'") + '\',\'' + (l.icon||'').replace(/'/g, "\\'") + '\',\'' + (l.description||'').replace(/'/g, "\\'") + '\',' + l.sort_order + ')"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-outline-danger" onclick="event.preventDefault();deleteLink(' + l.id + ')"><i class="bi bi-trash"></i></button></div>' : ''}
+                  ${isAdmin ? '<div class="mt-2"><button class="btn btn-sm btn-outline-secondary me-1" onclick="event.preventDefault();editLink(' + l.id + ",'" + l.label.replace(/'/g, "\\'") + "','" + l.url.replace(/'/g, "\\'") + "','" + (l.icon || '').replace(/'/g, "\\'") + "','" + (l.description || '').replace(/'/g, "\\'") + "'," + l.sort_order + ')"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-outline-danger" onclick="event.preventDefault();deleteLink(' + l.id + ')"><i class="bi bi-trash"></i></button></div>' : ''}
                 </div>
               </a>
-            </div>`).join('');
-        } catch (e) { console.error('Failed to load links:', e); }
+            </div>`
+            )
+            .join('');
+        } catch (e) {
+          console.error('Failed to load links:', e);
+        }
       }
 
       function editLink(id, label, url, icon, desc, sort) {
@@ -381,16 +677,27 @@
           icon: document.getElementById('link-icon').value,
           description: document.getElementById('link-desc').value,
           sort_order: parseInt(document.getElementById('link-sort').value) || 0,
-          _cf_token: getCfToken()
+          _cf_token: getCfToken(),
         };
         try {
           const url = id ? API + '/dnd-links-' + id : API + '/dnd-links';
-          const r = await fetch(url, { method: id ? 'PUT' : 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
-          if (!r.ok) { const e = await r.json(); showToast(e.error || 'Failed', 'danger'); return; }
+          const r = await fetch(url, {
+            method: id ? 'PUT' : 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          });
+          if (!r.ok) {
+            const e = await r.json();
+            showToast(e.error || 'Failed', 'danger');
+            return;
+          }
           bootstrap.Modal.getInstance(document.getElementById('linkModal')).hide();
           loadLinks();
           showToast(id ? 'Link updated' : 'Link added');
-        } catch (e) { console.error('Failed to save link:', e); showToast('Save failed', 'danger'); }
+        } catch (e) {
+          console.error('Failed to save link:', e);
+          showToast('Save failed', 'danger');
+        }
       }
 
       async function deleteLink(id) {
@@ -399,7 +706,10 @@
           await fetch(API + '/dnd-links-' + id + '?cf_token=' + getCfToken(), { method: 'DELETE' });
           loadLinks();
           showToast('Link deleted');
-        } catch (e) { console.error('Failed to delete link:', e); showToast('Delete failed', 'danger'); }
+        } catch (e) {
+          console.error('Failed to delete link:', e);
+          showToast('Delete failed', 'danger');
+        }
       }
 
       // ===== PARTY ROSTER =====
@@ -408,8 +718,14 @@
           const r = await fetch(API + '/dnd-characters');
           const d = await r.json();
           const c = document.getElementById('roster-container');
-          if (!d.characters || !d.characters.length) { c.innerHTML = '<div class="text-center text-secondary py-3">No characters yet. Click "My Character" to add yours.</div>'; return; }
-          c.innerHTML = d.characters.map(ch => `
+          if (!d.characters || !d.characters.length) {
+            c.innerHTML =
+              '<div class="text-center text-secondary py-3">No characters yet. Click "My Character" to add yours.</div>';
+            return;
+          }
+          c.innerHTML = d.characters
+            .map(
+              (ch) => `
             <div class="col-6 col-md-4 col-lg-3">
               <div class="card bg-dark border-secondary char-card h-100 p-3 text-center">
                 <div class="d-flex justify-content-center mb-2">
@@ -420,8 +736,12 @@
                 <div class="mt-1" style="font-size:0.85rem">${ch.race || '?'} ${ch.class_name || '?'} · Lv ${ch.level || 1}</div>
                 ${ch.beyond_url ? '<a href="' + ch.beyond_url + '" target="_blank" class="btn btn-sm btn-outline-warning mt-2">View Sheet</a>' : ''}
               </div>
-            </div>`).join('');
-        } catch (e) { console.error('Failed to load roster:', e); }
+            </div>`
+            )
+            .join('');
+        } catch (e) {
+          console.error('Failed to load roster:', e);
+        }
       }
 
       async function saveCharacter() {
@@ -431,15 +751,26 @@
           class_name: document.getElementById('char-class').value,
           level: parseInt(document.getElementById('char-level').value) || 1,
           beyond_url: document.getElementById('char-beyond').value,
-          _cf_token: getCfToken()
+          _cf_token: getCfToken(),
         };
         try {
-          const r = await fetch(API + '/dnd-characters', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
-          if (!r.ok) { const e = await r.json(); showToast(e.error || 'Failed', 'danger'); return; }
+          const r = await fetch(API + '/dnd-characters', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          });
+          if (!r.ok) {
+            const e = await r.json();
+            showToast(e.error || 'Failed', 'danger');
+            return;
+          }
           bootstrap.Modal.getInstance(document.getElementById('charModal')).hide();
           loadRoster();
           showToast('Character saved');
-        } catch (e) { console.error('Failed to save character:', e); showToast('Save failed', 'danger'); }
+        } catch (e) {
+          console.error('Failed to save character:', e);
+          showToast('Save failed', 'danger');
+        }
       }
 
       // Pre-fill character modal with existing data
@@ -448,7 +779,7 @@
           const r = await fetch(API + '/dnd-characters');
           const d = await r.json();
           if (!d.characters || !currentUser) return;
-          const mine = d.characters.find(c => c.user_id === currentUser.db_id);
+          const mine = d.characters.find((c) => c.user_id === currentUser.db_id);
           if (mine) {
             document.getElementById('char-name').value = mine.character_name || '';
             document.getElementById('char-race').value = mine.race || '';
@@ -456,7 +787,9 @@
             document.getElementById('char-level').value = mine.level || 1;
             document.getElementById('char-beyond').value = mine.beyond_url || '';
           }
-        } catch (e) { console.error('Failed to prefill character:', e); }
+        } catch (e) {
+          console.error('Failed to prefill character:', e);
+        }
       }
 
       // ===== SOUNDBOARD =====
@@ -465,8 +798,14 @@
           const r = await fetch(API + '/dnd-sounds');
           const d = await r.json();
           const c = document.getElementById('sounds-container');
-          if (!d.sounds || !d.sounds.length) { c.innerHTML = '<div class="text-center text-secondary py-3">No sounds yet. Click Upload to add one.</div>'; return; }
-          c.innerHTML = d.sounds.map(s => `
+          if (!d.sounds || !d.sounds.length) {
+            c.innerHTML =
+              '<div class="text-center text-secondary py-3">No sounds yet. Click Upload to add one.</div>';
+            return;
+          }
+          c.innerHTML = d.sounds
+            .map(
+              (s) => `
             <div class="col-4 col-md-3 col-lg-2">
               <button class="btn btn-outline-secondary sound-btn" data-id="${s.id}" data-url="${s.audio_url}" data-type="${s.sound_type}" onclick="toggleSound(${s.id}, '${s.audio_url}', '${s.sound_type}')">
                 <span class="sound-type-badge badge ${s.sound_type === 'ambient' ? 'bg-info' : 'bg-secondary'}">${s.sound_type}</span>
@@ -477,8 +816,12 @@
                 </div>
               </button>
               <button class="btn btn-sm btn-outline-danger w-100 mt-1" onclick="deleteSound(${s.id})"><i class="bi bi-trash"></i></button>
-            </div>`).join('');
-        } catch (e) { console.error('Failed to load sounds:', e); }
+            </div>`
+            )
+            .join('');
+        } catch (e) {
+          console.error('Failed to load sounds:', e);
+        }
       }
 
       function toggleSound(id, url, type) {
@@ -492,7 +835,7 @@
         const audio = new Audio(url);
         audio.volume = masterVolume * 0.8;
         audio.loop = type === 'ambient';
-        audio.play().catch(e => console.error('Audio play failed:', e));
+        audio.play().catch((e) => console.error('Audio play failed:', e));
         audioPlayers[id] = audio;
         const btn = document.querySelector('[data-id="' + id + '"]');
         if (btn) btn.classList.add('playing');
@@ -509,8 +852,11 @@
       }
 
       function stopAllSounds() {
-        Object.keys(audioPlayers).forEach(id => {
-          if (audioPlayers[id]) { audioPlayers[id].pause(); audioPlayers[id] = null; }
+        Object.keys(audioPlayers).forEach((id) => {
+          if (audioPlayers[id]) {
+            audioPlayers[id].pause();
+            audioPlayers[id] = null;
+          }
           const btn = document.querySelector('[data-id="' + id + '"]');
           if (btn) btn.classList.remove('playing');
         });
@@ -519,7 +865,10 @@
       async function uploadSound() {
         const label = document.getElementById('sound-label').value.trim();
         const file = document.getElementById('sound-file').files[0];
-        if (!label || !file) { showToast('Label and file required', 'danger'); return; }
+        if (!label || !file) {
+          showToast('Label and file required', 'danger');
+          return;
+        }
         const fd = new FormData();
         fd.append('label', label);
         fd.append('icon', document.getElementById('sound-icon').value.trim());
@@ -528,21 +877,36 @@
         fd.append('_cf_token', getCfToken());
         try {
           const r = await fetch(API + '/dnd-sounds', { method: 'POST', body: fd });
-          if (!r.ok) { const e = await r.json(); showToast(e.error || 'Upload failed', 'danger'); return; }
+          if (!r.ok) {
+            const e = await r.json();
+            showToast(e.error || 'Upload failed', 'danger');
+            return;
+          }
           bootstrap.Modal.getInstance(document.getElementById('soundModal')).hide();
           loadSounds();
           showToast('Sound uploaded');
-        } catch (e) { console.error('Failed to upload sound:', e); showToast('Upload failed', 'danger'); }
+        } catch (e) {
+          console.error('Failed to upload sound:', e);
+          showToast('Upload failed', 'danger');
+        }
       }
 
       async function deleteSound(id) {
         if (!confirm('Delete this sound?')) return;
-        if (audioPlayers[id]) { audioPlayers[id].pause(); audioPlayers[id] = null; }
+        if (audioPlayers[id]) {
+          audioPlayers[id].pause();
+          audioPlayers[id] = null;
+        }
         try {
-          await fetch(API + '/dnd-sounds-' + id + '?cf_token=' + getCfToken(), { method: 'DELETE' });
+          await fetch(API + '/dnd-sounds-' + id + '?cf_token=' + getCfToken(), {
+            method: 'DELETE',
+          });
           loadSounds();
           showToast('Sound deleted');
-        } catch (e) { console.error('Failed to delete sound:', e); showToast('Delete failed', 'danger'); }
+        } catch (e) {
+          console.error('Failed to delete sound:', e);
+          showToast('Delete failed', 'danger');
+        }
       }
 
       // ===== WIKI / SESSIONS =====
@@ -554,8 +918,14 @@
           try {
             const r = await fetch(API + '/dnd-sessions');
             const d = await r.json();
-            if (!d.sessions || !d.sessions.length) { c.innerHTML = '<div class="text-center text-secondary py-4">No session recaps yet. Click "New" to write the first one.</div>'; return; }
-            c.innerHTML = d.sessions.map((s, i) => `
+            if (!d.sessions || !d.sessions.length) {
+              c.innerHTML =
+                '<div class="text-center text-secondary py-4">No session recaps yet. Click "New" to write the first one.</div>';
+              return;
+            }
+            c.innerHTML = d.sessions
+              .map(
+                (s, i) => `
               <div class="card bg-dark border-secondary session-card mb-3 ${i === 0 ? 'latest-pin' : ''}">
                 <div class="card-body">
                   <div class="d-flex justify-content-between align-items-start">
@@ -569,15 +939,34 @@
                       ${isAdmin ? '<button class="btn btn-sm btn-outline-danger" onclick="deleteEntry(\'session\',' + s.id + ')"><i class="bi bi-trash"></i></button>' : ''}
                     </div>
                   </div>
-                  ${s.tags ? '<div class="mt-1">' + s.tags.split(',').map(t => '<span class="badge bg-secondary tag-badge me-1">' + t.trim() + '</span>').join('') + '</div>' : ''}
+                  ${
+                    s.tags
+                      ? '<div class="mt-1">' +
+                        s.tags
+                          .split(',')
+                          .map(
+                            (t) =>
+                              '<span class="badge bg-secondary tag-badge me-1">' +
+                              t.trim() +
+                              '</span>'
+                          )
+                          .join('') +
+                        '</div>'
+                      : ''
+                  }
                   <div class="mt-2" style="font-size:0.9rem">${renderMarkdown(s.body)}</div>
                   <div class="mt-2 text-secondary" style="font-size:0.75rem">
                     <img src="${s.author_avatar || 'https://cdn.discordapp.com/embed/avatars/0.png'}" style="width:18px;height:18px;border-radius:50%" class="me-1">
                     ${s.author_name || 'Unknown'}
                   </div>
                 </div>
-              </div>`).join('');
-          } catch (e) { console.error('Failed to load sessions:', e); c.innerHTML = '<div class="text-center text-danger py-3">Failed to load sessions</div>'; }
+              </div>`
+              )
+              .join('');
+          } catch (e) {
+            console.error('Failed to load sessions:', e);
+            c.innerHTML = '<div class="text-center text-danger py-3">Failed to load sessions</div>';
+          }
         } else {
           catFilters.style.display = 'flex';
           const cat = document.querySelector('.wiki-cat-btn.active');
@@ -586,8 +975,14 @@
             const url = API + '/dnd-wiki' + (catVal ? '?category=' + catVal : '');
             const r = await fetch(url);
             const d = await r.json();
-            if (!d.pages || !d.pages.length) { c.innerHTML = '<div class="text-center text-secondary py-4">No wiki pages yet. Click "New" to create one.</div>'; return; }
-            c.innerHTML = d.pages.map(p => `
+            if (!d.pages || !d.pages.length) {
+              c.innerHTML =
+                '<div class="text-center text-secondary py-4">No wiki pages yet. Click "New" to create one.</div>';
+              return;
+            }
+            c.innerHTML = d.pages
+              .map(
+                (p) => `
               <div class="card bg-dark border-secondary wiki-card mb-3">
                 <div class="card-body">
                   <div class="d-flex justify-content-between align-items-start">
@@ -607,8 +1002,14 @@
                     ${p.author_name || 'Unknown'} · ${p.updated_at ? new Date(p.updated_at).toLocaleDateString() : ''}
                   </div>
                 </div>
-              </div>`).join('');
-          } catch (e) { console.error('Failed to load wiki:', e); c.innerHTML = '<div class="text-center text-danger py-3">Failed to load wiki pages</div>'; }
+              </div>`
+              )
+              .join('');
+          } catch (e) {
+            console.error('Failed to load wiki:', e);
+            c.innerHTML =
+              '<div class="text-center text-danger py-3">Failed to load wiki pages</div>';
+          }
         }
       }
 
@@ -618,7 +1019,7 @@
           const r = await fetch(API + '/' + endpoint);
           const d = await r.json();
           const items = type === 'session' ? d.sessions : d.pages;
-          const item = items.find(i => i.id === id);
+          const item = items.find((i) => i.id === id);
           if (!item) return;
           document.getElementById('entry-edit-id').value = id;
           document.getElementById('entry-edit-type').value = type;
@@ -641,24 +1042,35 @@
             document.getElementById('entry-category-group').style.display = '';
             document.getElementById('entry-image-group').style.display = '';
           }
-          document.getElementById('entryModalTitle').textContent = 'Edit ' + (type === 'session' ? 'Session Recap' : 'Wiki Page');
+          document.getElementById('entryModalTitle').textContent =
+            'Edit ' + (type === 'session' ? 'Session Recap' : 'Wiki Page');
           bootstrap.Modal.getOrCreateInstance(document.getElementById('entryModal')).show();
-        } catch (e) { console.error('Failed to load entry for edit:', e); }
+        } catch (e) {
+          console.error('Failed to load entry for edit:', e);
+        }
       }
 
       async function saveEntry() {
         const editId = document.getElementById('entry-edit-id').value;
-        const type = document.getElementById('entry-edit-type').value || document.getElementById('entry-type').value;
+        const type =
+          document.getElementById('entry-edit-type').value ||
+          document.getElementById('entry-type').value;
         const title = document.getElementById('entry-title').value.trim();
         const body = document.getElementById('entry-body').value;
-        if (!title || !body) { showToast('Title and content required', 'danger'); return; }
+        if (!title || !body) {
+          showToast('Title and content required', 'danger');
+          return;
+        }
 
         let payload = { title, body, _cf_token: getCfToken() };
         let endpoint;
         if (type === 'session') {
           payload.session_date = document.getElementById('entry-date').value;
           payload.tags = document.getElementById('entry-tags').value;
-          if (!payload.session_date) { showToast('Session date required', 'danger'); return; }
+          if (!payload.session_date) {
+            showToast('Session date required', 'danger');
+            return;
+          }
           endpoint = editId ? 'dnd-sessions-' + editId : 'dnd-sessions';
         } else {
           payload.category = document.getElementById('entry-category').value;
@@ -666,34 +1078,60 @@
           endpoint = editId ? 'dnd-wiki-' + editId : 'dnd-wiki';
         }
         try {
-          const r = await fetch(API + '/' + endpoint, { method: editId ? 'PUT' : 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-          if (!r.ok) { const e = await r.json(); showToast(e.error || 'Failed', 'danger'); return; }
+          const r = await fetch(API + '/' + endpoint, {
+            method: editId ? 'PUT' : 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          if (!r.ok) {
+            const e = await r.json();
+            showToast(e.error || 'Failed', 'danger');
+            return;
+          }
           bootstrap.Modal.getInstance(document.getElementById('entryModal')).hide();
           loadContent();
           showToast(editId ? 'Updated' : 'Created');
-        } catch (e) { console.error('Failed to save entry:', e); showToast('Save failed', 'danger'); }
+        } catch (e) {
+          console.error('Failed to save entry:', e);
+          showToast('Save failed', 'danger');
+        }
       }
 
       async function deleteEntry(type, id) {
-        if (!confirm('Delete this ' + (type === 'session' ? 'session recap' : 'wiki page') + '?')) return;
+        if (!confirm('Delete this ' + (type === 'session' ? 'session recap' : 'wiki page') + '?'))
+          return;
         const endpoint = type === 'session' ? 'dnd-sessions-' : 'dnd-wiki-';
         try {
-          await fetch(API + '/' + endpoint + id + '?cf_token=' + getCfToken(), { method: 'DELETE' });
+          await fetch(API + '/' + endpoint + id + '?cf_token=' + getCfToken(), {
+            method: 'DELETE',
+          });
           loadContent();
           showToast('Deleted');
-        } catch (e) { console.error('Failed to delete entry:', e); showToast('Delete failed', 'danger'); }
+        } catch (e) {
+          console.error('Failed to delete entry:', e);
+          showToast('Delete failed', 'danger');
+        }
       }
 
       // ===== SEARCH =====
       async function doSearch() {
         const q = document.getElementById('wiki-search').value.trim();
-        if (!q) { loadContent(); return; }
+        if (!q) {
+          loadContent();
+          return;
+        }
         try {
           const r = await fetch(API + '/dnd-search?q=' + encodeURIComponent(q));
           const d = await r.json();
           const c = document.getElementById('wiki-content');
-          if (!d.results || !d.results.length) { c.innerHTML = '<div class="text-center text-secondary py-4">No results for "' + q + '"</div>'; return; }
-          c.innerHTML = d.results.map(item => `
+          if (!d.results || !d.results.length) {
+            c.innerHTML =
+              '<div class="text-center text-secondary py-4">No results for "' + q + '"</div>';
+            return;
+          }
+          c.innerHTML = d.results
+            .map(
+              (item) => `
             <div class="card bg-dark border-secondary mb-3">
               <div class="card-body">
                 <span class="badge ${item.type === 'session' ? 'bg-warning text-dark' : 'bg-info'} me-2">${item.type === 'session' ? 'Session' : 'Wiki'}</span>
@@ -702,8 +1140,12 @@
                 ${item.tags ? '<span class="text-secondary ms-2" style="font-size:0.75rem">' + item.tags + '</span>' : ''}
                 <div class="mt-2 text-secondary" style="font-size:0.85rem">${(item.body || '').substring(0, 200)}...</div>
               </div>
-            </div>`).join('');
-        } catch (e) { console.error('Search failed:', e); }
+            </div>`
+            )
+            .join('');
+        } catch (e) {
+          console.error('Search failed:', e);
+        }
       }
 
       // ===== INIT =====
@@ -719,9 +1161,9 @@
       }
 
       function setupTabs() {
-        document.querySelectorAll('.tab-btn').forEach(btn => {
+        document.querySelectorAll('.tab-btn').forEach((btn) => {
           btn.addEventListener('click', () => {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
             btn.classList.add('active');
             activeTab = btn.dataset.tab;
             loadContent();
@@ -733,10 +1175,17 @@
         const cats = ['', 'general', 'npcs', 'locations', 'items', 'factions', 'lore'];
         const labels = ['All', 'General', 'NPCs', 'Locations', 'Items', 'Factions', 'Lore'];
         const container = document.getElementById('wiki-category-filters');
-        container.innerHTML = cats.map((c, i) => `<button class="btn btn-sm wiki-nav-btn wiki-cat-btn ${i === 0 ? 'active' : ''} btn-outline-secondary" data-cat="${c}">${labels[i]}</button>`).join('');
-        container.querySelectorAll('.wiki-cat-btn').forEach(btn => {
+        container.innerHTML = cats
+          .map(
+            (c, i) =>
+              `<button class="btn btn-sm wiki-nav-btn wiki-cat-btn ${i === 0 ? 'active' : ''} btn-outline-secondary" data-cat="${c}">${labels[i]}</button>`
+          )
+          .join('');
+        container.querySelectorAll('.wiki-cat-btn').forEach((btn) => {
           btn.addEventListener('click', () => {
-            container.querySelectorAll('.wiki-cat-btn').forEach(b => b.classList.remove('active'));
+            container
+              .querySelectorAll('.wiki-cat-btn')
+              .forEach((b) => b.classList.remove('active'));
             btn.classList.add('active');
             loadContent();
           });
@@ -772,12 +1221,17 @@
 
         // Get DB user ID for character matching
         try {
-          const meResp = await fetch('https://panel.meduseld.io/api/me', { credentials: 'include', redirect: 'manual' });
+          const meResp = await fetch('https://panel.meduseld.io/api/me', {
+            credentials: 'include',
+            redirect: 'manual',
+          });
           if (meResp.ok) {
             const meData = await meResp.json();
             if (meData.authenticated && meData.user) currentUser.db_id = meData.user.id;
           }
-        } catch (e) { console.error('Failed to get DB user ID:', e); }
+        } catch (e) {
+          console.error('Failed to get DB user ID:', e);
+        }
 
         // Show admin-only elements
         if (isAdmin) {
@@ -794,10 +1248,14 @@
         document.getElementById('stop-all-btn').addEventListener('click', stopAllSounds);
         document.getElementById('master-volume').addEventListener('input', (e) => {
           masterVolume = e.target.value / 100;
-          Object.values(audioPlayers).forEach(a => { if (a) a.volume = masterVolume * 0.8; });
+          Object.values(audioPlayers).forEach((a) => {
+            if (a) a.volume = masterVolume * 0.8;
+          });
         });
         document.getElementById('wiki-search-btn').addEventListener('click', doSearch);
-        document.getElementById('wiki-search').addEventListener('keydown', (e) => { if (e.key === 'Enter') doSearch(); });
+        document.getElementById('wiki-search').addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') doSearch();
+        });
 
         // Reset entry modal on open
         document.getElementById('entryModal').addEventListener('show.bs.modal', (e) => {
