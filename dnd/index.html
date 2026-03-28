@@ -205,6 +205,97 @@
       .text-secondary {
         color: rgba(255, 255, 255, 0.65) !important;
       }
+
+      /* ===== Mobile responsiveness ===== */
+      @media (max-width: 767.98px) {
+        .container {
+          padding-left: 12px;
+          padding-right: 12px;
+        }
+        /* Soundboard header: stack title row and controls */
+        #soundboard-section .card-header {
+          flex-wrap: wrap !important;
+          gap: 0.5rem;
+        }
+        #soundboard-section .card-header .d-flex.align-items-center.gap-3 {
+          flex-wrap: wrap;
+          gap: 0.5rem !important;
+          width: 100%;
+          justify-content: flex-start;
+        }
+        #soundboard-section .card-header h5 {
+          width: 100%;
+        }
+        .master-volume {
+          width: 80px;
+        }
+        /* Campaign Wiki header: stack search + new button below title */
+        #wiki-search {
+          min-width: 0;
+        }
+        .dnd-section .card-header .d-flex.justify-content-between.align-items-center.mb-2 {
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+        .dnd-section .card-header .input-group {
+          width: 160px !important;
+        }
+        /* Category filter buttons: horizontal scroll instead of overflow */
+        #wiki-category-filters {
+          overflow-x: auto;
+          flex-wrap: nowrap !important;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+          padding-bottom: 4px;
+        }
+        #wiki-category-filters::-webkit-scrollbar {
+          display: none;
+        }
+        #wiki-category-filters .wiki-nav-btn {
+          white-space: nowrap;
+          flex-shrink: 0;
+        }
+        /* Tab row: allow wrapping */
+        .card-header .d-flex.gap-2.flex-wrap {
+          gap: 0.35rem !important;
+        }
+        /* Session/wiki card content: prevent long text overflow */
+        .session-card .card-body,
+        .wiki-card .card-body {
+          overflow-x: hidden;
+          word-break: break-word;
+        }
+        /* Character cards: ensure they don't overflow */
+        .char-card {
+          padding: 0.75rem !important;
+        }
+        .char-card .char-portrait {
+          width: 60px;
+          height: 60px;
+        }
+      }
+
+      @media (max-width: 575.98px) {
+        /* Even smaller screens: full-width search */
+        .dnd-section .card-header .d-flex.justify-content-between.align-items-center.mb-2 {
+          flex-direction: column;
+          align-items: flex-start !important;
+        }
+        .dnd-section .card-header .d-flex.gap-2:has(#wiki-search) {
+          width: 100%;
+        }
+        .dnd-section .card-header .input-group {
+          width: 100% !important;
+          flex: 1;
+        }
+      }
+
+      /* Prevent any container from causing horizontal overflow */
+      .card-body,
+      .card-header {
+        overflow-x: hidden;
+        min-width: 0;
+      }
     </style>
   </head>
   <body class="text-light" style="background: transparent">
@@ -299,7 +390,7 @@
       <div class="dnd-section">
         <div class="card bg-dark border-warning">
           <div
-            class="card-header d-flex justify-content-between align-items-center"
+            class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2"
             style="background-color: rgba(255, 255, 255, 0.08); border-bottom: 2px solid #fff"
           >
             <h5 class="mb-0" style="color: #fff">
@@ -307,7 +398,7 @@
               Party Roster
             </h5>
             <button
-              class="btn btn-sm btn-outline-warning"
+              class="btn btn-sm btn-outline-warning flex-shrink-0"
               id="edit-char-btn"
               data-bs-toggle="modal"
               data-bs-target="#charModal"
@@ -330,14 +421,14 @@
       <div class="dnd-section" id="soundboard-section" style="display: none">
         <div class="card bg-dark border-warning">
           <div
-            class="card-header d-flex justify-content-between align-items-center"
+            class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2"
             style="background-color: rgba(255, 255, 255, 0.08); border-bottom: 2px solid #fff"
           >
             <h5 class="mb-0" style="color: #fff">
               <i class="bi bi-music-note-list me-2"></i>
               DM Soundboard
             </h5>
-            <div class="d-flex align-items-center gap-3">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
               <div class="d-flex align-items-center gap-2">
                 <i class="bi bi-volume-up" style="color: #fff"></i>
                 <input
@@ -378,13 +469,13 @@
             class="card-header"
             style="background-color: rgba(255, 255, 255, 0.08); border-bottom: 2px solid #fff"
           >
-            <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
               <h5 class="mb-0" style="color: #fff">
                 <i class="bi bi-journal-text me-2"></i>
                 Campaign Wiki
               </h5>
               <div class="d-flex gap-2">
-                <div class="input-group input-group-sm" style="width: 220px">
+                <div class="input-group input-group-sm" style="width: 220px; min-width: 0">
                   <input
                     type="text"
                     class="form-control search-input"
@@ -396,7 +487,7 @@
                   </button>
                 </div>
                 <button
-                  class="btn btn-sm btn-outline-warning"
+                  class="btn btn-sm btn-outline-warning flex-shrink-0"
                   id="new-entry-btn"
                   data-bs-toggle="modal"
                   data-bs-target="#entryModal"
