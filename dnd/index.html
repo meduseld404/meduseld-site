@@ -708,7 +708,7 @@
                 </div>
                 <div class="fw-semibold" style="color:#fff">${ch.character_name}</div>
                 <div class="text-secondary" style="font-size:0.8rem">${ch.display_name || ''}</div>
-                <div class="mt-1" style="font-size:0.85rem">${ch.race || '?'} ${ch.class_name || '?'} · Lv ${ch.level || 1}</div>
+                <div class="mt-1" style="font-size:0.85rem;color:#fff">${ch.race || '?'} ${ch.class_name || '?'} · Lv ${ch.level || 1}</div>
                 ${ch.beyond_url ? '<a href="' + ch.beyond_url + '" target="_blank" class="btn btn-sm btn-outline-warning mt-2">View Sheet</a>' : ''}
                 ${isAdmin || (currentUser && currentUser.db_id === ch.user_id) ? '<button class="btn btn-sm btn-outline-danger mt-1" onclick="deleteCharacter(' + ch.id + ')"><i class="bi bi-trash"></i></button>' : ''}
               </div>
