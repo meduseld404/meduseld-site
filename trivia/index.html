@@ -381,7 +381,7 @@
         socket.on('player_left', function(d) { currentLobby = d.lobby; if (document.getElementById('lobby-players')) renderLobbyPlayers(); });
         socket.on('lobby_closed', function(d) { currentLobby = null; showToast(d.reason || 'Lobby closed', 'warning'); showBrowser(); });
         socket.on('kicked', function(d) { currentLobby = null; showToast(d.reason || 'You were kicked', 'warning'); showBrowser(); });
-        socket.on('game_starting', function(d) { showCountdown(d.countdown, d.total_questions); });
+        socket.on('game_starting', function(d) { showCountdown(d.countdown, d.total_questions, d.category_name); });
         socket.on('question', function(d) { showMpQuestion(d); });
         socket.on('player_answered', function(d) { currentLobby = d.lobby; updatePlayerChips(); });
         socket.on('answer_reveal', function(d) { revealAnswer(d); });
@@ -546,9 +546,10 @@
       }
 
       // ==================== COUNTDOWN ====================
-      function showCountdown(secs, totalQ) {
+      function showCountdown(secs, totalQ, catName) {
         clearTimers();
-        document.getElementById('main-panel').innerHTML = '<div class="text-center py-5"><p class="text-muted mb-2">Game starting in</p><div id="cd-num" class="countdown-number">'+secs+'</div><p class="text-muted mt-2">'+totalQ+' questions</p></div>';
+        var catLine = catName ? '<p class="text-muted mt-1" style="font-size:0.9rem"><span class="badge bg-secondary">'+esc(catName)+'</span></p>' : '';
+        document.getElementById('main-panel').innerHTML = '<div class="text-center py-5"><p class="text-muted mb-2">Game starting in</p><div id="cd-num" class="countdown-number">'+secs+'</div><p class="text-muted mt-2">'+totalQ+' questions</p>'+catLine+'</div>';
         var rem = secs;
         questionTimerInterval = setInterval(function() {
           rem--;
