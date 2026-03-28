@@ -1056,7 +1056,7 @@
 
       // ==================== HELPERS ====================
       function esc(s) { var d = document.createElement('div'); d.appendChild(document.createTextNode(s||'')); return d.innerHTML; }
-      function decodeHtml(s) { var d = document.createElement('textarea'); d.innerHTML = s || ''; return d.value; }
+      function decodeHtml(s) { if (!s) return ''; return new DOMParser().parseFromString(s, 'text/html').documentElement.textContent; }
 
       // Client-side country name aliases for solo flag matching
       // ==================== COUNTRY AUTOCOMPLETE ====================
