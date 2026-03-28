@@ -175,6 +175,33 @@
         justify-content: center;
         margin-bottom: 1rem;
       }
+      .tag-input-wrap { position: relative; }
+      .tag-dropdown {
+        position: absolute;
+        bottom: 100%;
+        left: 0;
+        right: 0;
+        max-height: 180px;
+        overflow-y: auto;
+        background: #1a2e22;
+        border: 1px solid rgba(108, 117, 125, 0.5);
+        border-radius: 6px;
+        z-index: 10;
+        display: none;
+        margin-bottom: 2px;
+      }
+      .tag-dropdown.show { display: block; }
+      .tag-dropdown-item {
+        padding: 0.4rem 0.75rem;
+        color: #e4d9b5;
+        font-size: 0.85rem;
+        cursor: pointer;
+      }
+      .tag-dropdown-item:hover,
+      .tag-dropdown-item.active {
+        background: rgba(230, 198, 92, 0.15);
+        color: #e6c65c;
+      }
       .lightbox-overlay {
         position: fixed;
         inset: 0;
@@ -315,16 +342,17 @@
           </div>
           <div class="mb-3">
             <label class="form-label small text-muted">Game Tag</label>
-            <input
-              type="text"
-              class="form-control bg-dark text-light border-secondary"
-              id="upload-tag"
-              list="tag-options"
-              maxlength="64"
-              placeholder="Select or type a game..."
-              autocomplete="off"
-            />
-            <datalist id="tag-options"></datalist>
+            <div class="tag-input-wrap">
+              <div class="tag-dropdown" id="upload-tag-dropdown"></div>
+              <input
+                type="text"
+                class="form-control bg-dark text-light border-secondary"
+                id="upload-tag"
+                maxlength="64"
+                placeholder="Select or type a game..."
+                autocomplete="off"
+              />
+            </div>
           </div>
           <div class="mb-3">
             <label class="form-label small text-muted">
@@ -363,15 +391,17 @@
           </div>
           <div class="mb-3">
             <label class="form-label small text-muted">Game Tag</label>
-            <input
-              type="text"
-              class="form-control bg-dark text-light border-secondary"
-              id="link-tag"
-              list="tag-options"
-              maxlength="64"
-              placeholder="Select or type a game..."
-              autocomplete="off"
-            />
+            <div class="tag-input-wrap">
+              <div class="tag-dropdown" id="link-tag-dropdown"></div>
+              <input
+                type="text"
+                class="form-control bg-dark text-light border-secondary"
+                id="link-tag"
+                maxlength="64"
+                placeholder="Select or type a game..."
+                autocomplete="off"
+              />
+            </div>
           </div>
           <div class="mb-3">
             <label class="form-label small text-muted">
@@ -780,7 +810,7 @@
           formData.append('file', fileInput.files[0]);
           formData.append('_cf_token', token);
 
-          fetch(HEALTH_BASE + '/fame?cf_token=' + encodeURIComponent(token), {
+          fetch(HEALTH_BASE + '/fame', {
             method: 'POST',
             body: formData,
           })
@@ -799,7 +829,7 @@
           if (!title) { showError('Title is required.'); btn.disabled = false; return; }
           if (!url) { showError('URL is required.'); btn.disabled = false; return; }
 
-          fetch(HEALTH_BASE + '/fame?cf_token=' + encodeURIComponent(token), {
+          fetch(HEALTH_BASE + '/fame', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ title: title, caption: caption, tag: tag, url: url, media_type: mediaType, _cf_token: token }),
@@ -899,12 +929,56 @@
       }
 
       function renderTagDatalist() {
-        var dl = document.getElementById('tag-options');
-        dl.innerHTML = '';
-        allTags.forEach(function (tag) {
-          var opt = document.createElement('option');
-          opt.value = tag;
-          dl.appendChild(opt);
+        // Wire up custom dropdowns for both tag inputs
+        ['upload-tag', 'link-tag'].forEach(function (inputId) {
+          var input = document.getElementById(inputId);
+          var dropdown = document.getElementById(inputId + '-dropdown');
+          var activeIdx = -1;
+
+          function showDropdown(filter) {
+            var val = (filter || '').toLowerCase();
+            var matches = val ? allTags.filter(function (t) { return t.toLowerCase().indexOf(val) !== -1; }) : allTags;
+            if (!matches.length) { dropdown.classList.remove('show'); return; }
+            dropdown.innerHTML = '';
+            activeIdx = -1;
+            matches.forEach(function (tag) {
+              var item = document.createElement('div');
+              item.className = 'tag-dropdown-item';
+              item.textContent = tag;
+              item.onmousedown = function (e) {
+                e.preventDefault();
+                input.value = tag;
+                dropdown.classList.remove('show');
+              };
+              dropdown.appendChild(item);
+            });
+            dropdown.classList.add('show');
+          }
+
+          input.addEventListener('focus', function () { showDropdown(input.value); });
+          input.addEventListener('input', function () { showDropdown(input.value); });
+          input.addEventListener('blur', function () { dropdown.classList.remove('show'); });
+          input.addEventListener('keydown', function (e) {
+            var items = dropdown.querySelectorAll('.tag-dropdown-item');
+            if (!items.length || !dropdown.classList.contains('show')) return;
+            if (e.key === 'ArrowDown') {
+              e.preventDefault();
+              activeIdx = Math.min(activeIdx + 1, items.length - 1);
+              items.forEach(function (it, i) { it.classList.toggle('active', i === activeIdx); });
+              items[activeIdx].scrollIntoView({ block: 'nearest' });
+            } else if (e.key === 'ArrowUp') {
+              e.preventDefault();
+              activeIdx = Math.max(activeIdx - 1, 0);
+              items.forEach(function (it, i) { it.classList.toggle('active', i === activeIdx); });
+              items[activeIdx].scrollIntoView({ block: 'nearest' });
+            } else if (e.key === 'Enter' && activeIdx >= 0) {
+              e.preventDefault();
+              input.value = items[activeIdx].textContent;
+              dropdown.classList.remove('show');
+            } else if (e.key === 'Escape') {
+              dropdown.classList.remove('show');
+            }
+          });
         });
       }
 
