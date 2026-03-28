@@ -1895,6 +1895,24 @@
             if (t.parentNode) t.remove();
           }, 5000);
         }
+
+        // Expose functions used by inline onclick handlers
+        window.showBrowser = showBrowser;
+        window.refreshLobbies = refreshLobbies;
+        window.showJoinByCode = showJoinByCode;
+        window.joinLobby = joinLobby;
+        window.showCreateLobby = showCreateLobby;
+        window.createLobby = createLobby;
+        window.leaveLobby = leaveLobby;
+        window.startMpGame = startMpGame;
+        window.submitFlagAnswer = submitFlagAnswer;
+        window.endGameEarly = endGameEarly;
+        window.leaveLobbyAndBrowse = leaveLobbyAndBrowse;
+        window.showPlayAgainSetup = showPlayAgainSetup;
+        window.submitPlayAgain = submitPlayAgain;
+        window.showSoloSetup = showSoloSetup;
+        window.startSolo = startSolo;
+        window.soloFlagAnswer = soloFlagAnswer;
       })();
     </script>
   </body>
