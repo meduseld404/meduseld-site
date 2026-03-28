@@ -45,7 +45,7 @@ Served via Cloudflare Pages at `/srv/meduseld-site`
   - Promote/demote users between admin and user roles
   - Activate/deactivate user accounts
   - Shows "Backend Offline" state if Flask is down
-  - Calls `health.meduseld.io/check/team-roster` for data (routed through health to bypass Cloudflare Access session requirement). The endpoint is named "team-roster" instead of "admin-users" to avoid ad-blocker false positives. The admin page reads the `CF_Authorization` cookie via JS and passes its value as a `cf_token` query parameter (GET) or `_cf_token` in the JSON body (PUT) — this avoids both Cloudflare cookie interception and CORS preflight issues. Flask's `_authenticate_from_cookie()` checks cookie, header, query param, and body for the token.
+  - Calls `health.meduseld.io/check/team-roster` for data (routed through health to bypass Cloudflare Access session requirement). The endpoint is named "team-roster" instead of "admin-users" to avoid ad-blocker false positives. The admin page reads the `CF_Authorization` cookie via JS and passes its value as a `cf_token` query parameter (GET) or `_cf_token` in the JSON body (PUT) — this avoids both Cloudflare cookie interception and CORS preflight issues. Flask's `_authenticate_from_cookie()` checks cookie, header, query param, body, and form data for the token.
 
 - **herugrim.meduseld.io** (herugrim/index.html)
   - Public landing page for the Herugrim open-source project
@@ -155,7 +155,7 @@ Cloudflare Worker (`worker.js`) that acts as an OIDC identity provider bridging 
 - **Host**: localhost:5432
 - **ORM**: Flask-SQLAlchemy with Flask-Migrate
 - **Files**: `app/database.py` (init + `db.create_all()`), `app/models.py` (models)
-- **Auto-create**: `db.create_all()` runs on every app startup, creating any missing tables automatically. Existing tables are untouched.
+- **Auto-create**: `db.create_all()` runs on every app startup, creating any missing tables automatically. Existing tables are untouched. `_ensure_columns()` then runs `ALTER TABLE` to add any columns that were added to models after the table was first created (e.g. `fame_entries.tag`).
 - **Dev mode**: Uses SQLite at `app/meduseld_dev.db` instead of PostgreSQL
 
 ### User Model (`app/models.py`)
@@ -430,7 +430,7 @@ sudo -u postgres psql -d meduseld_db -c "SELECT discord_id, username, avatar_has
 
 ### Auth Files
 
-- `meduseld/app/webserver.py` — `authenticate_request()` middleware, `_authenticate_from_cookie()` helper (for public-host routes that need auth; reads CF_Authorization cookie, X-CF-Authorization header, cf_token query param, or \_cf_token in JSON body), `@require_auth` and `@require_role` decorators, `/api/me`, `/api/sync-identity`
+- `meduseld/app/webserver.py` — `authenticate_request()` middleware, `_authenticate_from_cookie()` helper (for public-host routes that need auth; reads CF_Authorization cookie, X-CF-Authorization header, cf_token query param, \_cf_token in JSON body, or \_cf_token in form data), `@require_auth` and `@require_role` decorators, `/api/me`, `/api/sync-identity`
 - `meduseld-site/static/auth.js` — Client-side auth: `MeduseldAuth.getUser()`, `.isAuthenticated()`, `.getRole()`, `.hasRole()`, `.syncUser()`
 - `herugrim/worker.js` — Discord OIDC bridge worker
 
@@ -592,7 +592,7 @@ Three lightweight Python HTTP servers run independently of the Flask app so the 
    - Triggers `meduseld-backup.service` via systemd
    - Env: `BACKUP_SECRET`
 
-Flask proxy routing (`check_service()` in `webserver.py`): requests to `health.meduseld.io/check/stats` → `127.0.0.1:5004/stats`, `/check/history` → `127.0.0.1:5004/history`, `/check/backup` → `127.0.0.1:5003/backup`, `/check/backup-status` → `127.0.0.1:5003/status`, `/check/reboot` → `127.0.0.1:5002/reboot`, `/check/system-logs` → Flask's own `api_server_logs()`, `/check/media-auth` → Jellyfin SSO auth (authenticated, calls `_jellyfin_auth_inner()` to auto-provision and authenticate a Jellyfin account, returns `{token, user_id, server_id}`), `/check/seerr-auth` → Jellyseerr SSO auth (authenticated, provisions Jellyfin account then serves HTML page that POSTs credentials to Jellyseerr from the browser so `connect.sid` is set on the correct domain), `/check/team-roster` → admin users list with trivia stats (authenticated via CF_Authorization JWT passed as `cf_token` query param or `_cf_token` in body; each user includes a `trivia` object with `games_played`, `total_correct`, `total_wrong`, `total_questions`, `best_score`, `accuracy`), `/check/team-roster-<id>` → admin user update (PUT), `/check/calendar` → calendar events list (GET) and create (POST, admin only), `/check/calendar-<id>` → delete calendar event (DELETE, admin only) or edit calendar event (PUT with `title`/`event_date`, admin only) or RSVP (PUT with `status`, any authenticated user), `/check/game-votes` → game voting (GET returns aggregated scores + user's rankings, PUT submits user's ranked list), `/check/games` → games list (GET returns all games, POST adds a game — authenticated), `/check/games-<app_id>` → delete game (DELETE, admin only — also removes associated votes), `/check/trivia-lobbies` → list active multiplayer trivia lobbies (GET, public — returns lobbies with status `waiting`), `/check/trivia-leaderboard` → trivia leaderboard (GET, public — returns aggregated wins per user, only counting games where `won=True`, sorted by win count), `/check/trivia-record-win` → record a trivia game result (POST, authenticated — body: `{score, total_questions, category?, _cf_token}`), `/check/profile` → user profile with achievements and trivia stats (GET, authenticated — runs achievement checks and returns full profile data with all achievements and their locked/unlocked status), `/check/picker-current` → current week's game pick (GET, public), `/check/picker-spin` → spin the wheel to pick a game (POST, authenticated — admins can re-spin), `/check/picker-history` → past weekly picks (GET, public), `/check/picker-games` → game pool list (GET, public) and add game (POST, admin only), `/check/picker-games-<id>` → soft-delete game from pool (DELETE, admin only), `/check/fellowsync-rooms` → FellowSync active rooms (GET, public — proxies to `127.0.0.1:5050/api/rooms/active`, returns `{rooms, count}`, gracefully returns empty list if FellowSync is down), `/check/remote-sessions` → list active remote desktop sessions (GET, public — returns `{sessions}` from in-memory state, cleans up expired sessions on each call), `/check/fame` → Hall of Fame entries (GET public with optional auth for vote status, POST authenticated — file upload or JSON link), `/check/fame-<id>` → delete fame entry (DELETE, owner or admin), `/check/fame-<id>-vote` → toggle vote on entry (POST, authenticated), `/check/fame-media/<filename>` → serve uploaded fame media files from `/srv/media/fame/` (GET, public, dedicated Flask route with 24h cache). All authenticated endpoints use `_authenticate_from_cookie()` which reads the CF_Authorization JWT from cookie, header, `cf_token` query param, or `_cf_token` in JSON body.
+Flask proxy routing (`check_service()` in `webserver.py`): requests to `health.meduseld.io/check/stats` → `127.0.0.1:5004/stats`, `/check/history` → `127.0.0.1:5004/history`, `/check/backup` → `127.0.0.1:5003/backup`, `/check/backup-status` → `127.0.0.1:5003/status`, `/check/reboot` → `127.0.0.1:5002/reboot`, `/check/system-logs` → Flask's own `api_server_logs()`, `/check/media-auth` → Jellyfin SSO auth (authenticated, calls `_jellyfin_auth_inner()` to auto-provision and authenticate a Jellyfin account, returns `{token, user_id, server_id}`), `/check/seerr-auth` → Jellyseerr SSO auth (authenticated, provisions Jellyfin account then serves HTML page that POSTs credentials to Jellyseerr from the browser so `connect.sid` is set on the correct domain), `/check/team-roster` → admin users list with trivia stats (authenticated via CF_Authorization JWT passed as `cf_token` query param or `_cf_token` in body; each user includes a `trivia` object with `games_played`, `total_correct`, `total_wrong`, `total_questions`, `best_score`, `accuracy`), `/check/team-roster-<id>` → admin user update (PUT), `/check/calendar` → calendar events list (GET) and create (POST, admin only), `/check/calendar-<id>` → delete calendar event (DELETE, admin only) or edit calendar event (PUT with `title`/`event_date`, admin only) or RSVP (PUT with `status`, any authenticated user), `/check/game-votes` → game voting (GET returns aggregated scores + user's rankings, PUT submits user's ranked list), `/check/games` → games list (GET returns all games, POST adds a game — authenticated), `/check/games-<app_id>` → delete game (DELETE, admin only — also removes associated votes), `/check/trivia-lobbies` → list active multiplayer trivia lobbies (GET, public — returns lobbies with status `waiting`), `/check/trivia-leaderboard` → trivia leaderboard (GET, public — returns aggregated wins per user, only counting games where `won=True`, sorted by win count), `/check/trivia-record-win` → record a trivia game result (POST, authenticated — body: `{score, total_questions, category?, _cf_token}`), `/check/profile` → user profile with achievements and trivia stats (GET, authenticated — runs achievement checks and returns full profile data with all achievements and their locked/unlocked status), `/check/picker-current` → current week's game pick (GET, public), `/check/picker-spin` → spin the wheel to pick a game (POST, authenticated — admins can re-spin), `/check/picker-history` → past weekly picks (GET, public), `/check/picker-games` → game pool list (GET, public) and add game (POST, admin only), `/check/picker-games-<id>` → soft-delete game from pool (DELETE, admin only), `/check/fellowsync-rooms` → FellowSync active rooms (GET, public — proxies to `127.0.0.1:5050/api/rooms/active`, returns `{rooms, count}`, gracefully returns empty list if FellowSync is down), `/check/remote-sessions` → list active remote desktop sessions (GET, public — returns `{sessions}` from in-memory state, cleans up expired sessions on each call), `/check/fame` → Hall of Fame entries (GET public with optional auth for vote status, POST authenticated — file upload or JSON link), `/check/fame-<id>` → delete fame entry (DELETE, owner or admin), `/check/fame-<id>-vote` → toggle vote on entry (POST, authenticated), `/check/fame-media/<filename>` → serve uploaded fame media files from `/srv/media/fame/` (GET, public, dedicated Flask route with 24h cache). All authenticated endpoints use `_authenticate_from_cookie()` which reads the CF_Authorization JWT from cookie, header, `cf_token` query param, `_cf_token` in JSON body, or `_cf_token` in form data.
 
 ### Common Issues
 
@@ -722,7 +722,7 @@ Events (server → client):
 
 ### Remote Desktop Endpoint (via health proxy)
 
-- `GET /check/remote-sessions` - (Public) Returns all active (non-expired) remote desktop sessions. Response: `{sessions: [{code, host_user_id, host_name, host_avatar, viewer_count, viewers}]}`. Cleans up expired sessions on each call.
+- `GET /check/remote-sessions` - (Public) Returns all active (non-expired) remote desktop sessions. Response: `{sessions: [{code, host_user_id, host_name, host_avatar, viewer_count, os_control, viewers}]}`. Cleans up expired sessions on each call.
 
 ### Remote Desktop WebSocket (Flask-SocketIO)
 
@@ -732,6 +732,8 @@ Module: `app/remote_ws.py` — all signaling logic is isolated here. Event handl
 
 Auth: Client passes `CF_Authorization` cookie value as `token` query parameter on connect. Server decodes the JWT (without signature verification) and looks up the user by `discord_user.id`. Unauthenticated connections are rejected.
 
+OS-level input injection: When `xdotool` is installed on the server, admin hosts can enable OS Control for their session via the `toggle_os_control` event. When enabled, viewer input events (mouse, keyboard, scroll) are injected into the host OS via `xdotool` in addition to being relayed to the host's browser. Normalized coordinates (0-1) are scaled to screen resolution (cached for 30 seconds via `xdotool getdisplaygeometry`). JS key names are mapped to xdotool key names. JS mouse buttons (0=left, 1=middle, 2=right) are mapped to xdotool buttons (1, 2, 3). `DISPLAY=:0` is set automatically if not in the environment. Requires the server to have an active X display session.
+
 Events (client → server):
 
 - `create_session` — Create a new hosting session. Generates a 6-char code, stores in-memory. Host must already have a display stream (captured client-side before emitting).
@@ -739,8 +741,9 @@ Events (client → server):
 - `approve_viewer` — Host-only. Data: `{code, user_id}`. Moves viewer from pending to connected, joins SocketIO room.
 - `deny_viewer` — Host-only. Data: `{code, user_id}`. Removes from pending, notifies viewer.
 - `toggle_control` — Host-only. Data: `{code, user_id}`. Toggles mouse+keyboard control permission for a viewer.
+- `toggle_os_control` — Host-only, admin-only. Data: `{code}`. Toggles OS-level input injection (xdotool) for the session. Emits error if xdotool is not available.
 - `signal` — Relay WebRTC signaling data. Data: `{code, target_user_id, signal}`. Signal contains SDP offers/answers or ICE candidates.
-- `input_event` — Relay mouse/keyboard input from viewer to host. Data: `{code, event}`. Only relayed if viewer has control granted.
+- `input_event` — Relay mouse/keyboard input from viewer to host. Data: `{code, event}`. Only relayed if viewer has control granted. When `os_control` is enabled on the session, also injects the event into the OS via xdotool.
 - `end_session` — Host-only. Data: `{code}`. Ends session, notifies all viewers.
 - `leave_session` — Viewer leaves. Data: `{code}`. Removes from viewers/pending.
 
@@ -753,11 +756,12 @@ Events (server → client):
 - `join_approved` — Sent to viewer when host approves. Data: `{session}`.
 - `join_denied` — Sent to viewer when host denies. Data: `{reason}`.
 - `viewer_joined` / `viewer_left` — Broadcast to room. Data includes `{user_id, display_name, session}`.
-- `session_updated` — Broadcast when session state changes (e.g. control toggled). Data: `{session}`.
+- `session_updated` — Broadcast when session state changes (e.g. control toggled, OS control toggled). Data: `{session}`.
 - `session_ended` — Broadcast when session ends. Data: `{reason}`.
 - `sessions_list` — Broadcast to all `/remote` clients when the active sessions list changes. Data: `{sessions}`.
 - `signal` — Relayed signaling data. Data: `{from_user_id, signal}`.
 - `control_toggled` — Sent to viewer when control permission changes. Data: `{granted}`.
+- `os_control_toggled` — Sent to host when OS control is toggled. Data: `{enabled}`.
 - `input_event` — Relayed input from viewer to host. Data: `{from_user_id, event}`.
 
 ### Hall of Fame Endpoints (via health proxy)

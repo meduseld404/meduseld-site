@@ -412,7 +412,7 @@ Static admin page for managing user roles and account status. Served by Cloudfla
 - If the Flask backend is unreachable, the table shows "Backend is offline. Unable to load users."
 - User count badge shows "Backend Offline" in red
 - If the `CF_Authorization` cookie is invalid or expired (401/403), shows "Authentication failed" with a suggestion to log out and back in. User count badge shows "Auth Error" in yellow.
-- API calls are routed through `health.meduseld.io/check/team-roster` to bypass Cloudflare Access session requirements. The endpoint is named "team-roster" instead of "admin-users" to avoid ad-blocker false positives (filter lists block URLs containing "admin"). Auth is handled by reading the `CF_Authorization` cookie via JS and passing its value as a `cf_token` query parameter (GET) or `_cf_token` in the JSON body (PUT). This avoids both Cloudflare cookie interception and CORS preflight issues. Flask's `_authenticate_from_cookie()` decodes the token from cookie, header, query param, or body.
+- API calls are routed through `health.meduseld.io/check/team-roster` to bypass Cloudflare Access session requirements. The endpoint is named "team-roster" instead of "admin-users" to avoid ad-blocker false positives (filter lists block URLs containing "admin"). Auth is handled by reading the `CF_Authorization` cookie via JS and passing its value as a `cf_token` query parameter (GET) or `_cf_token` in the JSON body (PUT). This avoids both Cloudflare cookie interception and CORS preflight issues. Flask's `_authenticate_from_cookie()` decodes the token from cookie, header, query param, body, or form data.
 
 ### Admin Tools Section
 
@@ -747,6 +747,7 @@ Active Sessions list below:
 ### Host View
 
 - Session code badge (clickable to copy, with Bootstrap tooltip "Click to copy")
+- "OS Control" button (admin only) → emits `toggle_os_control`. When enabled, viewer input events are injected into the host OS via `xdotool` on the server (mouse, keyboard, scroll). Button shows "OS Control" (gray outline) when off, "OS Control ON" (green) when active. Requires `xdotool` to be installed on the server and a display session (`:0`). Only works when the host is sharing the server's screen. Shows error toast if xdotool is unavailable.
 - Pending Requests section: shows viewer join requests with avatar, name, and Approve/Deny buttons
 - Connected Viewers section: viewer chips with avatar, name, optional "CONTROL" badge, and a toggle button (lock/unlock icon with Bootstrap tooltip) to grant/revoke mouse+keyboard control per viewer
 - "End Session" button → emits `end_session`, disconnects all viewers, returns to lobby
