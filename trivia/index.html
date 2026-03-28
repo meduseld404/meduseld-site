@@ -582,7 +582,7 @@
         var amSpectator = isSuddenDeath && suddenDeathPlayers.indexOf(myUserId) === -1;
         var ansHtml = '';
         if (isFlag) {
-          ansHtml = '<div class="text-center mb-3"><img src="'+esc(data.question)+'" alt="Country flag" style="max-width:320px;width:100%;border-radius:8px;border:2px solid rgba(230,198,92,0.3);box-shadow:0 4px 12px rgba(0,0,0,0.4)" /></div>'
+          ansHtml = '<div class="text-center mb-3"><img id="mp-flag-img" alt="Country flag" style="max-width:320px;width:100%;border-radius:8px;border:2px solid rgba(230,198,92,0.3);box-shadow:0 4px 12px rgba(0,0,0,0.4);user-select:none;-webkit-user-drag:none" draggable="false" oncontextmenu="return false" /></div>'
             + '<div class="d-flex gap-2"><div class="flag-autocomplete-wrapper"><input type="text" id="flag-input" class="form-control bg-dark text-light border-secondary" placeholder="'+(amSpectator ? 'Spectating...' : 'Type the country name...')+'" autocomplete="off"'+(amSpectator?' disabled':'')+' /><div class="flag-autocomplete-list" id="flag-input-ac"></div></div>'
             + '<button class="btn btn-warning px-3" id="flag-submit-btn" onclick="submitFlagAnswer()"'+(amSpectator?' disabled':'')+' ><i class="bi bi-send"></i></button></div>';
         } else {
@@ -617,6 +617,7 @@
           + '</div></div></div></div>';
 
         if (isFlag) {
+          loadFlagAsBlob('mp-flag-img', 'https://flagcdn.com/' + data.question + '.svg');
           var flagInput = document.getElementById('flag-input');
           if (flagInput && !amSpectator) {
             setupFlagAutocomplete('flag-input', submitFlagAnswer);
@@ -899,10 +900,10 @@
       }
       function startSoloFlags(btn) {
         var num = parseInt(document.getElementById('s-num').value) || 10;
-        fetch('https://restcountries.com/v3.1/all?fields=name,flags')
+        fetch('https://restcountries.com/v3.1/all?fields=name,cca2')
           .then(function(r) { return r.json(); })
           .then(function(data) {
-            var pool = data.filter(function(c) { return c.name && c.name.common && c.flags && (c.flags.svg || c.flags.png); });
+            var pool = data.filter(function(c) { return c.name && c.name.common && c.cca2; });
             if (pool.length < num) throw new Error('Not enough countries');
             // Cache country names for autocomplete
             if (!allCountryNames.length) {
@@ -912,7 +913,7 @@
             for (var i = pool.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = pool[i]; pool[i] = pool[j]; pool[j] = t; }
             soloQuestions = pool.slice(0, num).map(function(c) {
               return {
-                question: c.flags.svg || c.flags.png,
+                question: c.cca2.toLowerCase(),
                 correct_answer: c.name.common,
                 incorrect_answers: [],
                 category: 'Country Flags',
@@ -936,7 +937,7 @@
         var ansHtml = '';
         var all = [];
         if (isFlag) {
-          ansHtml = '<div class="text-center mb-3"><img src="'+esc(q.question)+'" alt="Country flag" style="max-width:320px;width:100%;border-radius:8px;border:2px solid rgba(230,198,92,0.3);box-shadow:0 4px 12px rgba(0,0,0,0.4)" /></div>'
+          ansHtml = '<div class="text-center mb-3"><img id="solo-flag-img" alt="Country flag" style="max-width:320px;width:100%;border-radius:8px;border:2px solid rgba(230,198,92,0.3);box-shadow:0 4px 12px rgba(0,0,0,0.4);user-select:none;-webkit-user-drag:none" draggable="false" oncontextmenu="return false" /></div>'
             + '<div class="d-flex gap-2"><div class="flag-autocomplete-wrapper"><input type="text" id="solo-flag-input" class="form-control bg-dark text-light border-secondary" placeholder="Type the country name..." autocomplete="off" /><div class="flag-autocomplete-list" id="solo-flag-input-ac"></div></div>'
             + '<button class="btn btn-warning px-3" id="solo-flag-btn" onclick="soloFlagAnswer()"><i class="bi bi-send"></i></button></div>';
         } else {
@@ -960,6 +961,7 @@
         // Store answers and bind clicks
         currentAnswers = all;
         if (isFlag) {
+          loadFlagAsBlob('solo-flag-img', 'https://flagcdn.com/' + q.question + '.svg');
           var flagInput = document.getElementById('solo-flag-input');
           if (flagInput) {
             setupFlagAutocomplete('solo-flag-input', soloFlagAnswer);
@@ -1043,6 +1045,21 @@
 
       // Client-side country name aliases for solo flag matching
       // ==================== COUNTRY AUTOCOMPLETE ====================
+      function loadFlagAsBlob(imgId, url) {
+        var img = document.getElementById(imgId);
+        if (!img) return;
+        fetch(url).then(function(r) {
+          if (!r.ok) throw new Error('Flag fetch failed');
+          return r.blob();
+        }).then(function(blob) {
+          var blobUrl = URL.createObjectURL(blob);
+          img.onload = function() { URL.revokeObjectURL(blobUrl); };
+          img.src = blobUrl;
+        }).catch(function(err) {
+          console.error('Failed to load flag image as blob:', err);
+          img.alt = 'Flag image could not be loaded';
+        });
+      }
       function loadCountryNames() {
         if (allCountryNames.length) return Promise.resolve(allCountryNames);
         return fetch('https://restcountries.com/v3.1/all?fields=name')
