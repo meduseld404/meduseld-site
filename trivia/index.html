@@ -298,6 +298,7 @@
 
       document.getElementById('copyright-year').textContent = new Date().getFullYear();
       if (typeof MeduseldAuth !== 'undefined') {
+        if (!MeduseldAuth.requireAuth()) return; // Redirect to login if no cookie
         MeduseldAuth.renderProfile('profile-container');
         MeduseldAuth.syncUser().then(function() { MeduseldAuth.renderProfile('profile-container'); });
         currentUser = MeduseldAuth.getUser();

@@ -389,11 +389,10 @@
       document.getElementById('footer-year').textContent = new Date().getFullYear();
 
       (async function init() {
-        if (MeduseldAuth.isAuthenticated()) {
-          document.getElementById('profile-container').style.display = '';
-          MeduseldAuth.renderProfile('profile-container');
-          MeduseldAuth.syncUser();
-        }
+        if (!MeduseldAuth.requireAuth()) return; // Redirect to login if no cookie
+        document.getElementById('profile-container').style.display = '';
+        MeduseldAuth.renderProfile('profile-container');
+        MeduseldAuth.syncUser();
         connectSocket();
       })();
 

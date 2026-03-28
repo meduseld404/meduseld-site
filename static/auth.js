@@ -278,6 +278,13 @@ window.MeduseldAuth = (function () {
     },
     syncUser: syncUser,
     renderProfile: renderProfile,
+    requireAuth: function () {
+      if (_user) return true;
+      // No CF_Authorization cookie — redirect to services to trigger Cloudflare Access login
+      window.location.href =
+        'https://services.meduseld.io?login_redirect=' + encodeURIComponent(window.location.href);
+      return false;
+    },
   };
 })();
 

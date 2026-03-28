@@ -1487,6 +1487,30 @@
           window.history.replaceState({}, '', window.location.pathname);
         }
 
+        // Handle login_redirect: if user arrived here to trigger Cloudflare Access login,
+        // redirect back to the original page now that they have the CF_Authorization cookie
+        var loginRedirect = params.get('login_redirect');
+        if (loginRedirect && MeduseldAuth.isAuthenticated()) {
+          // Only allow redirects to *.meduseld.io to prevent open redirect attacks
+          try {
+            var redirectUrl = new URL(loginRedirect);
+            if (
+              redirectUrl.hostname.endsWith('.meduseld.io') ||
+              redirectUrl.hostname === 'meduseld.io'
+            ) {
+              window.history.replaceState({}, '', window.location.pathname);
+              window.location.href = loginRedirect;
+              return;
+            }
+          } catch (e) {
+            console.error('Invalid login_redirect URL:', e);
+          }
+          window.history.replaceState({}, '', window.location.pathname);
+        } else if (loginRedirect) {
+          // Cookie not set yet (shouldn't happen if Access is configured), clean up param
+          window.history.replaceState({}, '', window.location.pathname);
+        }
+
         document.getElementById('game-name').textContent = `${CONFIG.gameName} Server`;
         document.getElementById('game-description').textContent =
           `Control the ${CONFIG.gameName} dedicated game server. Start, stop, restart, and monitor server status.`;
