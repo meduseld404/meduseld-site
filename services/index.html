@@ -1415,10 +1415,22 @@
                 });
                 let content = item.contents || '';
                 content = content.replace(/<[^>]*>/g, '');
-                const textarea = document.createElement('textarea');
-                textarea.innerHTML = content;
-                content = textarea.value;
-                return `<div class="news-item mb-3 pb-3 border-bottom border-secondary"><div class="d-flex justify-content-between align-items-start mb-2"><h5 class="mb-0 flex-grow-1" style="color:#e6c65c;">${item.title}</h5><span class="badge bg-secondary ms-2 flex-shrink-0">${date}</span></div><p class="mb-2 text-light" style="font-size: 0.9rem;">${content}</p><a href="${item.url}" target="_blank" class="btn btn-sm btn-outline-warning">Read More <i class="bi bi-box-arrow-up-right ms-1"></i></a></div>`;
+                content = new DOMParser().parseFromString(content, 'text/html').documentElement
+                  .textContent;
+                const esc = (s) => {
+                  const d = document.createElement('div');
+                  d.appendChild(document.createTextNode(s || ''));
+                  return d.innerHTML;
+                };
+                const safeUrl = (() => {
+                  try {
+                    const u = new URL(item.url);
+                    return u.protocol === 'https:' || u.protocol === 'http:' ? esc(u.href) : '#';
+                  } catch (e) {
+                    return '#';
+                  }
+                })();
+                return `<div class="news-item mb-3 pb-3 border-bottom border-secondary"><div class="d-flex justify-content-between align-items-start mb-2"><h5 class="mb-0 flex-grow-1" style="color:#e6c65c;">${esc(item.title)}</h5><span class="badge bg-secondary ms-2 flex-shrink-0">${date}</span></div><p class="mb-2 text-light" style="font-size: 0.9rem;">${esc(content)}</p><a href="${safeUrl}" target="_blank" class="btn btn-sm btn-outline-warning">Read More <i class="bi bi-box-arrow-up-right ms-1"></i></a></div>`;
               })
               .join('');
           } else {
