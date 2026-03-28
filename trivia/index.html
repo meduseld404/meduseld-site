@@ -895,6 +895,13 @@
         if (diff) url += '&difficulty='+diff;
         fetch(url).then(function(r) { return r.json(); }).then(function(d) {
           if (d.response_code !== 0 || !d.results || !d.results.length) throw new Error('No questions (code: '+d.response_code+')');
+          // Decode HTML entities from opentdb
+          d.results.forEach(function(q) {
+            q.question = decodeHtml(q.question);
+            q.correct_answer = decodeHtml(q.correct_answer);
+            q.incorrect_answers = q.incorrect_answers.map(decodeHtml);
+            q.category = decodeHtml(q.category);
+          });
           soloQuestions = d.results; soloIndex = 0; soloScore = 0; soloAnswers = [];
           showSoloQ();
         }).catch(function(err) {
@@ -1047,6 +1054,7 @@
 
       // ==================== HELPERS ====================
       function esc(s) { var d = document.createElement('div'); d.appendChild(document.createTextNode(s||'')); return d.innerHTML; }
+      function decodeHtml(s) { var d = document.createElement('textarea'); d.innerHTML = s || ''; return d.value; }
 
       // Client-side country name aliases for solo flag matching
       // ==================== COUNTRY AUTOCOMPLETE ====================
