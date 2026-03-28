@@ -663,7 +663,7 @@ When the server "goes offline" after pressing start:
 
 Namespace: `/trivia` on `panel.meduseld.io`. Uses `flask-socketio` with `gevent` async mode. Lobby game state is held in-memory (`trivia_ws.lobby_games` dict); only final results are persisted to DB.
 
-Auth: Client passes `CF_Authorization` cookie value as `token` query parameter on connect. Server decodes the JWT (without signature verification) and looks up the user by `discord_user.id`. Unauthenticated connections are rejected.
+Auth: Client passes `CF_Authorization` cookie value as `token` query parameter on connect. Server decodes the JWT (without signature verification) and looks up the user by `discord_user.id`. If no DB record exists, auto-creates the user from JWT claims (same as `sync-identity`), so users don't need to visit `panel.meduseld.io` first. Unauthenticated connections are rejected.
 
 Module: `app/trivia_ws.py` — all lobby logic is isolated here. `socketio` is initialized in `trivia_ws.py` and attached to the Flask app via `socketio.init_app(app)` in `webserver.py`. The app is started with `socketio.run()` instead of `app.run()`.
 
@@ -730,7 +730,7 @@ Namespace: `/remote` on `health.meduseld.io` (same Flask app as `panel.meduseld.
 
 Module: `app/remote_ws.py` — all signaling logic is isolated here. Event handlers are registered via `register_remote_ws(socketio)` called from `webserver.py`.
 
-Auth: Client passes `CF_Authorization` cookie value as `token` query parameter on connect. Server decodes the JWT (without signature verification) and looks up the user by `discord_user.id`. Unauthenticated connections are rejected.
+Auth: Client passes `CF_Authorization` cookie value as `token` query parameter on connect. Server decodes the JWT (without signature verification) and looks up the user by `discord_user.id`. If no DB record exists, auto-creates the user from JWT claims (same as `sync-identity`), so users don't need to visit `panel.meduseld.io` first. Unauthenticated connections are rejected.
 
 OS-level input injection: When `xdotool` is installed on the server, admin hosts can enable OS Control for their session via the `toggle_os_control` event. When enabled, viewer input events (mouse, keyboard, scroll) are injected into the host OS via `xdotool` in addition to being relayed to the host's browser. Normalized coordinates (0-1) are scaled to screen resolution (cached for 30 seconds via `xdotool getdisplaygeometry`). JS key names are mapped to xdotool key names. JS mouse buttons (0=left, 1=middle, 2=right) are mapped to xdotool buttons (1, 2, 3). `DISPLAY=:0` is set automatically if not in the environment. Requires the server to have an active X display session.
 

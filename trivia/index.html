@@ -282,7 +282,7 @@
 </html>
     <script>
       var HEALTH_BASE = 'https://health.meduseld.io/check';
-      var WS_URL = 'https://panel.meduseld.io';
+      var WS_URL = 'https://health.meduseld.io';
       var socket = null;
       var currentLobby = null;
       var currentUser = null;
@@ -363,7 +363,7 @@
         if (socket && socket.connected) { if (cb) cb(); return; }
         var cfToken = getCfToken();
         if (!cfToken) { showToast('Not authenticated', 'warning'); return; }
-        socket = io(WS_URL + '/trivia', { query: { token: cfToken }, transports: ['websocket','polling'], withCredentials: true });
+        socket = io(WS_URL + '/trivia', { query: { token: cfToken }, transports: ['polling','websocket'], withCredentials: true });
         socket.on('connect', function() {
           console.log('Trivia WS connected');
           if (cb) cb();
