@@ -987,6 +987,18 @@
       // Init
       loadTags();
       loadEntries(false);
+
+      // Expose functions used by inline onclick handlers
+      window.deleteEntry = deleteEntry;
+      window.loadMore = loadMore;
+      window.openLightbox = openLightbox;
+      window.openSubmitModal = openSubmitModal;
+      window.setFilter = setFilter;
+      window.setSort = setSort;
+      window.setTag = setTag;
+      window.submitEntry = submitEntry;
+      window.switchTab = switchTab;
+      window.toggleVote = toggleVote;
     })();
     </script>
   </body>
