@@ -860,6 +860,13 @@ Session hub, DM soundboard, and campaign wiki for D&D sessions. Any authenticate
 - "← Back to Services" button → navigates to `https://services.meduseld.io`
 - Profile widget (top-right, inside header nav bar)
 
+### Next Session Banner
+
+- Displayed above the Roll20 card when an upcoming calendar event contains "D&D" in its title
+- Fetches from `GET https://health.meduseld.io/check/calendar` (same calendar API used by the services page)
+- Shows the first matching event's title and formatted date/time
+- Hidden when no upcoming D&D events exist
+
 ### Roll20 Campaign Card
 
 - Static banner card at the top of the page linking to the Roll20 campaign
