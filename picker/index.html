@@ -853,7 +853,11 @@
         pickerSocket.on('spin_result', function (data) {
           if (isSpinning) return; // Don't interrupt our own spin
           var pick = data.pick;
-          var winnerIdx = data.winner_index || 0;
+          // Find winner by game_id in our local sorted games array
+          var winnerIdx = 0;
+          for (var i = 0; i < games.length; i++) {
+            if (games[i].id === pick.game_id) { winnerIdx = i; break; }
+          }
 
           // If we have games loaded, animate the wheel
           if (games.length > 0) {
