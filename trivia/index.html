@@ -1191,7 +1191,7 @@
       function normalizeCountryName(s) {
         s = s.trim().toLowerCase();
         ['the ', 'republic of ', 'kingdom of ', 'state of '].forEach(function(p) { if (s.indexOf(p) === 0) s = s.substring(p.length); });
-        return s.replace(/[''`]/g, '').replace(/\s+/g, ' ').trim();
+        return s.replace(/['\u2018\u2019`]/g, '').replace(/\s+/g, ' ').trim();
       }
       function checkFlagAnswerClient(submitted, correct) {
         var sub = submitted.trim().toLowerCase();
