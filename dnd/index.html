@@ -754,7 +754,16 @@
       function getCharPortrait(characterName) {
         if (!characterName) return null;
         const firstName = characterName.trim().split(/\s+/)[0].toLowerCase();
-        const portraits = ['draconis', 'drayvn', 'finnan', 'korrak', 'thalmior', 'tharok', 'vael'];
+        const portraits = [
+          'draconis',
+          'drayvn',
+          'elennar',
+          'finnan',
+          'korrak',
+          'thalmior',
+          'tharok',
+          'vael',
+        ];
         if (portraits.includes(firstName)) return firstName + '.png';
         return null;
       }
