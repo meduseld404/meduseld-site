@@ -1144,9 +1144,6 @@
 
         // Resolve viewer name
         if (!cursorViewerNames[fromUserId]) {
-          // Look up from current session viewers
-          var code = currentSessionCode;
-          var session = null;
           // We don't have session data locally, use a fallback
           cursorViewerNames[fromUserId] = 'Viewer ' + fromUserId;
         }
