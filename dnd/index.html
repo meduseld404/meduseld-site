@@ -1258,10 +1258,40 @@
         setupTabs();
         setupCategoryFilters();
 
+        // Load next D&D session from calendar
+        loadNextSession();
+
         // Load data
         loadRoster();
         loadContent();
       });
+
+      async function loadNextSession() {
+        try {
+          const r = await fetch(API + '/calendar?cf_token=' + getCfToken());
+          if (!r.ok) return;
+          const d = await r.json();
+          if (!d.events || !d.events.length) return;
+          const dndEvent = d.events.find((e) => e.title && e.title.toLowerCase().includes('d&d'));
+          if (!dndEvent) return;
+          const date = new Date(dndEvent.event_date);
+          const opts = {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+          };
+          document.getElementById('next-session-title').textContent = dndEvent.title;
+          document.getElementById('next-session-date').textContent = date.toLocaleDateString(
+            'en-US',
+            opts
+          );
+          document.getElementById('next-session-banner').style.display = '';
+        } catch (e) {
+          console.error('Failed to load next session:', e);
+        }
+      }
     </script>
   </body>
 </html>
