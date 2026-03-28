@@ -813,6 +813,16 @@
         var preview = document.getElementById('cover-preview');
         var img = document.getElementById('cover-preview-img');
         if (url) {
+          try {
+            var parsed = new URL(url);
+            if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+              preview.style.display = 'none';
+              return;
+            }
+          } catch (e) {
+            preview.style.display = 'none';
+            return;
+          }
           img.src = url;
           preview.style.display = '';
         } else {
