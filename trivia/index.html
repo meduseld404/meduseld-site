@@ -348,11 +348,11 @@
           html += '<div class="podium-card '+cls[i]+'" style="min-width:160px;max-width:200px"><div class="podium-rank">'+medals[i]+'</div>'+av;
           html += '<div style="color:#e4d9b5;font-weight:600;font-size:0.95rem">'+esc(e.display_name)+'</div>';
           html += '<div style="color:#e6c65c;font-size:1.2rem;font-weight:700">'+e.wins+' win'+(e.wins!==1?'s':'')+'</div>';
-          html += '<div class="text-muted" style="font-size:0.75rem">'+e.total_score+'/'+e.total_questions+' correct</div></div>';
+          html += '</div>';
         });
         if (lb.length > 3) {
           html += '<div class="w-100 mt-3"><table class="table table-sm table-dark mb-0" style="max-width:500px;margin:0 auto"><tbody>';
-          for (var i=3;i<lb.length;i++) { var e=lb[i]; html += '<tr><td class="text-muted">#'+(i+1)+'</td><td>'+esc(e.display_name)+'</td><td style="color:#e6c65c">'+e.wins+' win'+(e.wins!==1?'s':'')+'</td><td class="text-muted">'+e.total_score+'/'+e.total_questions+'</td></tr>'; }
+          for (var i=3;i<lb.length;i++) { var e=lb[i]; html += '<tr><td class="text-muted">#'+(i+1)+'</td><td>'+esc(e.display_name)+'</td><td style="color:#e6c65c">'+e.wins+' win'+(e.wins!==1?'s':'')+'</td></tr>'; }
           html += '</tbody></table></div>';
         }
         c.innerHTML = html;
