@@ -19,6 +19,12 @@
     />
     <link rel="stylesheet" href="https://meduseld.io/static/style.css" />
     <style>
+      :root {
+        --dnd-accent: #460365;
+        --dnd-accent-light: #7b2fa0;
+        --dnd-accent-glow: rgba(70, 3, 101, 0.3);
+        --dnd-accent-subtle: rgba(70, 3, 101, 0.1);
+      }
       .dnd-section {
         margin-bottom: 2rem;
       }
@@ -29,7 +35,7 @@
           transform 0.15s;
       }
       .link-card:hover {
-        border-color: #e6c65c !important;
+        border-color: var(--dnd-accent-light) !important;
         transform: translateY(-2px);
       }
       .char-card {
@@ -39,13 +45,13 @@
         width: 48px;
         height: 48px;
         border-radius: 50%;
-        border: 2px solid #e6c65c;
+        border: 2px solid var(--dnd-accent-light);
       }
       .char-card .char-portrait {
         width: 80px;
         height: 80px;
         border-radius: 50%;
-        border: 2px solid #e6c65c;
+        border: 2px solid var(--dnd-accent-light);
         object-fit: cover;
         object-position: top;
       }
@@ -57,8 +63,8 @@
         position: relative;
       }
       .sound-btn.playing {
-        border-color: #e6c65c !important;
-        box-shadow: 0 0 12px rgba(230, 198, 92, 0.3);
+        border-color: var(--dnd-accent-light) !important;
+        box-shadow: 0 0 12px var(--dnd-accent-glow);
       }
       .sound-btn .sound-type-badge {
         position: absolute;
@@ -71,8 +77,9 @@
         font-size: 0.85rem;
       }
       .wiki-nav-btn.active {
-        background: #e6c65c !important;
-        color: #0b1f14 !important;
+        background: var(--dnd-accent) !important;
+        color: #fff !important;
+        border-color: var(--dnd-accent) !important;
         font-weight: 600;
       }
       .session-card,
@@ -82,7 +89,7 @@
       }
       .session-card:hover,
       .wiki-card:hover {
-        border-color: #e6c65c !important;
+        border-color: var(--dnd-accent-light) !important;
       }
       .tag-badge {
         font-size: 0.7rem;
@@ -90,34 +97,59 @@
         padding: 2px 8px;
       }
       .latest-pin {
-        border: 2px solid #e6c65c !important;
-        background: rgba(230, 198, 92, 0.05) !important;
+        border: 2px solid var(--dnd-accent-light) !important;
+        background: var(--dnd-accent-subtle) !important;
       }
       .volume-slider {
         width: 80px;
-        accent-color: #e6c65c;
+        accent-color: var(--dnd-accent-light);
       }
       .master-volume {
         width: 120px;
-        accent-color: #e6c65c;
+        accent-color: var(--dnd-accent-light);
       }
       .search-input {
-        background: rgba(20, 36, 26, 0.85);
+        background: rgba(20, 16, 26, 0.85);
         border: 1px solid rgba(108, 117, 125, 0.3);
         color: #e4d9b5;
       }
       .search-input:focus {
-        border-color: #e6c65c;
-        box-shadow: 0 0 0 0.2rem rgba(230, 198, 92, 0.15);
+        border-color: var(--dnd-accent-light);
+        box-shadow: 0 0 0 0.2rem rgba(70, 3, 101, 0.2);
         color: #e4d9b5;
-        background: rgba(20, 36, 26, 0.95);
+        background: rgba(20, 16, 26, 0.95);
       }
       .tab-btn {
         border-radius: 8px 8px 0 0;
       }
       .tab-btn.active {
-        background: rgba(230, 198, 92, 0.15) !important;
-        border-bottom: 2px solid #e6c65c;
+        background: var(--dnd-accent-subtle) !important;
+        border-bottom: 2px solid var(--dnd-accent-light);
+      }
+      /* Override Bootstrap warning classes for this page */
+      .btn-outline-warning {
+        color: var(--dnd-accent-light) !important;
+        border-color: var(--dnd-accent-light) !important;
+      }
+      .btn-outline-warning:hover {
+        background: var(--dnd-accent) !important;
+        border-color: var(--dnd-accent) !important;
+        color: #fff !important;
+      }
+      .btn-warning {
+        background: var(--dnd-accent) !important;
+        border-color: var(--dnd-accent) !important;
+        color: #fff !important;
+      }
+      .btn-warning:hover {
+        background: var(--dnd-accent-light) !important;
+        border-color: var(--dnd-accent-light) !important;
+      }
+      .border-warning {
+        border-color: var(--dnd-accent) !important;
+      }
+      .card-header[style*='border-bottom'] {
+        border-bottom-color: var(--dnd-accent-light) !important;
       }
     </style>
   </head>
@@ -135,7 +167,7 @@
     <div class="container py-4">
       <div class="text-center mb-4">
         <img src="logo.png" alt="D&D Companion" style="max-height: 120px; margin-bottom: 10px" />
-        <h1 style="color: #e6c65c; font-weight: 600" class="mt-2">D&D Companion</h1>
+        <h1 style="color: #fff; font-weight: 600" class="mt-2">D&D Companion</h1>
         <p style="opacity: 0.8">Session hub, soundboard & campaign wiki</p>
       </div>
 
@@ -144,9 +176,9 @@
         <div class="card bg-dark border-warning">
           <div
             class="card-header d-flex justify-content-between align-items-center"
-            style="background-color: rgba(230, 198, 92, 0.1); border-bottom: 2px solid #e6c65c"
+            style="background-color: rgba(70, 3, 101, 0.15); border-bottom: 2px solid #7b2fa0"
           >
-            <h5 class="mb-0" style="color: #e6c65c">
+            <h5 class="mb-0" style="color: #7b2fa0">
               <i class="bi bi-signpost-2 me-2"></i>
               Session Links
             </h5>
@@ -175,9 +207,9 @@
         <div class="card bg-dark border-warning">
           <div
             class="card-header d-flex justify-content-between align-items-center"
-            style="background-color: rgba(230, 198, 92, 0.1); border-bottom: 2px solid #e6c65c"
+            style="background-color: rgba(70, 3, 101, 0.15); border-bottom: 2px solid #7b2fa0"
           >
-            <h5 class="mb-0" style="color: #e6c65c">
+            <h5 class="mb-0" style="color: #7b2fa0">
               <i class="bi bi-people me-2"></i>
               Party Roster
             </h5>
@@ -206,15 +238,15 @@
         <div class="card bg-dark border-warning">
           <div
             class="card-header d-flex justify-content-between align-items-center"
-            style="background-color: rgba(230, 198, 92, 0.1); border-bottom: 2px solid #e6c65c"
+            style="background-color: rgba(70, 3, 101, 0.15); border-bottom: 2px solid #7b2fa0"
           >
-            <h5 class="mb-0" style="color: #e6c65c">
+            <h5 class="mb-0" style="color: #7b2fa0">
               <i class="bi bi-music-note-list me-2"></i>
               DM Soundboard
             </h5>
             <div class="d-flex align-items-center gap-3">
               <div class="d-flex align-items-center gap-2">
-                <i class="bi bi-volume-up" style="color: #e6c65c"></i>
+                <i class="bi bi-volume-up" style="color: #7b2fa0"></i>
                 <input
                   type="range"
                   class="master-volume"
@@ -251,10 +283,10 @@
         <div class="card bg-dark border-warning">
           <div
             class="card-header"
-            style="background-color: rgba(230, 198, 92, 0.1); border-bottom: 2px solid #e6c65c"
+            style="background-color: rgba(70, 3, 101, 0.15); border-bottom: 2px solid #7b2fa0"
           >
             <div class="d-flex justify-content-between align-items-center mb-2">
-              <h5 class="mb-0" style="color: #e6c65c">
+              <h5 class="mb-0" style="color: #7b2fa0">
                 <i class="bi bi-journal-text me-2"></i>
                 Campaign Wiki
               </h5>
@@ -311,7 +343,7 @@
       <div class="modal-dialog">
         <div class="modal-content bg-dark text-light border-warning">
           <div class="modal-header border-secondary">
-            <h5 class="modal-title" style="color: #e6c65c" id="linkModalTitle">Add Link</h5>
+            <h5 class="modal-title" style="color: #7b2fa0" id="linkModalTitle">Add Link</h5>
             <button
               type="button"
               class="btn-close btn-close-white"
@@ -387,7 +419,7 @@
       <div class="modal-dialog">
         <div class="modal-content bg-dark text-light border-warning">
           <div class="modal-header border-secondary">
-            <h5 class="modal-title" style="color: #e6c65c">My Character</h5>
+            <h5 class="modal-title" style="color: #7b2fa0">My Character</h5>
             <button
               type="button"
               class="btn-close btn-close-white"
@@ -455,7 +487,7 @@
       <div class="modal-dialog">
         <div class="modal-content bg-dark text-light border-warning">
           <div class="modal-header border-secondary">
-            <h5 class="modal-title" style="color: #e6c65c">Upload Sound</h5>
+            <h5 class="modal-title" style="color: #7b2fa0">Upload Sound</h5>
             <button
               type="button"
               class="btn-close btn-close-white"
@@ -512,7 +544,7 @@
       <div class="modal-dialog modal-lg">
         <div class="modal-content bg-dark text-light border-warning">
           <div class="modal-header border-secondary">
-            <h5 class="modal-title" style="color: #e6c65c" id="entryModalTitle">New Entry</h5>
+            <h5 class="modal-title" style="color: #7b2fa0" id="entryModalTitle">New Entry</h5>
             <button
               type="button"
               class="btn-close btn-close-white"
@@ -635,9 +667,9 @@
           .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
           .replace(/\*(.+?)\*/g, '<em>$1</em>')
           .replace(/`(.+?)`/g, '<code>$1</code>')
-          .replace(/^### (.+)$/gm, '<h5 class="mt-3" style="color:#e6c65c">$1</h5>')
-          .replace(/^## (.+)$/gm, '<h4 class="mt-3" style="color:#e6c65c">$1</h4>')
-          .replace(/^# (.+)$/gm, '<h3 class="mt-3" style="color:#e6c65c">$1</h3>')
+          .replace(/^### (.+)$/gm, '<h5 class="mt-3" style="color:#7b2fa0">$1</h5>')
+          .replace(/^## (.+)$/gm, '<h4 class="mt-3" style="color:#7b2fa0">$1</h4>')
+          .replace(/^# (.+)$/gm, '<h3 class="mt-3" style="color:#7b2fa0">$1</h3>')
           .replace(/^- (.+)$/gm, '<li>$1</li>')
           .replace(/\n/g, '<br>');
       }
@@ -663,7 +695,7 @@
                 <div class="card bg-dark border-secondary link-card h-100 text-center" style="overflow:hidden">
                   ${l.image_url ? '<img src="' + l.image_url + '" style="width:100%;height:100px;object-fit:cover" alt="">' : ''}
                   <div class="p-3">
-                    ${!l.image_url ? '<i class="bi ' + l.icon + '" style="font-size:2rem;color:#e6c65c"></i>' : ''}
+                    ${!l.image_url ? '<i class="bi ' + l.icon + '" style="font-size:2rem;color:#7b2fa0"></i>' : ''}
                     <div class="${l.image_url ? '' : 'mt-2 '}text-light fw-semibold">${l.label}</div>
                     ${l.description ? '<div class="text-secondary" style="font-size:0.75rem">' + l.description + '</div>' : ''}
                     ${isAdmin ? '<div class="mt-2"><button class="btn btn-sm btn-outline-secondary me-1" onclick="event.preventDefault();editLinkById(' + l.id + ')"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-outline-danger" onclick="event.preventDefault();deleteLink(' + l.id + ')"><i class="bi bi-trash"></i></button></div>' : ''}
@@ -792,7 +824,7 @@
                 <div class="d-flex justify-content-center mb-2">
                   ${avatarHtml}
                 </div>
-                <div class="fw-semibold" style="color:#e6c65c">${ch.character_name}</div>
+                <div class="fw-semibold" style="color:#7b2fa0">${ch.character_name}</div>
                 <div class="text-secondary" style="font-size:0.8rem">${ch.display_name || ''}</div>
                 <div class="mt-1" style="font-size:0.85rem">${ch.race || '?'} ${ch.class_name || '?'} · Lv ${ch.level || 1}</div>
                 ${ch.beyond_url ? '<a href="' + ch.beyond_url + '" target="_blank" class="btn btn-sm btn-outline-warning mt-2">View Sheet</a>' : ''}
@@ -1007,7 +1039,7 @@
                   <div class="d-flex justify-content-between align-items-start">
                     <div>
                       ${i === 0 ? '<span class="badge bg-warning text-dark me-2" style="font-size:0.7rem">LATEST</span>' : ''}
-                      <span class="fw-semibold" style="color:#e6c65c;font-size:1.1rem">${s.title}</span>
+                      <span class="fw-semibold" style="color:#7b2fa0;font-size:1.1rem">${s.title}</span>
                       <span class="text-secondary ms-2" style="font-size:0.8rem">${s.session_date || ''}</span>
                     </div>
                     <div class="d-flex gap-1">
@@ -1064,7 +1096,7 @@
                   <div class="d-flex justify-content-between align-items-start">
                     <div>
                       <span class="badge bg-secondary tag-badge me-2">${p.category}</span>
-                      <span class="fw-semibold" style="color:#e6c65c;font-size:1.1rem">${p.title}</span>
+                      <span class="fw-semibold" style="color:#7b2fa0;font-size:1.1rem">${p.title}</span>
                     </div>
                     <div class="d-flex gap-1">
                       <button class="btn btn-sm btn-outline-secondary" onclick="editEntry('wiki',${p.id})"><i class="bi bi-pencil"></i></button>
@@ -1211,7 +1243,7 @@
             <div class="card bg-dark border-secondary mb-3">
               <div class="card-body">
                 <span class="badge ${item.type === 'session' ? 'bg-warning text-dark' : 'bg-info'} me-2">${item.type === 'session' ? 'Session' : 'Wiki'}</span>
-                <span class="fw-semibold" style="color:#e6c65c">${item.title}</span>
+                <span class="fw-semibold" style="color:#7b2fa0">${item.title}</span>
                 ${item.category ? '<span class="badge bg-secondary tag-badge ms-2">' + item.category + '</span>' : ''}
                 ${item.tags ? '<span class="text-secondary ms-2" style="font-size:0.75rem">' + item.tags + '</span>' : ''}
                 <div class="mt-2 text-secondary" style="font-size:0.85rem">${(item.body || '').substring(0, 200)}...</div>
