@@ -1495,11 +1495,12 @@
           try {
             var redirectUrl = new URL(loginRedirect);
             if (
-              redirectUrl.hostname.endsWith('.meduseld.io') ||
-              redirectUrl.hostname === 'meduseld.io'
+              (redirectUrl.hostname.endsWith('.meduseld.io') ||
+                redirectUrl.hostname === 'meduseld.io') &&
+              redirectUrl.protocol === 'https:'
             ) {
               window.history.replaceState({}, '', window.location.pathname);
-              window.location.href = loginRedirect;
+              window.location.href = redirectUrl.href;
               return;
             }
           } catch (e) {
