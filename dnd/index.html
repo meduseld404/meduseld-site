@@ -213,35 +213,46 @@
         <p style="opacity: 0.8">Session hub, soundboard & campaign wiki</p>
       </div>
 
-      <!-- Session Links -->
+      <!-- Roll20 Campaign -->
       <div class="dnd-section">
-        <div class="card bg-dark border-warning">
+        <a
+          href="https://app.roll20.net/campaigns/details/20842428/the-beginning"
+          target="_blank"
+          class="text-decoration-none"
+        >
           <div
-            class="card-header d-flex justify-content-between align-items-center"
-            style="background-color: rgba(255, 255, 255, 0.08); border-bottom: 2px solid rgba(255,255,255,0.2)"
+            class="card border-0"
+            style="
+              background: var(--dnd-bg);
+              border-radius: 12px;
+              overflow: hidden;
+              transition:
+                transform 0.15s,
+                box-shadow 0.15s;
+              cursor: pointer;
+            "
+            onmouseover="
+              this.style.transform = 'translateY(-3px)';
+              this.style.boxShadow = '0 8px 24px rgba(0,0,0,0.3)';
+            "
+            onmouseout="
+              this.style.transform = '';
+              this.style.boxShadow = '';
+            "
           >
-            <h5 class="mb-0" style="color: #fff">
-              <i class="bi bi-signpost-2 me-2"></i>
-              Session Links
-            </h5>
-            <button
-              class="btn btn-sm btn-outline-warning"
-              id="add-link-btn"
-              style="display: none"
-              data-bs-toggle="modal"
-              data-bs-target="#linkModal"
-            >
-              <i class="bi bi-plus-lg"></i>
-            </button>
-          </div>
-          <div class="card-body">
-            <div id="links-container" class="row g-3">
-              <div class="text-center text-secondary py-3">
-                <div class="spinner-border spinner-border-sm" role="status"></div>
+            <img
+              src="banner.png"
+              alt="The Beginning"
+              style="width: 100%; height: 180px; object-fit: cover; object-position: center"
+            />
+            <div class="p-3 text-center">
+              <div class="fw-semibold text-white" style="font-size: 1.1rem">
+                Open Roll20 Campaign
               </div>
+              <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.8rem">The Beginning</div>
             </div>
           </div>
-        </div>
+        </a>
       </div>
 
       <!-- Party Roster -->
@@ -249,7 +260,10 @@
         <div class="card bg-dark border-warning">
           <div
             class="card-header d-flex justify-content-between align-items-center"
-            style="background-color: rgba(255, 255, 255, 0.08); border-bottom: 2px solid rgba(255,255,255,0.2)"
+            style="
+              background-color: rgba(255, 255, 255, 0.08);
+              border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            "
           >
             <h5 class="mb-0" style="color: #fff">
               <i class="bi bi-people me-2"></i>
@@ -280,7 +294,10 @@
         <div class="card bg-dark border-warning">
           <div
             class="card-header d-flex justify-content-between align-items-center"
-            style="background-color: rgba(255, 255, 255, 0.08); border-bottom: 2px solid rgba(255,255,255,0.2)"
+            style="
+              background-color: rgba(255, 255, 255, 0.08);
+              border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            "
           >
             <h5 class="mb-0" style="color: #fff">
               <i class="bi bi-music-note-list me-2"></i>
@@ -325,7 +342,10 @@
         <div class="card bg-dark border-warning">
           <div
             class="card-header"
-            style="background-color: rgba(255, 255, 255, 0.08); border-bottom: 2px solid rgba(255,255,255,0.2)"
+            style="
+              background-color: rgba(255, 255, 255, 0.08);
+              border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            "
           >
             <div class="d-flex justify-content-between align-items-center mb-2">
               <h5 class="mb-0" style="color: #fff">
@@ -375,82 +395,6 @@
                 <div class="spinner-border spinner-border-sm" role="status"></div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Link Modal -->
-    <div class="modal fade" id="linkModal" tabindex="-1">
-      <div class="modal-dialog">
-        <div class="modal-content bg-dark text-light border-warning">
-          <div class="modal-header border-secondary">
-            <h5 class="modal-title" style="color: #fff" id="linkModalTitle">Add Link</h5>
-            <button
-              type="button"
-              class="btn-close btn-close-white"
-              data-bs-dismiss="modal"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <input type="hidden" id="link-edit-id" />
-            <div class="mb-3">
-              <label class="form-label">Label</label>
-              <input
-                type="text"
-                class="form-control bg-dark text-light border-secondary"
-                id="link-label"
-                required
-              />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">URL</label>
-              <input
-                type="url"
-                class="form-control bg-dark text-light border-secondary"
-                id="link-url"
-                required
-              />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Icon (Bootstrap Icons class)</label>
-              <input
-                type="text"
-                class="form-control bg-dark text-light border-secondary"
-                id="link-icon"
-                value="bi-link-45deg"
-                placeholder="bi-link-45deg"
-              />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Image URL (optional, overrides icon)</label>
-              <input
-                type="url"
-                class="form-control bg-dark text-light border-secondary"
-                id="link-image-url"
-                placeholder="https://example.com/image.png"
-              />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Description (optional)</label>
-              <input
-                type="text"
-                class="form-control bg-dark text-light border-secondary"
-                id="link-desc"
-              />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Sort Order</label>
-              <input
-                type="number"
-                class="form-control bg-dark text-light border-secondary"
-                id="link-sort"
-                value="0"
-              />
-            </div>
-          </div>
-          <div class="modal-footer border-secondary">
-            <button class="btn btn-warning text-dark" id="link-save-btn">Save</button>
           </div>
         </div>
       </div>
@@ -717,113 +661,6 @@
       }
 
       // ===== LINKS =====
-      async function loadLinks() {
-        try {
-          const r = await fetch(API + '/dnd-links');
-          const d = await r.json();
-          const c = document.getElementById('links-container');
-          if (!d.links || !d.links.length) {
-            c.innerHTML =
-              '<div class="text-center text-secondary py-3">No session links yet. ' +
-              (isAdmin ? 'Click + to add one.' : '') +
-              '</div>';
-            return;
-          }
-          c.innerHTML = d.links
-            .map(
-              (l) => `
-            <div class="col-6 col-md-4 col-lg-3">
-              <a href="${l.url}" target="_blank" class="text-decoration-none">
-                <div class="card bg-dark border-secondary link-card h-100 text-center" style="overflow:hidden">
-                  ${l.image_url ? '<img src="' + l.image_url + '" style="width:100%;height:100px;object-fit:cover" alt="">' : ''}
-                  <div class="p-3">
-                    ${!l.image_url ? '<i class="bi ' + l.icon + '" style="font-size:2rem;color:#fff"></i>' : ''}
-                    <div class="${l.image_url ? '' : 'mt-2 '}text-light fw-semibold">${l.label}</div>
-                    ${l.description ? '<div class="text-secondary" style="font-size:0.75rem">' + l.description + '</div>' : ''}
-                    ${isAdmin ? '<div class="mt-2"><button class="btn btn-sm btn-outline-secondary me-1" onclick="event.preventDefault();editLinkById(' + l.id + ')"><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-outline-danger" onclick="event.preventDefault();deleteLink(' + l.id + ')"><i class="bi bi-trash"></i></button></div>' : ''}
-                  </div>
-                </div>
-              </a>
-            </div>`
-            )
-            .join('');
-          // Store links data for edit
-          window._dndLinks = d.links;
-        } catch (e) {
-          console.error('Failed to load links:', e);
-        }
-      }
-
-      function editLinkById(id) {
-        const l = (window._dndLinks || []).find((x) => x.id === id);
-        if (!l) return;
-        document.getElementById('link-edit-id').value = l.id;
-        document.getElementById('link-label').value = l.label || '';
-        document.getElementById('link-url').value = l.url || '';
-        document.getElementById('link-icon').value = l.icon || 'bi-link-45deg';
-        document.getElementById('link-image-url').value = l.image_url || '';
-        document.getElementById('link-desc').value = l.description || '';
-        document.getElementById('link-sort').value = l.sort_order || 0;
-        document.getElementById('linkModalTitle').textContent = 'Edit Link';
-        bootstrap.Modal.getOrCreateInstance(document.getElementById('linkModal')).show();
-      }
-
-      function editLink(id, label, url, icon, desc, sort) {
-        document.getElementById('link-edit-id').value = id || '';
-        document.getElementById('link-label').value = label || '';
-        document.getElementById('link-url').value = url || '';
-        document.getElementById('link-icon').value = icon || 'bi-link-45deg';
-        document.getElementById('link-image-url').value = '';
-        document.getElementById('link-desc').value = desc || '';
-        document.getElementById('link-sort').value = sort || 0;
-        document.getElementById('linkModalTitle').textContent = id ? 'Edit Link' : 'Add Link';
-        bootstrap.Modal.getOrCreateInstance(document.getElementById('linkModal')).show();
-      }
-
-      async function saveLink() {
-        const id = document.getElementById('link-edit-id').value;
-        const body = {
-          label: document.getElementById('link-label').value,
-          url: document.getElementById('link-url').value,
-          icon: document.getElementById('link-icon').value,
-          image_url: document.getElementById('link-image-url').value,
-          description: document.getElementById('link-desc').value,
-          sort_order: parseInt(document.getElementById('link-sort').value) || 0,
-          _cf_token: getCfToken(),
-        };
-        try {
-          const url = id ? API + '/dnd-links-' + id : API + '/dnd-links';
-          const r = await fetch(url, {
-            method: id ? 'PUT' : 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body),
-          });
-          if (!r.ok) {
-            const e = await r.json();
-            showToast(e.error || 'Failed', 'danger');
-            return;
-          }
-          bootstrap.Modal.getInstance(document.getElementById('linkModal')).hide();
-          loadLinks();
-          showToast(id ? 'Link updated' : 'Link added');
-        } catch (e) {
-          console.error('Failed to save link:', e);
-          showToast('Save failed', 'danger');
-        }
-      }
-
-      async function deleteLink(id) {
-        if (!confirm('Delete this link?')) return;
-        try {
-          await fetch(API + '/dnd-links-' + id + '?cf_token=' + getCfToken(), { method: 'DELETE' });
-          loadLinks();
-          showToast('Link deleted');
-        } catch (e) {
-          console.error('Failed to delete link:', e);
-          showToast('Delete failed', 'danger');
-        }
-      }
-
       // ===== PARTY ROSTER =====
       function getCharPortrait(characterName) {
         if (!characterName) return null;
@@ -1385,13 +1222,11 @@
 
         // Show admin-only elements
         if (isAdmin) {
-          document.getElementById('add-link-btn').style.display = '';
           document.getElementById('soundboard-section').style.display = '';
           loadSounds();
         }
 
         // Event listeners
-        document.getElementById('link-save-btn').addEventListener('click', saveLink);
         document.getElementById('char-save-btn').addEventListener('click', saveCharacter);
         document.getElementById('sound-save-btn').addEventListener('click', uploadSound);
         document.getElementById('entry-save-btn').addEventListener('click', saveEntry);
@@ -1421,7 +1256,6 @@
         setupCategoryFilters();
 
         // Load data
-        loadLinks();
         loadRoster();
         loadContent();
       });
