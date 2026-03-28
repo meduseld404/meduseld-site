@@ -146,6 +146,10 @@ Visible to all users (always shown, displayed below admin links):
 
 When a non-admin user is redirected from an admin-only page (SSH, System Monitor, Admin), the services page shows a warning toast banner: "[Page Name] is not available for your account type." Auto-dismisses after 8 seconds. The `?restricted=` URL parameter is cleaned after display. Built with DOM APIs (not innerHTML) to prevent XSS.
 
+### Login Redirect
+
+Pages not behind Cloudflare Access (trivia, picker, remote, fame, profile) call `MeduseldAuth.requireAuth()` on load. If no `CF_Authorization` cookie is found, the user is redirected to `services.meduseld.io?login_redirect=<encoded_url>`. After the Cloudflare Access login completes, the services page reads the `login_redirect` param, validates the URL is on `*.meduseld.io`, and redirects back to the original page. The param is cleaned from the URL after processing.
+
 ---
 
 ## system.meduseld.io — System Monitor (Admin Only)

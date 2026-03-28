@@ -418,6 +418,13 @@ sudo -u postgres psql -d meduseld_db -c "SELECT discord_id, username, avatar_has
 - The `Cf-Access-Jwt-Assertion` header is only added by Cloudflare on direct requests to the protected origin, not on JS fetch calls
 - Solution: `authenticate_request()` falls back to the `CF_Authorization` cookie, which Cloudflare Access sets on `.meduseld.io` (all subdomains), so it IS available on cross-origin requests
 - The `/api/sync-identity` endpoint uses `get_or_create` to ensure users are created even on cross-origin calls from static pages
+
+### Auth Redirect for Non-Access Pages
+
+- Some static pages (trivia, picker, remote, fame, profile) are not behind Cloudflare Access but require authentication for interactive features
+- These pages call `MeduseldAuth.requireAuth()` on load — if no `CF_Authorization` cookie is found, the user is redirected to `services.meduseld.io?login_redirect=<original_url>` to trigger the Cloudflare Access login flow
+- After login, the services page reads the `login_redirect` query param and redirects back to the original page (validated to `*.meduseld.io` only to prevent open redirects)
+- This ensures users get the `CF_Authorization` cookie (set on `.meduseld.io`) before attempting to use auth-dependent features like WebSocket connections or API calls
 - CORS is configured to allow `GET, POST, PUT, DELETE, OPTIONS` with credentials for `*.meduseld.io` origins
 
 ### Important Cloudflare Access Quirks
@@ -431,7 +438,7 @@ sudo -u postgres psql -d meduseld_db -c "SELECT discord_id, username, avatar_has
 ### Auth Files
 
 - `meduseld/app/webserver.py` — `authenticate_request()` middleware, `_authenticate_from_cookie()` helper (for public-host routes that need auth; reads CF_Authorization cookie, X-CF-Authorization header, cf_token query param, \_cf_token in JSON body, or \_cf_token in form data), `@require_auth` and `@require_role` decorators, `/api/me`, `/api/sync-identity`
-- `meduseld-site/static/auth.js` — Client-side auth: `MeduseldAuth.getUser()`, `.isAuthenticated()`, `.getRole()`, `.hasRole()`, `.syncUser()`
+- `meduseld-site/static/auth.js` — Client-side auth: `MeduseldAuth.getUser()`, `.isAuthenticated()`, `.getRole()`, `.hasRole()`, `.syncUser()`, `.requireAuth()`, `.renderProfile()`
 - `herugrim/worker.js` — Discord OIDC bridge worker
 
 ### Role-Based Access Control
