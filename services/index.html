@@ -333,17 +333,33 @@
         </div>
         <!-- Game Wiki -->
         <div class="col-md-6 col-lg-4">
-          <div class="card h-100 text-white bg-dark border-secondary disabled-card">
+          <div class="card h-100 text-white bg-dark border-warning service-card">
             <div class="card-body d-flex flex-column text-center p-4">
-              <div class="mb-3"><i class="bi bi-book" style="font-size: 3rem"></i></div>
-              <h3 class="card-title mb-3 text-secondary" id="wiki-title">Game Wiki</h3>
+              <div class="mb-3">
+                <i class="bi bi-book" style="font-size: 3rem; color: #e6c65c"></i>
+              </div>
+              <h3 class="card-title mb-3" style="color: #e6c65c" id="wiki-title">Game Wiki</h3>
+              <div class="mb-2">
+                <span id="wiki-status-indicator" class="badge bg-secondary">
+                  <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                  Checking...
+                </span>
+              </div>
               <p
                 class="card-text flex-grow-1 d-flex align-items-center justify-content-center"
                 id="wiki-description"
               >
                 Community wiki with guides, tips, and information for the current game.
               </p>
-              <button class="btn btn-secondary btn-lg" disabled>Coming Soon</button>
+              <a
+                id="wiki-button"
+                href="https://wiki.meduseld.io"
+                class="btn btn-secondary btn-lg w-100"
+                disabled
+              >
+                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                Checking Status...
+              </a>
             </div>
           </div>
         </div>
@@ -409,14 +425,20 @@
         </div>
         <!-- D&D Companion -->
         <div class="col-md-6 col-lg-4">
-          <div class="card h-100 text-white bg-dark border-secondary disabled-card">
+          <div class="card h-100 text-white bg-dark border-warning service-card">
             <div class="card-body d-flex flex-column text-center p-4">
-              <div class="mb-3"><i class="bi bi-dice-6" style="font-size: 3rem"></i></div>
-              <h3 class="card-title mb-3 text-secondary">D&D Companion</h3>
+              <div class="mb-3">
+                <i class="bi bi-dice-6" style="font-size: 3rem; color: #e6c65c"></i>
+              </div>
+              <h3 class="card-title mb-3" style="color: #e6c65c">D&D Companion</h3>
               <p class="card-text flex-grow-1 d-flex align-items-center justify-content-center">
                 Session hub, DM soundboard, and campaign wiki for our Roll20 adventures.
               </p>
-              <button class="btn btn-secondary btn-lg" disabled>Coming Soon</button>
+              <div class="mt-auto">
+                <a href="https://dnd.meduseld.io" class="btn btn-warning text-dark btn-lg w-100">
+                  Open D&D Companion
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -1137,6 +1159,63 @@
           updatePanelStatus({ status: 'error', color: 'red', message: 'Health check failed' });
 
           updateJellyfinStatus({ status: 'error', color: 'red', message: 'Health check failed' });
+        }
+        // Wiki status check — separate from Cloudflare Worker, checks via health proxy
+        checkWikiStatus();
+      }
+      async function checkWikiStatus() {
+        try {
+          const resp = await fetch('https://health.meduseld.io/check/wiki-health?t=' + Date.now(), {
+            method: 'GET',
+            mode: 'cors',
+            credentials: 'omit',
+          });
+          if (resp.ok) {
+            const data = await resp.json();
+            if (data.status === 'ok') {
+              updateWikiStatus({ color: 'green', pages: data.pages, last_sync: data.last_sync });
+            } else {
+              updateWikiStatus({ color: 'red' });
+            }
+          } else {
+            updateWikiStatus({ color: 'red' });
+          }
+        } catch (e) {
+          console.error('Wiki health check failed:', e);
+          updateWikiStatus({ color: 'red' });
+        }
+      }
+      function updateWikiStatus(data) {
+        const button = document.getElementById('wiki-button');
+        const indicator = document.getElementById('wiki-status-indicator');
+        if (data.color === 'green') {
+          button.innerHTML = 'Open ' + CONFIG.gameName + ' Wiki';
+          button.classList.remove('btn-secondary', 'btn-danger', 'btn-disabled-link');
+          button.classList.add('btn-warning');
+          button.removeAttribute('disabled');
+          button.href = CONFIG.wikiUrl;
+          button.style.cursor = '';
+          button.onclick = null;
+          let statusText = 'Online';
+          if (data.pages) statusText += ' · ' + data.pages + ' pages';
+          indicator.innerHTML =
+            '<i class="bi bi-circle-fill text-success status-online me-1"></i>' + statusText;
+          indicator.classList.remove('bg-secondary', 'bg-danger');
+          indicator.classList.add('bg-success');
+        } else {
+          button.innerHTML = 'Wiki Offline';
+          button.classList.remove('btn-secondary', 'btn-warning');
+          button.classList.add('btn-danger', 'btn-disabled-link');
+          button.setAttribute('disabled', 'true');
+          button.href = '#';
+          button.style.cursor = 'not-allowed';
+          button.onclick = function (e) {
+            e.preventDefault();
+            return false;
+          };
+          indicator.innerHTML = '<i class="bi bi-circle-fill text-danger me-1"></i>Offline';
+          indicator.classList.remove('bg-secondary', 'bg-success');
+          indicator.classList.add('bg-danger');
         }
       }
       function updatePanelStatus(data) {
