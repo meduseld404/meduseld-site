@@ -277,6 +277,7 @@
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script src="https://meduseld.io/static/auth.js"></script>
     <script>
+    (function() {
       var HEALTH_BASE = 'https://health.meduseld.io/check';
       var games = [];
       var currentPick = null;
@@ -908,6 +909,7 @@
       loadCurrentPick();
       loadGames();
       loadHistory();
+    })();
     </script>
   </body>
 </html>

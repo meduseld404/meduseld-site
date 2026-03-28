@@ -144,155 +144,159 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://meduseld.io/static/auth.js"></script>
     <script>
-      var HEALTH_BASE = 'https://health.meduseld.io/check';
-      document.getElementById('copyright-year').textContent = new Date().getFullYear();
+      (function () {
+        var HEALTH_BASE = 'https://health.meduseld.io/check';
+        document.getElementById('copyright-year').textContent = new Date().getFullYear();
 
-      if (typeof MeduseldAuth !== 'undefined') {
-        if (!MeduseldAuth.requireAuth()) return; // Redirect to login if no cookie
-        MeduseldAuth.renderProfile('profile-container');
-        MeduseldAuth.syncUser().then(function () {
+        if (typeof MeduseldAuth !== 'undefined') {
+          if (!MeduseldAuth.requireAuth()) return; // Redirect to login if no cookie
           MeduseldAuth.renderProfile('profile-container');
-        });
-      }
-
-      function loadProfile() {
-        var cfCookie = (document.cookie.match(/(?:^|; )CF_Authorization=([^;]*)/) || [])[1] || '';
-        fetch(HEALTH_BASE + '/profile?cf_token=' + encodeURIComponent(cfCookie))
-          .then(function (r) {
-            if (!r.ok) throw new Error('HTTP ' + r.status);
-            return r.json();
-          })
-          .then(function (data) {
-            renderProfileHeader(data);
-            renderStats(data.trivia || {});
-            renderAchievements(data.achievements || [], data.new_achievements || []);
-          })
-          .catch(function (err) {
-            console.error('Failed to load profile:', err);
-            document.getElementById('profile-header').innerHTML =
-              '<p class="text-danger">Could not load profile. Make sure you are logged in.</p>';
+          MeduseldAuth.syncUser().then(function () {
+            MeduseldAuth.renderProfile('profile-container');
           });
-      }
-
-      function renderProfileHeader(data) {
-        var avatarHtml = data.avatar_url
-          ? '<img src="' + data.avatar_url + '" class="profile-avatar mb-3" alt="" />'
-          : '<div class="profile-avatar d-flex align-items-center justify-content-center mx-auto mb-3" style="background:rgba(108,117,125,0.3);border:3px solid #e6c65c"><i class="bi bi-person-fill" style="font-size:2.5rem;color:#6c757d"></i></div>';
-        var roleBadge =
-          data.role === 'admin'
-            ? ' <span class="badge" style="background:#e6c65c;color:#0b1f14;font-size:0.7rem;">Admin</span>'
-            : '';
-        var memberSince = data.created_at
-          ? new Date(data.created_at).toLocaleDateString(undefined, {
-              month: 'long',
-              year: 'numeric',
-            })
-          : '';
-
-        document.getElementById('profile-header').innerHTML =
-          avatarHtml +
-          '<h2 style="color:#e6c65c;font-weight:600">' +
-          escapeHtml(data.display_name || data.username) +
-          roleBadge +
-          '</h2>' +
-          '<p class="text-muted mb-0">@' +
-          escapeHtml(data.username) +
-          '</p>' +
-          (memberSince
-            ? '<p class="text-muted" style="font-size:0.8rem">Member since ' + memberSince + '</p>'
-            : '');
-      }
-
-      function renderStats(trivia) {
-        var row = document.getElementById('stats-row');
-        if (!trivia.games_played) {
-          row.style.display = 'none';
-          return;
         }
-        row.style.display = '';
-        var stats = [
-          { value: trivia.games_played, label: 'Games Played' },
-          { value: trivia.total_correct, label: 'Correct Answers' },
-          { value: trivia.total_wrong, label: 'Wrong Answers' },
-          { value: trivia.best_score, label: 'Best Score' },
-          { value: trivia.accuracy + '%', label: 'Accuracy' },
-        ];
-        row.innerHTML = stats
-          .map(function (s) {
-            return (
-              '<div class="col-6 col-md-4 col-lg-2"><div class="stat-card"><div class="stat-value">' +
-              s.value +
-              '</div><div class="stat-label">' +
-              s.label +
-              '</div></div></div>'
-            );
-          })
-          .join('');
-      }
 
-      function renderAchievements(achievements, newlyUnlocked) {
-        var section = document.getElementById('achievements-section');
-        section.style.display = '';
+        function loadProfile() {
+          var cfCookie = (document.cookie.match(/(?:^|; )CF_Authorization=([^;]*)/) || [])[1] || '';
+          fetch(HEALTH_BASE + '/profile?cf_token=' + encodeURIComponent(cfCookie))
+            .then(function (r) {
+              if (!r.ok) throw new Error('HTTP ' + r.status);
+              return r.json();
+            })
+            .then(function (data) {
+              renderProfileHeader(data);
+              renderStats(data.trivia || {});
+              renderAchievements(data.achievements || [], data.new_achievements || []);
+            })
+            .catch(function (err) {
+              console.error('Failed to load profile:', err);
+              document.getElementById('profile-header').innerHTML =
+                '<p class="text-danger">Could not load profile. Make sure you are logged in.</p>';
+            });
+        }
 
-        var unlocked = achievements.filter(function (a) {
-          return a.unlocked;
-        });
-        var locked = achievements.filter(function (a) {
-          return !a.unlocked;
-        });
-        var countEl = document.getElementById('ach-count');
-        countEl.textContent = unlocked.length + ' / ' + achievements.length + ' unlocked';
-
-        var grid = document.getElementById('achievements-grid');
-        var html = '';
-
-        // Unlocked first, then locked
-        var sorted = unlocked.concat(locked);
-        sorted.forEach(function (a) {
-          var isNew = newlyUnlocked.indexOf(a.achievement_id) !== -1;
-          var cls = a.unlocked ? 'unlocked' : 'locked';
-          var dateHtml = '';
-          if (a.unlocked && a.unlocked_at) {
-            dateHtml =
-              '<div class="ach-date">' +
-              new Date(a.unlocked_at).toLocaleDateString(undefined, {
-                day: 'numeric',
-                month: 'short',
+        function renderProfileHeader(data) {
+          var avatarHtml = data.avatar_url
+            ? '<img src="' + data.avatar_url + '" class="profile-avatar mb-3" alt="" />'
+            : '<div class="profile-avatar d-flex align-items-center justify-content-center mx-auto mb-3" style="background:rgba(108,117,125,0.3);border:3px solid #e6c65c"><i class="bi bi-person-fill" style="font-size:2.5rem;color:#6c757d"></i></div>';
+          var roleBadge =
+            data.role === 'admin'
+              ? ' <span class="badge" style="background:#e6c65c;color:#0b1f14;font-size:0.7rem;">Admin</span>'
+              : '';
+          var memberSince = data.created_at
+            ? new Date(data.created_at).toLocaleDateString(undefined, {
+                month: 'long',
                 year: 'numeric',
-              }) +
-              '</div>';
+              })
+            : '';
+
+          document.getElementById('profile-header').innerHTML =
+            avatarHtml +
+            '<h2 style="color:#e6c65c;font-weight:600">' +
+            escapeHtml(data.display_name || data.username) +
+            roleBadge +
+            '</h2>' +
+            '<p class="text-muted mb-0">@' +
+            escapeHtml(data.username) +
+            '</p>' +
+            (memberSince
+              ? '<p class="text-muted" style="font-size:0.8rem">Member since ' +
+                memberSince +
+                '</p>'
+              : '');
+        }
+
+        function renderStats(trivia) {
+          var row = document.getElementById('stats-row');
+          if (!trivia.games_played) {
+            row.style.display = 'none';
+            return;
           }
-          var newBadge = isNew ? '<span class="new-badge">NEW</span>' : '';
+          row.style.display = '';
+          var stats = [
+            { value: trivia.games_played, label: 'Games Played' },
+            { value: trivia.total_correct, label: 'Correct Answers' },
+            { value: trivia.total_wrong, label: 'Wrong Answers' },
+            { value: trivia.best_score, label: 'Best Score' },
+            { value: trivia.accuracy + '%', label: 'Accuracy' },
+          ];
+          row.innerHTML = stats
+            .map(function (s) {
+              return (
+                '<div class="col-6 col-md-4 col-lg-2"><div class="stat-card"><div class="stat-value">' +
+                s.value +
+                '</div><div class="stat-label">' +
+                s.label +
+                '</div></div></div>'
+              );
+            })
+            .join('');
+        }
 
-          html +=
-            '<div class="col-6 col-md-4 col-lg-3">' +
-            '<div class="achievement-card ' +
-            cls +
-            '">' +
-            newBadge +
-            '<div class="ach-icon"><i class="bi ' +
-            a.icon +
-            '"></i></div>' +
-            '<div class="ach-name">' +
-            escapeHtml(a.name) +
-            '</div>' +
-            '<div class="ach-desc">' +
-            escapeHtml(a.description) +
-            '</div>' +
-            dateHtml +
-            '</div></div>';
-        });
+        function renderAchievements(achievements, newlyUnlocked) {
+          var section = document.getElementById('achievements-section');
+          section.style.display = '';
 
-        grid.innerHTML = html;
-      }
+          var unlocked = achievements.filter(function (a) {
+            return a.unlocked;
+          });
+          var locked = achievements.filter(function (a) {
+            return !a.unlocked;
+          });
+          var countEl = document.getElementById('ach-count');
+          countEl.textContent = unlocked.length + ' / ' + achievements.length + ' unlocked';
 
-      function escapeHtml(s) {
-        var d = document.createElement('div');
-        d.appendChild(document.createTextNode(s));
-        return d.innerHTML;
-      }
+          var grid = document.getElementById('achievements-grid');
+          var html = '';
 
-      loadProfile();
+          // Unlocked first, then locked
+          var sorted = unlocked.concat(locked);
+          sorted.forEach(function (a) {
+            var isNew = newlyUnlocked.indexOf(a.achievement_id) !== -1;
+            var cls = a.unlocked ? 'unlocked' : 'locked';
+            var dateHtml = '';
+            if (a.unlocked && a.unlocked_at) {
+              dateHtml =
+                '<div class="ach-date">' +
+                new Date(a.unlocked_at).toLocaleDateString(undefined, {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                }) +
+                '</div>';
+            }
+            var newBadge = isNew ? '<span class="new-badge">NEW</span>' : '';
+
+            html +=
+              '<div class="col-6 col-md-4 col-lg-3">' +
+              '<div class="achievement-card ' +
+              cls +
+              '">' +
+              newBadge +
+              '<div class="ach-icon"><i class="bi ' +
+              a.icon +
+              '"></i></div>' +
+              '<div class="ach-name">' +
+              escapeHtml(a.name) +
+              '</div>' +
+              '<div class="ach-desc">' +
+              escapeHtml(a.description) +
+              '</div>' +
+              dateHtml +
+              '</div></div>';
+          });
+
+          grid.innerHTML = html;
+        }
+
+        function escapeHtml(s) {
+          var d = document.createElement('div');
+          d.appendChild(document.createTextNode(s));
+          return d.innerHTML;
+        }
+
+        loadProfile();
+      })();
     </script>
   </body>
 </html>
