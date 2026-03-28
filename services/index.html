@@ -338,7 +338,7 @@
               <div class="mb-3">
                 <i class="bi bi-book" style="font-size: 3rem; color: #e6c65c"></i>
               </div>
-              <h3 class="card-title mb-3" style="color: #e6c65c" id="wiki-title">Game Wiki</h3>
+              <h3 class="card-title mb-3" style="color: #e6c65c" id="wiki-title">Wikicarus</h3>
               <div class="mb-2">
                 <span id="wiki-status-indicator" class="badge bg-secondary">
                   <span class="spinner-border spinner-border-sm me-1" role="status"></span>
@@ -1189,7 +1189,7 @@
         const button = document.getElementById('wiki-button');
         const indicator = document.getElementById('wiki-status-indicator');
         if (data.color === 'green') {
-          button.innerHTML = 'Open ' + CONFIG.gameName + ' Wiki';
+          button.innerHTML = 'Open Wikicarus';
           button.classList.remove('btn-secondary', 'btn-danger', 'btn-disabled-link');
           button.classList.add('btn-warning');
           button.removeAttribute('disabled');
@@ -1625,7 +1625,7 @@
         document.getElementById('game-name').textContent = `${CONFIG.gameName} Server`;
         document.getElementById('game-description').textContent =
           `Control the ${CONFIG.gameName} dedicated game server. Start, stop, restart, and monitor server status.`;
-        document.getElementById('wiki-title').textContent = `${CONFIG.gameName} Wiki`;
+        document.getElementById('wiki-title').textContent = 'Wikicarus';
         document.getElementById('wiki-description').textContent =
           `Community wiki with guides, tips, and information for ${CONFIG.gameName}.`;
         document.getElementById('news-game-title').textContent = `${CONFIG.gameName} News`;
