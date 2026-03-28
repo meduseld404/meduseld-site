@@ -41,6 +41,14 @@
         border-radius: 50%;
         border: 2px solid #e6c65c;
       }
+      .char-card .char-portrait {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 2px solid #e6c65c;
+        object-fit: cover;
+        object-position: top;
+      }
       .sound-btn {
         width: 100%;
         min-height: 70px;
@@ -743,6 +751,14 @@
       }
 
       // ===== PARTY ROSTER =====
+      function getCharPortrait(characterName) {
+        if (!characterName) return null;
+        const firstName = characterName.trim().split(/\s+/)[0].toLowerCase();
+        const portraits = ['draconis', 'drayvn', 'finnan', 'korrak', 'thalmior', 'tharok', 'vael'];
+        if (portraits.includes(firstName)) return firstName + '.png';
+        return null;
+      }
+
       async function loadRoster() {
         try {
           const r = await fetch(API + '/dnd-characters');
@@ -754,12 +770,18 @@
             return;
           }
           c.innerHTML = d.characters
-            .map(
-              (ch) => `
+            .map((ch) => {
+              const portrait = getCharPortrait(ch.character_name);
+              const avatarHtml = portrait
+                ? '<img src="' + portrait + '" class="char-portrait" alt="">'
+                : '<img src="' +
+                  (ch.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png') +
+                  '" class="char-avatar" alt="">';
+              return `
             <div class="col-6 col-md-4 col-lg-3">
               <div class="card bg-dark border-secondary char-card h-100 p-3 text-center">
                 <div class="d-flex justify-content-center mb-2">
-                  <img src="${ch.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png'}" class="char-avatar" alt="">
+                  ${avatarHtml}
                 </div>
                 <div class="fw-semibold" style="color:#e6c65c">${ch.character_name}</div>
                 <div class="text-secondary" style="font-size:0.8rem">${ch.display_name || ''}</div>
@@ -767,8 +789,8 @@
                 ${ch.beyond_url ? '<a href="' + ch.beyond_url + '" target="_blank" class="btn btn-sm btn-outline-warning mt-2">View Sheet</a>' : ''}
                 ${isAdmin || (currentUser && currentUser.db_id === ch.user_id) ? '<button class="btn btn-sm btn-outline-danger mt-1" onclick="deleteCharacter(' + ch.id + ')"><i class="bi bi-trash"></i></button>' : ''}
               </div>
-            </div>`
-            )
+            </div>`;
+            })
             .join('');
         } catch (e) {
           console.error('Failed to load roster:', e);
