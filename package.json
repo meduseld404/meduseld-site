@@ -1,6 +1,6 @@
 {
   "name": "meduseld-site",
-  "version": "0.8.0-alpha",
+  "version": "0.9.0-alpha",
   "description": "Meduseld Services Hub",
   "private": true,
   "scripts": {
