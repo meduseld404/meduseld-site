@@ -731,6 +731,34 @@
       </div>
     </div>
 
+    <!-- Footer -->
+    <footer class="text-center py-3 mt-auto" style="border-top: 1px solid rgba(255, 255, 255, 0.2)">
+      <p class="text-light mb-0" style="font-size: 0.85rem">
+        &copy;
+        <span id="copyright-year"></span>
+        <a
+          href="https://quietarca.de"
+          target="_blank"
+          class="text-decoration-none"
+          style="color: #fff"
+        >
+          quietarcade
+        </a>
+        ~ All rights reserved.
+      </p>
+      <p class="text-light mb-0" style="font-size: 0.75rem">
+        <a
+          id="version-badge"
+          href="https://github.com/meduseld404/meduseld-site/releases"
+          target="_blank"
+          class="text-decoration-none"
+          style="color: rgba(255, 255, 255, 0.7)"
+        >
+          loading...
+        </a>
+      </p>
+    </footer>
+
     <!-- Toast -->
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
       <div id="toast" class="toast align-items-center border-0" role="alert">
@@ -1411,6 +1439,8 @@
           console.error('Failed to load next session:', e);
         }
       }
+
+      document.getElementById('copyright-year').textContent = new Date().getFullYear();
     </script>
   </body>
 </html>
