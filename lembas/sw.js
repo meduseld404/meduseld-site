@@ -1,5 +1,12 @@
-const CACHE_NAME = 'lembas-v1';
-const ASSETS = ['/lembas/', '/lembas/index.html', '/lembas/manifest.json'];
+const CACHE_NAME = 'lembas-v2';
+const ASSETS = [
+  '/lembas/',
+  '/lembas/index.html',
+  '/lembas/manifest.json',
+  '/lembas/logo.png',
+  '/lembas/favicon.ico',
+  '/lembas/apple-touch-icon.png',
+];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE_NAME).then((c) => c.addAll(ASSETS)));
