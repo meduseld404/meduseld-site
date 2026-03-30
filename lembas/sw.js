@@ -1,11 +1,11 @@
-const CACHE_NAME = 'lembas-v2';
+const CACHE_NAME = 'lembas-v3';
 const ASSETS = [
-  '/lembas/',
-  '/lembas/index.html',
-  '/lembas/manifest.json',
-  '/lembas/logo.png',
-  '/lembas/favicon.ico',
-  '/lembas/apple-touch-icon.png',
+  '/',
+  '/index.html',
+  '/manifest.json',
+  '/logo.png',
+  '/favicon.ico',
+  '/apple-touch-icon.png',
 ];
 
 self.addEventListener('install', (e) => {
