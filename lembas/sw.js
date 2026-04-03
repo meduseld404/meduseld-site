@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lembas-v6';
+const CACHE_NAME = 'lembas-v3';
 const ASSETS = [
   '/',
   '/index.html',
