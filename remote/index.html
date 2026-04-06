@@ -77,6 +77,12 @@
         border-radius: 8px;
         border: 2px solid rgba(108, 117, 125, 0.3);
       }
+      /* When control is granted, prevent browser default interactions on the video */
+      .control-active #remote-video {
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-user-drag: none;
+      }
       .video-wrapper {
         position: relative;
         display: inline-block;
@@ -558,13 +564,21 @@
         socket.on('control_toggled', function (data) {
           controlGranted = data.granted;
           var badge = document.getElementById('control-status');
+          var wrapper = document.getElementById('viewer-video-wrapper');
+          var video = document.getElementById('remote-video');
           if (data.granted) {
             badge.className = 'badge bg-success me-2';
             badge.textContent = 'Control Enabled';
+            if (wrapper) wrapper.classList.add('control-active');
+            // Focus the video so keyboard events work and prevent default video interactions
+            if (video) {
+              video.focus();
+            }
             showToast('Remote control granted', 'success');
           } else {
             badge.className = 'badge bg-secondary me-2';
             badge.textContent = 'View Only';
+            if (wrapper) wrapper.classList.remove('control-active');
             showToast('Remote control revoked', 'warning');
           }
         });
@@ -1021,6 +1035,10 @@
       function setupInputForwarding() {
         var video = document.getElementById('remote-video');
 
+        // Make the video focusable for keyboard events and prevent default video behaviors
+        video.setAttribute('tabindex', '0');
+        video.style.outline = 'none';
+
         function getRelCoords(e) {
           var rect = video.getBoundingClientRect();
           return {
@@ -1036,6 +1054,7 @@
 
         video.addEventListener('mousemove', function (e) {
           if (!controlGranted || !socket) return;
+          e.preventDefault();
           // Throttle mousemove to ~60fps
           if (inputThrottleTimer) return;
           inputThrottleTimer = setTimeout(function () {
@@ -1090,6 +1109,24 @@
           },
           { passive: false }
         );
+
+        // Prevent the browser from dragging the video element
+        video.addEventListener('dragstart', function (e) {
+          if (controlGranted) e.preventDefault();
+        });
+
+        // Prevent default video play/pause toggle on click
+        video.addEventListener('play', function () {
+          // Keep video playing - don't let click handlers pause it
+        });
+        video.addEventListener('pause', function () {
+          // If control is active and video gets paused by a click, resume it
+          if (controlGranted && video.srcObject) {
+            video.play().catch(function (e) {
+              console.error('Failed to resume video after pause:', e);
+            });
+          }
+        });
 
         document.addEventListener('keydown', function (e) {
           if (!controlGranted || !socket || currentMode !== 'viewer') return;
@@ -1253,6 +1290,9 @@
 
         var logEl = document.getElementById('host-input-log');
         if (logEl) logEl.style.display = 'none';
+
+        var wrapper = document.getElementById('viewer-video-wrapper');
+        if (wrapper) wrapper.classList.remove('control-active');
 
         cursorViewerNames = {};
         controlGranted = false;
