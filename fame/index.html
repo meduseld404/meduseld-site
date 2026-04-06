@@ -724,7 +724,11 @@
       function openLightbox(el) {
         var overlay = document.createElement('div');
         overlay.className = 'lightbox-overlay';
-        overlay.onclick = function () { document.body.removeChild(overlay); };
+        overlay.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+        });
 
         if (el.tagName === 'VIDEO') {
           var v = document.createElement('video');
@@ -733,12 +737,13 @@
           v.autoplay = true;
           v.style.maxWidth = '95vw';
           v.style.maxHeight = '90vh';
-          v.onclick = function (e) { e.stopPropagation(); };
+          v.addEventListener('click', function (e) { e.stopPropagation(); });
           overlay.appendChild(v);
         } else {
           var img = document.createElement('img');
           img.src = el.src;
           img.alt = el.alt || '';
+          img.addEventListener('click', function (e) { e.stopPropagation(); });
           overlay.appendChild(img);
         }
         document.body.appendChild(overlay);
